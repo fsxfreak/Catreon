@@ -1,0 +1,12 @@
+As mentioned in the description, this is purely for the betterment of my programming skills. This is my first "actual" project, and as such will be riddled with what you may call poor programming practices.
+
+Planned features:
+Two large (10 square km) interconnected cities
+	-Layout similar to the San Francisco Bay Area Peninsula
+Car AI
+	-Car accidents
+	-Emergency responders
+	-Traffic jams
+Pedestrians
+	-Roadkill? (lol)
+Drivable car (low priority)
