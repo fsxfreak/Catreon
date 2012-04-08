@@ -10,3 +10,5 @@ Car AI
 Pedestrians
 	-Roadkill? (lol)
 Drivable car (low priority)
+
+If you want to fork this, you will have to download Ogre3D, Bullet, and irrKlang separately, and fix the directories in the Visual Studio solution.
