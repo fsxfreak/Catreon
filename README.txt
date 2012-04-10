@@ -12,4 +12,4 @@ Pedestrians
 Drivable car (low priority)
 
 Source files can be found in /src
-If you want to fork this, you will have to download Ogre3D, Bullet, and irrKlang separately, and fix the directories in the Visual Studio solution. Unfortunately, no one will want to fork this. :(
+If you want to fork this, you will have to download Ogre3D, Bullet, and irrKlang separately, and create your own project/solution. Unfortunately, no one will want to fork this. :(
