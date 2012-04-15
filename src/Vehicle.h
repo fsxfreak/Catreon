@@ -2,6 +2,7 @@
 #define VEHICLE_H
 
 #include "stdafx.h"
+#include "Driver.h"
 
 class Vehicle
 {
@@ -16,6 +17,9 @@ private:
 	int mnCargo;
 	int mnPassengers;
 
+	//AI
+	Driver mcDriver;
+
 public:
 	Vehicle();
 	~Vehicle();
@@ -28,6 +32,8 @@ public:
 	bool isMoving();
 	bool isHealthy();
 	bool isInReverse();
+
+	Driver getDriver();
 };
 
 

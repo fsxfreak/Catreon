@@ -67,3 +67,8 @@ bool Vehicle::isInReverse()
 
 	return mbIsInReverse;
 }
+//-------------------------------------------------------------------------------------------------------
+Driver Vehicle::getDriver()
+{
+	return mcDriver;
+}
