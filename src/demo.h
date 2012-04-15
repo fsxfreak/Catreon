@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "OgreFramework.h"
+#include "Vehicle.h"
 
 class OgreApp : public OIS::KeyListener
 {
@@ -25,6 +26,7 @@ private:
 	Ogre::SceneNode* mNodeTerrain;
 	Ogre::Entity* mEntityTerrain;
 
+	
 	
 	bool mShutDown;
 };

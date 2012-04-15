@@ -2,7 +2,9 @@
 #include <assert.h>
 #include "Vehicle.h"
 //-------------------------------------------------------------------------------------------------------
-Vehicle::Vehicle() : mnSpeed(0), mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1)
+Vehicle::Vehicle(int nCargo, int nPassengers, int nDriverSkill) 
+	:	mnSpeed(0), mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1),
+		mcDriver(nDriverSkill)
 {
 
 }

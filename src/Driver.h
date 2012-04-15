@@ -11,13 +11,16 @@ private:
 	std::string mstrDestination;
 
 	//driving skill, scale of 1 to 10
-	int mnSkill;
+	const int mnSkill;
 
 public:
-	Driver();
+	Driver(int nSkill);
 	~Driver();
 
 	void updateDecision();
+	void updateDestination(std::string strDest);
+
+	std::string getDestination();
 };
 
 #endif

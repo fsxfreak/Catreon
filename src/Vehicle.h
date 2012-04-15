@@ -19,9 +19,9 @@ private:
 
 	//AI
 	Driver mcDriver;
-
+	
 public:
-	Vehicle();
+	Vehicle(int nCargo, int nPassengers, int nDriverSkill);
 	~Vehicle();
 
 	int getSpeed();

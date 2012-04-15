@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "demo.h"
+#include <iostream>
 
 OgreApp::OgreApp() : mNodePenguin(0), mEntityPenguin(0)
 {
@@ -9,6 +10,10 @@ OgreApp::OgreApp() : mNodePenguin(0), mEntityPenguin(0)
 OgreApp::~OgreApp()
 {
 	delete OgreFramework::getSingletonPtr();
+	delete mNodePenguin;
+	delete mEntityPenguin;
+	delete mNodeTerrain;
+	delete mEntityTerrain;
 }
 
 void OgreApp::startDemo()
@@ -59,6 +64,12 @@ void OgreApp::createScene()
 	mNodeTerrain->attachObject(mEntityTerrain);
 
 	mNodeTerrain->setPosition(0, -200, 0);
+
+	Vehicle mVehicleTest(200, 2, 8);
+	mVehicleTest.setSpeed(50);
+	mVehicleTest.getDriver().updateDestination("San Francisco");
+
+	std::cout << "speed: " << mVehicleTest.getSpeed() << " destination: " << mVehicleTest.getDriver().getDestination() << std::endl;
 	
 }
 

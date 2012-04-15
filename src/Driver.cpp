@@ -2,7 +2,7 @@
 #include "Driver.h"
 
 //-------------------------------------------------------------------------------------------------------
-Driver::Driver() : mnSkill(8)
+Driver::Driver(int nSkill) : mnSkill(nSkill)
 {
 
 }
@@ -15,4 +15,14 @@ Driver::~Driver()
 void Driver::updateDecision()
 {
 
+}
+//-------------------------------------------------------------------------------------------------------
+void Driver::updateDestination(std::string strDest)
+{
+	mstrDestination = strDest;
+}
+//-------------------------------------------------------------------------------------------------------
+std::string Driver::getDestination()
+{
+	return mstrDestination;
 }
