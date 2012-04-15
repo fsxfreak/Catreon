@@ -59,8 +59,8 @@ public:
 	Ogre::SceneNode *cameraNode;
 
 private:
-	OgreFramework(const OgreFramework&) = delete;
-	OgreFramework& operator=(const OgreFramework&) = delete;
+	OgreFramework(const OgreFramework&);
+	OgreFramework& operator=(const OgreFramework&);
 
 	OgreBites::SdkTrayManager* mTrayMgr;
 	Ogre::FrameEvent mFrameEvent;

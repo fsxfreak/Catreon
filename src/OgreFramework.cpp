@@ -203,7 +203,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 		Ogre::ConfigFile::SettingsMultiMap *settings = secit.getNext();
 		Ogre::ConfigFile::SettingsMultiMap::iterator it;
 
-		for (auto it : settings->begin())
+		for (it = settings->begin(); it != settings->end(); ++it)
 		{
 			typeName = it->first;
 			archName = it->second;
