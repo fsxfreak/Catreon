@@ -10,10 +10,6 @@ OgreApp::OgreApp() : mNodePenguin(0), mEntityPenguin(0)
 OgreApp::~OgreApp()
 {
 	delete OgreFramework::getSingletonPtr();
-	delete mNodePenguin;
-	delete mEntityPenguin;
-	delete mNodeTerrain;
-	delete mEntityTerrain;
 }
 
 void OgreApp::startDemo()
@@ -58,7 +54,7 @@ void OgreApp::createScene()
 	mNodePenguin = OgreFramework::getSingletonPtr()->mSceneMgr->getRootSceneNode()->createChildSceneNode("PenguinNode");
 	mNodePenguin->attachObject(mEntityPenguin);
 
-	mEntityTerrain = OgreFramework::getSingletonPtr()->mSceneMgr->createEntity("building.mesh");
+	mEntityTerrain = OgreFramework::getSingletonPtr()->mSceneMgr->createEntity("landscape.mesh");
 	
 	mNodeTerrain = OgreFramework::getSingletonPtr()->mSceneMgr->getRootSceneNode()->createChildSceneNode("TerrainNode");
 	mNodeTerrain->attachObject(mEntityTerrain);

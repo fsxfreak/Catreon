@@ -17,7 +17,6 @@ public:
 	Driver(int nSkill);
 	~Driver();
 
-	void updateDecision();
 	void updateDestination(std::string strDest);
 
 	std::string getDestination();
