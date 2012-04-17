@@ -2,7 +2,6 @@
 #define DRIVER_H
 
 #include "stdafx.h"
-#include "Brain.h"
 
 #include <string>
 

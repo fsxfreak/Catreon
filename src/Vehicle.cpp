@@ -38,16 +38,18 @@ void Vehicle::setSpeed(int nSpeed)
 	}
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::addSpeed(int nSpeed)
+void Vehicle::accelerate(int nTargetSpeed)
 {
-	mnSpeed += nSpeed;
+	//dirty base implementation, adding acceleration by time handling
+	mnSpeed += nTargetSpeed;
 	if (mnSpeed > 150)
 		mbIsHealthy = 0;
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::decreaseSpeed(int nSpeed)
+void Vehicle::decelerate(int nTargetSpeed)
 {
-	mnSpeed -= nSpeed;
+	//dirty base implementation, adding deceleration by time handling
+	mnSpeed -= nTargetSpeed;
 	if (mnSpeed < 0)
 		bool mbIsInReverse = 1;
 }

@@ -28,8 +28,6 @@ public:
 
 	int getSpeed();
 	void setSpeed(int nSpeed);
-	void addSpeed(int nSpeed);
-	void decreaseSpeed(int nSpeed);
 
 	bool isMoving();
 	bool isHealthy();
@@ -37,6 +35,10 @@ public:
 
 	//modify the driver through vehicle class
 	Driver getDriver();
+
+protected:
+	virtual void decelerate(int nTargetSpeed);
+	virtual void accelerate(int nTargetSpeed);
 };
 
 
