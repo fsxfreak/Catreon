@@ -6,7 +6,6 @@ class Brain
 {
 private:
 
-	Brain(const Brain&);
 	Brain& operator=(const Brain&);
 public:
 	Brain();

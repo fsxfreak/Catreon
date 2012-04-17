@@ -20,7 +20,6 @@ private:
 	//AI
 	Driver mcDriver;
 
-	Vehicle(const Vehicle&);
 	Vehicle& operator=(const Vehicle&);
 	
 public:
