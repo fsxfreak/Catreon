@@ -18,7 +18,6 @@ private:
 
 	Brain cDriverBrain;
 
-	Driver(const Driver&);
 	Driver& operator=(const Driver&);
 public:
 	Driver(int nSkill);
