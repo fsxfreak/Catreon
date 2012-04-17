@@ -8,6 +8,7 @@ class Vehicle
 {
 private:
 	int mnSpeed;
+
 	bool mbIsMoving;
 	//healthy as in not totaled
 	bool mbIsHealthy;
@@ -32,6 +33,9 @@ public:
 	bool isMoving();
 	bool isHealthy();
 	bool isInReverse();
+
+	int getCargo();
+	int getPassengers();
 
 	//modify the driver through vehicle class
 	Driver getDriver();

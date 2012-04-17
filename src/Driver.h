@@ -23,6 +23,8 @@ public:
 	void updateDestination(std::string strDest);
 	void updateDecision();
 
+	int getSkill();
+
 	std::string getDestination();
 
 };
