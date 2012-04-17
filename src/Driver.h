@@ -16,18 +16,16 @@ private:
 	int mnNervousness;
 	int mnRiskTaker;
 
-	Brain cDriverBrain;
-
 	Driver& operator=(const Driver&);
 public:
 	Driver(int nSkill);
 	~Driver();
 
 	void updateDestination(std::string strDest);
+	void updateDecision();
 
 	std::string getDestination();
 
-	Brain getBrain();
 };
 
 #endif

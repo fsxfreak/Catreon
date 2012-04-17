@@ -21,3 +21,8 @@ std::string Driver::getDestination()
 {
 	return mstrDestination;
 }
+//-------------------------------------------------------------------------------------------------------
+void Driver::updateDecision()
+{
+
+}
