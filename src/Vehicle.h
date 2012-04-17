@@ -19,6 +19,9 @@ private:
 
 	//AI
 	Driver mcDriver;
+
+	Vehicle(const Vehicle&);
+	Vehicle& operator=(const Vehicle&);
 	
 public:
 	Vehicle(int nCargo, int nPassengers, int nDriverSkill);
