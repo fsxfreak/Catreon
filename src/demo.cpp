@@ -16,11 +16,9 @@ void OgreApp::startDemo()
 {
 	new OgreFramework();
 
-	//graphics initialized
+	//graphics and sound initialized
 	if (!OgreFramework::getSingletonPtr()->initOgre("OgreApp", this, 0))
 		return;
-
-	//initialize sound
 
 
 	mShutDown = false;
@@ -61,7 +59,7 @@ void OgreApp::createScene()
 
 	mNodeTerrain->setPosition(0, -200, 0);
 
-	Vehicle mVehicleTest(200, 2, 8);
+	Vehicle mVehicleTest(200, 2, 16);
 	mVehicleTest.setSpeed(50);
 	mVehicleTest.getDriver().updateDestination("San Francisco");
 
@@ -71,6 +69,8 @@ void OgreApp::createScene()
 
 void OgreApp::runDemo()
 {
+	srand(GetTickCount());
+
 	OgreFramework::getSingletonPtr()->mLog->logMessage("Start main loop.");
 
 	double timeSinceLastFrame = 0;
