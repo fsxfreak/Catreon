@@ -8,7 +8,7 @@ OgreFramework::OgreFramework() :	mMoveSpeed(0.1f), mRotateSpeed(0.3f), mShutDown
 									mNumScreenShots(0), mRoot(0), mSceneMgr(0), mRenderWindow(0), 
 									mCamera(0), mViewport(0), mLog(0), mTimer(0), mInputMgr(0), 
 									mKb(0), mMouse(0), mTrayMgr(0), mFrameEvent(Ogre::FrameEvent()),
-									soundengine(createIrrKlangDevice())
+									mSoundEngine(createIrrKlangDevice())
 {
 
 }
@@ -21,6 +21,8 @@ OgreFramework::~OgreFramework()
 		delete mTrayMgr;
 	if (mRoot)
 		delete mRoot;
+	if (mSoundEngine)
+		mSoundEngine->drop();
 }
 
 void OgreFramework::moveCamera()
@@ -102,6 +104,10 @@ bool OgreFramework::keyPressed(const OIS::KeyEvent &keyEvent)
 			mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
 		}
 	}
+	if (mKb->isKeyDown(OIS::KC_U))
+	{
+		mSoundEngine->play3D("sound/gottobe.mp3", ogreToIrrVec(mCamera->getPosition()), false, false, false);
+	}
 	return true;
 }
 
@@ -128,6 +134,27 @@ bool OgreFramework::mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseBu
 bool OgreFramework::mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
 {
 	return true;
+}
+
+//translate an ogre vector into an irrklang vector
+vec3df OgreFramework::ogreToIrrVec(Ogre::Vector3 ogrevec)
+{
+	vec3df irrvec;
+	irrvec.X = ogrevec.x;
+	irrvec.Y = ogrevec.y;
+	irrvec.Z = ogrevec.z;
+
+	return irrvec;
+}
+//translate an irrklang vector into an ogre vector
+Ogre::Vector3 irrToOgreVec(vec3df irrvec)
+{
+	Ogre::Vector3 ogrevec;
+	ogrevec.x = irrvec.X;
+	ogrevec.y = irrvec.Y;
+	ogrevec.z = irrvec.Z;
+
+	return ogrevec;
 }
 
 bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener, OIS::MouseListener *pMouseListener)
@@ -223,6 +250,12 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 	mTrayMgr->hideCursor();
 
 	mRenderWindow->setActive(true);
+
+	//check the sound engine
+	if (!mSoundEngine)
+		return 1;
+
+	
 
 	return true;
 

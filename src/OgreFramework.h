@@ -46,6 +46,11 @@ public:
 	bool mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
 	bool mouseMoved(const OIS::MouseEvent &mouseEvent);
 
+	//translate an ogre vector into an irrklang vector
+	vec3df ogreToIrrVec(Ogre::Vector3 ogrevec);
+	//translate an irrklang vector into an ogre vector
+	Ogre::Vector3 irrToOgreVec(vec3df irrvec);
+
 	Ogre::Root*			mRoot;
 	Ogre::SceneManager* mSceneMgr;
 	Ogre::RenderWindow* mRenderWindow;
@@ -64,7 +69,7 @@ public:
 	Ogre::SceneNode *cameraNode;
 
 	//sound engine
-	ISoundEngine *soundengine;
+	ISoundEngine *mSoundEngine;
 
 private:
 	OgreFramework(const OgreFramework&);
