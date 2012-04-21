@@ -1,6 +1,7 @@
 #ifndef OGRE_FRAMEWORK_H
 #define OGRE_FRAMEWORK_H
 
+//renderer
 #include <OgreCamera.h>
 #include <OgreEntity.h>
 #include <OgreLogManager.h>
@@ -19,7 +20,11 @@
 #include <OISMouse.h>
  
 #include <SdkTrays.h>
- 
+
+//sound
+#include <irrKlang.h>
+
+using namespace irrklang;
 
 class OgreFramework : public Ogre::Singleton<OgreFramework>, OIS::KeyListener, OIS::MouseListener, OgreBites::SdkTrayListener
 {
@@ -57,6 +62,9 @@ public:
 
 	//handle cameras
 	Ogre::SceneNode *cameraNode;
+
+	//sound engine
+	ISoundEngine *soundengine;
 
 private:
 	OgreFramework(const OgreFramework&);

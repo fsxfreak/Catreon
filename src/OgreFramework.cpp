@@ -7,7 +7,8 @@ template<> OgreFramework* Ogre::Singleton<OgreFramework>::ms_Singleton = 0;
 OgreFramework::OgreFramework() :	mMoveSpeed(0.1f), mRotateSpeed(0.3f), mShutDownOgre(false), 
 									mNumScreenShots(0), mRoot(0), mSceneMgr(0), mRenderWindow(0), 
 									mCamera(0), mViewport(0), mLog(0), mTimer(0), mInputMgr(0), 
-									mKb(0), mMouse(0), mTrayMgr(0), mFrameEvent(Ogre::FrameEvent())
+									mKb(0), mMouse(0), mTrayMgr(0), mFrameEvent(Ogre::FrameEvent()),
+									soundengine(createIrrKlangDevice())
 {
 
 }
