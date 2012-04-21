@@ -11,7 +11,10 @@
 
 #include "Vehicle.h"
 #include "Driver.h"
+#include "demo.h"
 #include "OgreFramework.h"
+
+#include "irrKlang.h"
 
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
