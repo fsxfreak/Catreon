@@ -59,7 +59,7 @@ void OgreApp::createScene()
 
 	mNodeTerrain->setPosition(0, -200, 0);
 
-	Vehicle mVehicleTest(200, 2, 16);
+	Vehicle mVehicleTest(200, 2);
 	mVehicleTest.setSpeed(50);
 	mVehicleTest.getDriver().updateDestination("San Francisco");
 
