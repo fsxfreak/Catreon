@@ -8,9 +8,10 @@ Driver::Driver(int nSkill, int nRiskTaker) : mnSkill(nSkill), mnRiskTaker(nRiskT
 }
 //-------------------------------------------------------------------------------------------------------
 //random, default constructor
-Driver::Driver()
+Driver::Driver() : mnNervousness(25)
 {
-
+	mnSkill = rand() % 100;
+	mnRiskTaker = rand() % 100;
 }
 //-------------------------------------------------------------------------------------------------------
 Driver::~Driver()
