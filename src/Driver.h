@@ -10,20 +10,25 @@ class Driver
 private:
 	std::string mstrDestination;
 
-	//all personality on a scale of 1 to 10
-	const int mnSkill;
+	//all personality on a scale of 1 to 100
+	int mnSkill;
 	int mnNervousness;
 	int mnRiskTaker;
 
 	Driver& operator=(const Driver&);
 public:
-	Driver(int nSkill);
+	Driver(int nSkill, int nRiskTaker);
+	Driver();
 	~Driver();
 
 	void updateDestination(std::string strDest);
 	void updateDecision();
 
 	int getSkill();
+	int getNervousness();
+	int getRiskTaker();
+
+	void setNervousness(int nNervous);
 
 	std::string getDestination();
 

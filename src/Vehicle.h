@@ -15,8 +15,8 @@ private:
 	bool mbIsInReverse;
 
 	//in pounds
-	int mnCargo;
-	int mnPassengers;
+	unsigned int mnCargo;
+	unsigned int mnPassengers;
 
 	//AI
 	Driver mcDriver;
@@ -24,7 +24,7 @@ private:
 	Vehicle& operator=(const Vehicle&);
 	
 public:
-	Vehicle(int nCargo, int nPassengers, int nDriverSkill);
+	Vehicle(int nCargo, int nPassengers);
 	~Vehicle();
 
 	int getSpeed();

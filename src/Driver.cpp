@@ -2,7 +2,13 @@
 #include "Driver.h"
 
 //-------------------------------------------------------------------------------------------------------
-Driver::Driver(int nSkill) : mnSkill(nSkill)
+Driver::Driver(int nSkill, int nRiskTaker) : mnSkill(nSkill), mnRiskTaker(nRiskTaker)
+{
+
+}
+//-------------------------------------------------------------------------------------------------------
+//random, default constructor
+Driver::Driver()
 {
 
 }
@@ -40,4 +46,9 @@ int Driver::getNervousness()
 int Driver::getRiskTaker()
 {
 	return mnRiskTaker;
+}
+//-------------------------------------------------------------------------------------------------------
+void Driver::setNervousness(int nNervous)
+{
+	mnNervousness += nNervous;
 }
