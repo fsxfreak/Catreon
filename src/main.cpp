@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "DemoApp.hpp"
 
 #if OGRE_PLATFORM == PLATFORM_WIN32 || OGRE_PLATFORM == OGRE_PLATFORM_WIN32

@@ -1,4 +1,4 @@
-#ifndef OGRE_FRAMEWORK_H
+/*#ifndef OGRE_FRAMEWORK_H
 #define OGRE_FRAMEWORK_H
 
 //renderer
@@ -91,3 +91,4 @@ private:
 
 #endif
 
+*/

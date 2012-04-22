@@ -4,6 +4,8 @@
 #define DOT_SCENELOADER_H
  
 // Includes
+#include "stdafx.h"
+
 #include <OgreString.h>
 #include <OgreVector3.h>
 #include <OgreQuaternion.h>

@@ -1,5 +1,7 @@
 //copied directly from Ogre Wiki at ogre3d.org
 
+#include "stdafx.h"
+
 #include "DotSceneLoader.h"
 #include <Ogre.h>
 #include <Terrain/OgreTerrain.h>
