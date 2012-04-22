@@ -5,7 +5,7 @@
 #include "OgreFramework.h"
 #include "Vehicle.h"
 
-class OgreApp : public OIS::KeyListener
+class OgreApp : public OIS::KeyListener, public Ogre::FrameListener
 {
 public:
 	OgreApp();
@@ -17,6 +17,8 @@ public:
 	bool keyReleased(const OIS::KeyEvent &keyEvent);
 
 private:
+	bool frameRenderingQueued(const Ogre::FrameEvent& evt);
+
 	void createScene();
 	void runDemo();
 

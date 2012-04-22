@@ -32,6 +32,7 @@ void OgreApp::startDemo()
 bool OgreApp::keyPressed(const OIS::KeyEvent &keyEvent)
 {
 	OgreFramework::getSingletonPtr()->keyPressed(keyEvent);
+	
 
 	return true;
 }
@@ -40,6 +41,11 @@ bool OgreApp::keyReleased(const OIS::KeyEvent &keyEvent)
 {
 	OgreFramework::getSingletonPtr()->keyReleased(keyEvent);
 	return true;
+}
+
+bool frameRenderingQueued(const Ogre::FrameEvent& evt)
+{
+
 }
 
 void OgreApp::createScene()
@@ -52,7 +58,7 @@ void OgreApp::createScene()
 	mNodePenguin = OgreFramework::getSingletonPtr()->mSceneMgr->getRootSceneNode()->createChildSceneNode("PenguinNode");
 	mNodePenguin->attachObject(mEntityPenguin);
 
-	mEntityTerrain = OgreFramework::getSingletonPtr()->mSceneMgr->createEntity("landscape.mesh");
+	mEntityTerrain = OgreFramework::getSingletonPtr()->mSceneMgr->createEntity("city2.mesh");
 	
 	mNodeTerrain = OgreFramework::getSingletonPtr()->mSceneMgr->getRootSceneNode()->createChildSceneNode("TerrainNode");
 	mNodeTerrain->attachObject(mEntityTerrain);
