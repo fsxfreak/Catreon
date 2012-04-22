@@ -55,6 +55,8 @@ void OgreFramework::updateOgre(double timeSinceLastFrame)
 	getInput();
 	moveCamera();
 
+	mSoundEngine->setListenerPosition(ogreToIrrVec(mCamera->getPosition()), ogreToIrrVec(mCamera->getDirection()));
+
 	mFrameEvent.timeSinceLastFrame = timeSinceLastFrame;
 	mTrayMgr->frameRenderingQueued(mFrameEvent);
 }
@@ -106,7 +108,7 @@ bool OgreFramework::keyPressed(const OIS::KeyEvent &keyEvent)
 	}
 	if (mKb->isKeyDown(OIS::KC_U))
 	{
-		mSoundEngine->play3D("sound/gottobe.mp3", ogreToIrrVec(mCamera->getPosition()), false, false, false);
+		mSoundEngine->play3D("sound/gottobe.mp3", vec3df(0, 0, 0), true, false, true);
 	}
 	return true;
 }
@@ -140,7 +142,7 @@ bool OgreFramework::mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseB
 vec3df OgreFramework::ogreToIrrVec(Ogre::Vector3 ogrevec)
 {
 	vec3df irrvec;
-	irrvec.X = ogrevec.x;
+	irrvec.X = -ogrevec.x;
 	irrvec.Y = ogrevec.y;
 	irrvec.Z = ogrevec.z;
 
@@ -150,7 +152,7 @@ vec3df OgreFramework::ogreToIrrVec(Ogre::Vector3 ogrevec)
 Ogre::Vector3 irrToOgreVec(vec3df irrvec)
 {
 	Ogre::Vector3 ogrevec;
-	ogrevec.x = irrvec.X;
+	ogrevec.x = -irrvec.X;
 	ogrevec.y = irrvec.Y;
 	ogrevec.z = irrvec.Z;
 
@@ -250,6 +252,9 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 	mTrayMgr->hideCursor();
 
 	mRenderWindow->setActive(true);
+
+	mSoundEngine->setListenerPosition(ogreToIrrVec(mCamera->getPosition()), ogreToIrrVec(mCamera->getDirection()));
+	mSoundEngine->setRolloffFactor(0.01);
 
 	//check the sound engine
 	if (!mSoundEngine)

@@ -43,11 +43,6 @@ bool OgreApp::keyReleased(const OIS::KeyEvent &keyEvent)
 	return true;
 }
 
-bool frameRenderingQueued(const Ogre::FrameEvent& evt)
-{
-
-}
-
 void OgreApp::createScene()
 {
 	OgreFramework::getSingletonPtr()->mSceneMgr->setSkyBox(true, "Examples/SpaceSkyBox");
