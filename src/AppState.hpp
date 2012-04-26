@@ -42,12 +42,12 @@ public:
 protected:
 	AppState() {};
 
-	AppState*	findByName(Ogre::String stateName)	{ return mParent->findByName(stateName); }
-	void		changeAppState(AppState* state)		{ mParent->changeAppState(state); }
-	bool		pushAppState(AppState* state)		{ return mParent->pushAppState(state); }
-	void		popAppState()						{ mParent->popAppState(); }
-	void		shutdown()							{ mParent->shutdown(); }
-	void		popAllAndPushAppState(AppState *state) { mParent->popAllAndPushAppState(state); }
+	AppState*	findByName(Ogre::String stateName)		{ return mParent->findByName(stateName); }
+	void		changeAppState(AppState* state)			{ mParent->changeAppState(state); }
+	bool		pushAppState(AppState* state)			{ return mParent->pushAppState(state); }
+	void		popAppState()							{ mParent->popAppState(); }
+	void		shutdown()								{ mParent->shutdown(); }
+	void		popAllAndPushAppState(AppState *state)	{ mParent->popAllAndPushAppState(state); }
 
 	AppStateListener* mParent;
 

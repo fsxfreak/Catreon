@@ -1,4 +1,6 @@
 //code largely based on Advanced Ogre Framework at ogre3d.org
+//minor formatting and name changes to fit my conventions
+
 
 #ifndef APP_STATE_MANAGER_HPP
 #define APP_STATE_MANAGER_HPP

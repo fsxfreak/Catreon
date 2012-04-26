@@ -2,7 +2,7 @@
 #define DEMO_H
 
 #include "stdafx.h"
-#include "OgreFramework.h"
+#include "AdvancedOgreFramework.hpp"
 #include "Vehicle.h"
 
 class OgreApp : public OIS::KeyListener
