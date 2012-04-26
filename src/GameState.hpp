@@ -63,9 +63,9 @@ private:
 	float					mMoveScale;
 	Ogre::Degree			mRotateScale;
 
-	Ogre::RaySceneQuery		mRaySceneQuery;
+	Ogre::RaySceneQuery*	mRaySceneQuery;
 	Ogre::SceneNode*		mCurrentObject;
-	Ogre::Entity			mCurrentEntity;
+	Ogre::Entity*			mCurrentEntity;
 	bool					mbLMouseDown;
 	bool					mbRMouseDown;
 	bool					mbSettingsMode;
