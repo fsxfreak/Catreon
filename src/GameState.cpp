@@ -170,25 +170,110 @@ bool GameState::keyReleased(const OIS::KeyEvent &keyEvent)
 //-------------------------------------------------------------------------------------------------------
 bool GameState::mouseMoved(const OIS::MouseEvent &mouseEvent)
 {
+	if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseMove(mouseEvent))
+	{
+		return true;
+	}
+	//if right mouse down, camera look is activated
+	if (mbRMouseDown)
+	{
+		mCamera->yaw(Ogre::Degree(mouseEvent.state.X.rel * -0.1f));
+		mCamera->pitch(Ogre::Degree(mouseEvent.state.Y.rel * -0.1f));
+	}
 
+	return true;
 }
 //-------------------------------------------------------------------------------------------------------
 bool GameState::mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
 {
+	if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseDown(mouseEvent, id))
+	{
+		return true;
+	}
 
+	if (id == OIS::MB_Left)
+	{
+		onLeftPressed(mouseEvent);
+		mbLMouseDown = true;
+	}
+	else if (id == OIS::MB_Right)
+	{
+		mbRMouseDown = true;
+	}
+
+	return true;
 }
 //-------------------------------------------------------------------------------------------------------
 bool GameState::mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
 {
+	if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseMove(mouseEvent, id))
+	{
+		return true;
+	}
 
+	if (id == OIS::MB_Left)
+	{
+		mbLMouseDown = false;
+	}
+	else if (id == OIS::MB_Right)
+	{
+		mbRMouseDown = false;
+	}
+
+	return true;
 }
 //-------------------------------------------------------------------------------------------------------
+//object selection
 void GameState::onLeftPressed(const OIS::MouseEvent &mouseEvent)
 {
+	if (mCurrentObject)
+	{
+		mCurrentObject->showBoundingBox(false);
+		mCurrentEntity->getSubEntity(1)->setMaterial(mOgreHeadMaterial);
+	}
 
+	//quite the formatting
+	Ogre::Ray mouseRay = mCamera->getCameraToViewportRay(
+		OgreFramework::getSingletonPtr()->mMouse->getMouseState().X.abs / 
+		static_cast<float>(mouseEvent.state.width), 
+		OgreFramework::getSingletonPtr()->mMouse->getMouseState().Y.abs /
+		static_cast<float>(mouseEvent.state.height));
+
+	mRaySceneQuery->setRay(mouseRay);
+	mRaySceneQuery->setSortByDistance(true);
+
+	Ogre::RaySceneQueryResult &result = mRaySceneQuery->execute();
+	Ogre::RaySceneQueryResult::iterator itRayScene;
+
+	//get all hits from left mouse click from a ray from the camera
+	for (itRayScene = result.begin(); itRayScene != result.end(); itRayScene++)
+	{
+		if (itRayScene->movable)
+		{
+			OgreFramework::getSingletonPtr()->mLog->logMessage("MovableName: " + itRayScene->movable->getName());
+			mCurrentObject = mSceneMgr->getEntity(itRayScene->movable->getName())->getParentSceneNode();
+			OgreFramework::getSingletonPtr()->mLog->logMessage("ObjName " + mCurrentObject->getName());
+			mCurrentObject->showBoundingBox(true);
+			mCurrentEntity = mSceneMgr->getEntity(itRayScene->movable->getName());
+			mCurrentEntity->getSubEntity(1)->setMaterial(mOgreHeadMaterialHigh);
+			break;
+		}
+	}
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::itemSelected(OgreBites::SelectMenu *menu)
 {
-
+	switch (menu->getSelectionIndex())
+	{
+	case 0:
+		mCamera->setPolygonMode(Ogre::PM_SOLID);
+		break;
+	case 1:
+		mCamera->setPolygonMode(Ogre::PM_WIREFRAME);
+		break;
+	case 2:
+		mCamera->setPolygonMode(Ogre::PM_POINTS);
+		break;
+	}
 }
+//-------------------------------------------------------------------------------------------------------
