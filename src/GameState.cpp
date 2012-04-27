@@ -161,3 +161,34 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
 
 	return true;
 }
+//-------------------------------------------------------------------------------------------------------
+bool GameState::keyReleased(const OIS::KeyEvent &keyEvent)
+{
+	OgreFramework::getSingletonPtr()->keyReleased(keyEvent);
+	return true;
+}
+//-------------------------------------------------------------------------------------------------------
+bool GameState::mouseMoved(const OIS::MouseEvent &mouseEvent)
+{
+
+}
+//-------------------------------------------------------------------------------------------------------
+bool GameState::mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
+{
+
+}
+//-------------------------------------------------------------------------------------------------------
+bool GameState::mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
+{
+
+}
+//-------------------------------------------------------------------------------------------------------
+void GameState::onLeftPressed(const OIS::MouseEvent &mouseEvent)
+{
+
+}
+//-------------------------------------------------------------------------------------------------------
+void GameState::itemSelected(OgreBites::SelectMenu *menu)
+{
+
+}
