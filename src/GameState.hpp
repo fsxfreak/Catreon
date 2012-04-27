@@ -44,17 +44,17 @@ public:
 	bool mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
 
 	void onLeftPressed(const OIS::MouseEvent &mouseEvent);
-	void itemSelected(OgreBites::SelectMenu* menu);
+	void itemSelected(OgreBites::SelectMenu *menu);
 
 	void update(double timeSinceLastFrame);
 
 private:
-	Ogre::SceneNode*		mOgreHeadNode;
-	Ogre::Entity*			mOgreHeadEntity;
+	Ogre::SceneNode			*mOgreHeadNode;
+	Ogre::Entity			*mOgreHeadEntity;
 	Ogre::MaterialPtr		mOgreHeadMaterial;
 	Ogre::MaterialPtr		mOgreHeadMaterialHigh;
 
-	OgreBites::ParamsPanel* mDetailsPanel;
+	OgreBites::ParamsPanel  *mDetailsPanel;
 	bool					mbQuit;
 
 	Ogre::Vector3			mTranslateVector;
@@ -63,9 +63,9 @@ private:
 	float					mMoveScale;
 	Ogre::Degree			mRotateScale;
 
-	Ogre::RaySceneQuery*	mRaySceneQuery;
-	Ogre::SceneNode*		mCurrentObject;
-	Ogre::Entity*			mCurrentEntity;
+	Ogre::RaySceneQuery		*mRaySceneQuery;
+	Ogre::SceneNode			*mCurrentObject;
+	Ogre::Entity			*mCurrentEntity;
 	bool					mbLMouseDown;
 	bool					mbRMouseDown;
 	bool					mbSettingsMode;

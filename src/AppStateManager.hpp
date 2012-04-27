@@ -21,17 +21,17 @@ public:
 	AppStateManager();
 	~AppStateManager();
 
-	void manageAppState(Ogre::String stateName, AppState* state);
+	void manageAppState(Ogre::String stateName, AppState *state);
 
 	AppState* findByName(Ogre::String stateName);
 
-	void start(AppState* state);
-	void changeAppState(AppState* state);
-	bool pushAppState(AppState* state);
+	void start(AppState *state);
+	void changeAppState(AppState *state);
+	bool pushAppState(AppState *state);
 	void popAppState();
 	void pauseAppState();
 	void shutdown();
-    void popAllAndPushAppState(AppState* state);
+    void popAllAndPushAppState(AppState *state);
 	
 protected:
 	void init(AppState *state);

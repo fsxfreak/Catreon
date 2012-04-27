@@ -19,7 +19,7 @@ public:
 	
 	virtual AppState*	findByName(Ogre::String stateName) = 0;
 	virtual void		changeAppState(AppState *state) = 0;
-	virtual bool		pushAppState(AppState* state) = 0;
+	virtual bool		pushAppState(AppState *state) = 0;
 	virtual void		popAppState() = 0;
 	virtual void		pauseAppState() = 0;
 	virtual void		shutdown() = 0;
@@ -29,7 +29,7 @@ public:
 class AppState : public OIS::KeyListener, public OIS::MouseListener, public OgreBites::SdkTrayListener
 {
 public:
-	static void create(AppStateListener* parent, const Ogre::String name) {};
+	static void create(AppStateListener *parent, const Ogre::String name) {};
 
 	void destroy() { delete this; }
 
@@ -43,16 +43,16 @@ protected:
 	AppState() {};
 
 	AppState*	findByName(Ogre::String stateName)		{ return mParent->findByName(stateName); }
-	void		changeAppState(AppState* state)			{ mParent->changeAppState(state); }
-	bool		pushAppState(AppState* state)			{ return mParent->pushAppState(state); }
+	void		changeAppState(AppState *state)			{ mParent->changeAppState(state); }
+	bool		pushAppState(AppState *state)			{ return mParent->pushAppState(state); }
 	void		popAppState()							{ mParent->popAppState(); }
 	void		shutdown()								{ mParent->shutdown(); }
 	void		popAllAndPushAppState(AppState *state)	{ mParent->popAllAndPushAppState(state); }
 
-	AppStateListener* mParent;
+	AppStateListener *mParent;
 
-	Ogre::Camera* mCamera;
-	Ogre::SceneManager* mSceneMgr;
+	Ogre::Camera *mCamera;
+	Ogre::SceneManager *mSceneMgr;
 	Ogre::FrameEvent mFrameEvent;
 };
 //-------------------------------------------------------------------------------------------------------
