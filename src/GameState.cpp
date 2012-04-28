@@ -277,3 +277,101 @@ void GameState::itemSelected(OgreBites::SelectMenu *menu)
 	}
 }
 //-------------------------------------------------------------------------------------------------------
+void GameState::moveCamera()
+{
+	//if lshift down, move 10x faster
+	if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_LSHIFT))
+	{
+		mCamera->moveRelative(mTranslateVector);
+	}
+	mCamera->moveRelative(mTranslateVector / 10);
+}
+//-------------------------------------------------------------------------------------------------------
+void GameState::getInput()
+{
+	if (mbSettingsMode == false)
+	{
+		if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_A))
+			mTranslateVector.x = -mMoveScale;
+		if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_D))
+			mTranslateVector.x = mMoveScale;
+		if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_W))
+			mTranslateVector.z = -mMoveScale;
+		if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_S))
+			mTranslateVector.z = mMoveScale;
+	}
+}
+//-------------------------------------------------------------------------------------------------------
+void GameState::update(double timeSinceLastFrame)
+{
+	mFrameEvent.timeSinceLastFrame = timeSinceLastFrame;
+	OgreFramework::getSingletonPtr()->mTrayMgr->frameRenderingQueued(mFrameEvent);
+
+	if (mbQuit == true)
+	{
+		popAppState();
+		return():
+	}
+
+	if (!OgreFramework::getSingletonPtr()->mTrayMgr->isDialogVisible())
+	{
+		if (mDetailsPanel->isVisible())
+		{
+			mDetailsPanel->setParamValue(0, Ogre::StringConverter::toString(mCamera->getDerivedPosition().x));
+			mDetailsPanel->setParamValue(1, Ogre::StringConverter::toString(mCamera->getDerivedPosition().y));
+			mDetailsPanel->setParamValue(2, Ogre::StringConverter::toString(mCamera->getDerivedPosition().z));
+			mDetailsPanel->setParamValue(3, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().w));
+			mDetailsPanel->setParamValue(4, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().x));
+			mDetailsPanel->setParamValue(5, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().y));
+			mDetailsPanel->setParamValue(6, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().z));
+			if (mbSettingsMode)
+			{
+				mDetailsPanel->setParamValue(7, "Buffered Input");
+			}
+			else
+				mDetailsPanel->setParamValue(7, "Un-buffered Input");
+		}
+	}
+
+	mMoveScale = mMoveSpeed * timeSinceLastFrame;
+	mRotateScale = mRotateSpeed * timeSinceLastFrame;
+
+	mTranslateVector = Ogre::Vector3::ZERO;
+
+	getInput();
+	moveCamera();
+}
+//-------------------------------------------------------------------------------------------------------
+void GameState::buildGUI()
+{
+	OgreFramework::getSingletonPtr()->mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
+	OgreFramework::getSingletonPtr()->mTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
+	OgreFramework::getSingletonPtr()->mTrayMgr->createLabel(OgreBites::TL_TOP, "GameLbl", "Game mode", 250);
+	OgreFramework::getSingletonPtr()->mTrayMgr->showCursor();
+
+	Ogre::StringVector items;
+    items.push_back("cam.pX");
+    items.push_back("cam.pY");
+    items.push_back("cam.pZ");
+    items.push_back("cam.oW");
+    items.push_back("cam.oX");
+    items.push_back("cam.oY");
+    items.push_back("cam.oZ");
+    items.push_back("Mode");
+
+	mDetailsPanel = OgreFramework::getSingletonPtr()->mTrayMgr->createParamsPanel(OgreBites::TL_TOPLEFT, "DetailsPanel", 200, items);
+	mDetailsPanel->show();
+
+	Ogre::String infoText = "[TAB] - Switch input mode\n\n[W] - Forward / Mode up\n[S] - Backwards/ Mode down\n[A] - Left\n";
+    infoText.append("[D] - Right\n\nPress [SHIFT] to move faster\n\n[O] - Toggle FPS / logo\n");
+	infoText.append("[Print] - Take screenshot\n\n[ESC] - Exit");
+
+	OgreFramework::getSingletonPtr()->mTrayMgr->createTextBox(OgreBites::TL_RIGHT, "InfoPanel", infoText, 300, 220);
+
+	Ogre::StringVector chatModes;
+	chatModes.push_back("Solid mode");
+	chatModes.push_back("Wireframe mode");
+	chatModes.push_back("Point mode");
+	OgreFramework::getSingletonPtr()->mTrayMgr->createLongSelectMenu(OgreBites::TL_TOPRIGHT, "ChatModeSelMenu", "ChatMode", 200, 3, chatModes);
+}
+//-------------------------------------------------------------------------------------------------------
