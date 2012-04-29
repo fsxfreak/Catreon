@@ -60,7 +60,7 @@ protected:
 static void create(AppStateListener* parent, const Ogre::String name)	\
 {																		\
 	T* myAppState = new T();											\
-	myAppState->m_pParent = parent;										\
+	myAppState->mParent = parent;										\
 	parent->manageAppState(name, myAppState);							\
 }
 
