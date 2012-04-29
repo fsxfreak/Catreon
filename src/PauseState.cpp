@@ -18,7 +18,7 @@ void PauseState::enter()
 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.7f, 0.7f));
 
 	mCamera = mSceneMgr->createCamera("PauseCam");
-	mCamera->setPosition(Ogre::Vector3(0, 25, -50);
+	mCamera->setPosition(Ogre::Vector3(0, 25, -50));
 	mCamera->lookAt(Ogre::Vector3(0, 0, 0));
 	mCamera->setNearClipDistance(5);
 
@@ -126,7 +126,7 @@ void PauseState::buttonHit(OgreBites::Button *button)
 	}
 	else if (button->getName() == "BackToMenuBtn")
 	{
-		popAllAndPushAppState(findByName("MenuState");
+		popAllAndPushAppState(findByName("MenuState"));
 	}
 }
 //-------------------------------------------------------------------------------------------------------

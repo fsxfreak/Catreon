@@ -11,7 +11,6 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #define DRIVER_H
 
 #include "stdafx.h"
-
 #include <string>
 
 class Driver
@@ -24,7 +23,7 @@ private:
 	int mnNervousness;
 	int mnRiskTaker;
 
-	Driver& operator=(const Driver&);
+	Driver& operator=(const Driver& cDriver);
 public:
 	Driver(int nSkill, int nRiskTaker);
 	Driver();
@@ -42,5 +41,6 @@ public:
 	std::string getDestination();
 
 };
+
 
 #endif

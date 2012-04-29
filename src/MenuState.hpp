@@ -1,9 +1,10 @@
 //code largely based on Advanced Ogre Framework at ogre3d.org
 //minor formatting and name changes to fit my conventions
 
+
+
 #ifndef MENU_STATE_HPP
 #define MENU_STATE_HPP
-
 #include "stdafx.h"
 
 #include "AppState.hpp"

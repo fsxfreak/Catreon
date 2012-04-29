@@ -12,8 +12,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include "Vehicle.h"
 //-------------------------------------------------------------------------------------------------------
 Vehicle::Vehicle(int nCargo, int nPassengers) 
-	:	mnSpeed(0), mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1),
-		mcDriver()
+	:	mnSpeed(0), mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1)
 {
 
 }

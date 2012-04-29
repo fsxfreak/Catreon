@@ -1,7 +1,6 @@
 //code largely based on Advanced Ogre Framework at ogre3d.org
 //minor formatting and name changes to fit my conventions
 
-
 #include "stdafx.h"
 
 #include "GameState.hpp"
@@ -206,7 +205,7 @@ bool GameState::mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButton
 //-------------------------------------------------------------------------------------------------------
 bool GameState::mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
 {
-	if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseMove(mouseEvent, id))
+	if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseUp(mouseEvent, id))
 	{
 		return true;
 	}
@@ -310,7 +309,7 @@ void GameState::update(double timeSinceLastFrame)
 	if (mbQuit == true)
 	{
 		popAppState();
-		return():
+		return;
 	}
 
 	if (!OgreFramework::getSingletonPtr()->mTrayMgr->isDialogVisible())

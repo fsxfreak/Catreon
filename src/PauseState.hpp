@@ -3,8 +3,8 @@
 
 #ifndef PAUSE_STATE_HPP
 #define PAUSE_STATE_HPP
-
 #include "stdafx.h"
+
 #include "AppState.hpp"
 
 class PauseState : public AppState

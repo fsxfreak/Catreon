@@ -5,7 +5,6 @@
 #define GAME_STATE_HPP
 
 #include "stdafx.h"
-
 #include "AppState.hpp"
 
 #include "DotSceneLoader.h"
@@ -69,5 +68,5 @@ private:
 	bool					mbLMouseDown;
 	bool					mbRMouseDown;
 	bool					mbSettingsMode;
-}
+};
 #endif

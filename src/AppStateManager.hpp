@@ -12,11 +12,11 @@
 class AppStateManager : public AppStateListener
 {
 public:
-	struct state_info
+	typedef struct
 	{
 		Ogre::String name;
 		AppState* state;
-	}
+	} state_info;
 
 	AppStateManager();
 	~AppStateManager();

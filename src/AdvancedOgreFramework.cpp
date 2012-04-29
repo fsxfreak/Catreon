@@ -25,7 +25,7 @@ OgreFramework::~OgreFramework()
 		delete mRoot;
 }
 //-------------------------------------------------------------------------------------------------------
-bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0)
+bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener, OIS::MouseListener *pMouseListener)
 {
 	Ogre::LogManager *logMgr = new Ogre::LogManager();
 

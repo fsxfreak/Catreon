@@ -1,10 +1,12 @@
 //copied directly from Ogre Wiki at ogre3d.org
 
+
+
 #ifndef DOT_SCENELOADER_H
 #define DOT_SCENELOADER_H
- 
-// Includes
 #include "stdafx.h"
+// Includes
+
 
 #include <OgreString.h>
 #include <OgreVector3.h>
