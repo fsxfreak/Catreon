@@ -117,7 +117,7 @@ void PauseState::buttonHit(OgreBites::Button *button)
 {
 	if (button->getName() == "ExitBtn")
 	{
-		OgreFramework::getSingletonPtr()->mTrayMgr->showYesNoDialog("Yes", "Are you sure you want to quit?");
+		OgreFramework::getSingletonPtr()->mTrayMgr->showYesNoDialog("Exit Catreon", "Are you sure you want to quit?");
 		mbQuestionActive = true;
 	}
 	else if (button->getName() == "BackToGameBtn")

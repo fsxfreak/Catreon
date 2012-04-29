@@ -78,10 +78,6 @@ void GameState::createScene()
 	pDotSceneLoader->parseDotScene("CubeScene.xml", "General", mSceneMgr, mSceneMgr->getRootSceneNode());
 	delete pDotSceneLoader;
 
-	mSceneMgr->getEntity("Cube01")->setQueryFlags(CUBE_MASK);
-	mSceneMgr->getEntity("Cube02")->setQueryFlags(CUBE_MASK);
-	mSceneMgr->getEntity("Cube03")->setQueryFlags(CUBE_MASK);
-
 	mOgreHeadEntity = mSceneMgr->createEntity("Cube", "ogrehead.mesh");
 	mOgreHeadEntity->setQueryFlags(OGRE_HEAD_MASK);
 	mOgreHeadNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("CubeNode");
@@ -92,6 +88,10 @@ void GameState::createScene()
 	mOgreHeadMaterialHigh = mOgreHeadMaterial->clone("OgreHeadMaterialHigh");
 	mOgreHeadMaterialHigh->getTechnique(0)->getPass(0)->setAmbient(1, 0, 0);
 	mOgreHeadMaterialHigh->getTechnique(0)->getPass(0)->setDiffuse(1, 0 ,0 , 0);
+
+	mSceneMgr->getEntity("Cube01")->setQueryFlags(CUBE_MASK);
+	mSceneMgr->getEntity("Cube02")->setQueryFlags(CUBE_MASK);
+	mSceneMgr->getEntity("Cube03")->setQueryFlags(CUBE_MASK);
 }
 //-------------------------------------------------------------------------------------------------------
 bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
@@ -176,8 +176,8 @@ bool GameState::mouseMoved(const OIS::MouseEvent &mouseEvent)
 	//if right mouse down, camera look is activated
 	if (mbRMouseDown)
 	{
-		mCamera->yaw(Ogre::Degree(mouseEvent.state.X.rel * -0.1f));
-		mCamera->pitch(Ogre::Degree(mouseEvent.state.Y.rel * -0.1f));
+		mCamera->yaw(Ogre::Degree(mouseEvent.state.X.rel * -0.13f));
+		mCamera->pitch(Ogre::Degree(mouseEvent.state.Y.rel * -0.13f));
 	}
 
 	return true;
