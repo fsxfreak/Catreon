@@ -5,6 +5,8 @@
 
 #include "MenuState.hpp"
 
+using namespace irrklang;
+
 MenuState::MenuState() : mbQuit(false)
 {
 	mFrameEvent = Ogre::FrameEvent();
@@ -118,5 +120,8 @@ void MenuState::buttonHit(OgreBites::Button *button)
 	if (button->getName() == "ExitBtn")
 		mbQuit = true;
 	else if (button->getName() == "EnterBtn")
+	{
 		changeAppState(findByName("GameState"));
+		OgreFramework::getSingletonPtr()->soundeng->play2D("sound/explosion.wav");
+	}
 }

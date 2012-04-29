@@ -26,6 +26,10 @@
  
 #include <SdkTrays.h>
 
+#include <irrKlang.h>
+
+using namespace irrklang;
+
 class OgreFramework : public Ogre::Singleton<OgreFramework>, OIS::KeyListener, OIS::MouseListener
 {
 public:
@@ -56,9 +60,15 @@ public:
 
 	Ogre::String				mPluginsCfg;
 
+	//sound
+	ISoundEngine *soundeng;
+
+	//physics
+
 private:
 	OgreFramework(const OgreFramework&);
 	OgreFramework& operator=(const OgreFramework&);
+
 };
 
 #endif

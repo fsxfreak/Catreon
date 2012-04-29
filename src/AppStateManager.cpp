@@ -55,6 +55,8 @@ AppState* AppStateManager::findByName(Ogre::String stateName)
 		if (it->name == stateName)
 			return it->state;
 	}
+
+	return 0;
 }
 //-------------------------------------------------------------------------------------------------------
 //starts the game loop
