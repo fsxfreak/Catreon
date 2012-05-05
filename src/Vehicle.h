@@ -12,14 +12,12 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include "stdafx.h"
 #include "Driver.h"
+#include "AdvancedOgreFramework.hpp"
 
 class Vehicle
 {
 private:
 	int mnSpeed;
-
-	const int mnAccel;
-	const int mnDecel;
 
 	bool mbIsMoving;
 	//healthy as in not totaled
@@ -53,11 +51,8 @@ public:
 	Driver getDriver();
 
 protected:
-	virtual void decelerate(int nTargetSpeed);
-	virtual void accelerate(int nTargetSpeed);
-
-	virtual int calculateAccel();
-	virtual int calculateDecel();
+	virtual void decelerate(int nAccelForce);
+	virtual void accelerate(int nDecelForce);
 };
 
 

@@ -7,11 +7,11 @@ GNU Lesser General Public License version 3.0
 available at http://www.gnu.org/licenses/lgpl-3.0.txt
 */
 
-/**************************
+/********************************************************
 TODO
 Implement acceleration/deceleration
-
-***************************/
+Create derived classes of this class, Car, Truck
+********************************************************/
 
 #include "stdafx.h"
 #include <assert.h>
@@ -86,30 +86,20 @@ Driver Vehicle::getDriver()
 	return mcDriver;
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::accelerate(int nTargetSpeed)
+void Vehicle::accelerate(int nAccelForce)
 {
+	//accelforce, in m/s, 1 - little acceleration, 5, normal acceleration, 10, flooring
 	//dirty base implementation, adding acceleration by time handling
-	mnSpeed += nTargetSpeed;
-	if (mnSpeed > 150)
-		mbIsHealthy = 0;
+	mnSpeed = (nAccelForce * OgreFramework::getSingletonPtr()->getTimeSinceLastFrame()) + mnSpeed;
+	if (mnSpeed < 150)
+		mbIsHealthy = false;
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::decelerate(int nTargetSpeed)
+void Vehicle::decelerate(int nDecelForce)
 {
+	//accelforce, in m/s, 1 - little decleration, 5, normal deceleration, 10, flooring breaks
 	//dirty base implementation, adding deceleration by time handling
-	mnSpeed -= nTargetSpeed;
+	mnSpeed = (nDecelForce * OgreFramework::getSingletonPtr()->getTimeSinceLastFrame()) - mnSpeed;
 	if (mnSpeed < 0)
-		mbIsInReverse = 1;
-}
-//-------------------------------------------------------------------------------------------------------
-int Vehicle::calculateAccel()
-{
-	//trying to figure out car physics, this will do for now
-	int accelForce = rand();
-}
-//-------------------------------------------------------------------------------------------------------
-int Vehicle::calculateDecel()
-{
-	//trying to figure out car physics, this will do for now
-	int decelForce = rand();
+		mbIsInReverse = true;
 }
