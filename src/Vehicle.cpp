@@ -86,6 +86,12 @@ Driver Vehicle::getDriver()
 	return mcDriver;
 }
 //-------------------------------------------------------------------------------------------------------
+void Vehicle::setModel(Ogre::Entity *entity, Ogre::SceneNode *node)
+{
+	mVehicleEntity = entity;
+	mVehicleNode = node;
+}
+//-------------------------------------------------------------------------------------------------------
 void Vehicle::accelerate(int nAccelForce)
 {
 	//accelforce, in m/s, 1 - little acceleration, 5, normal acceleration, 10, flooring

@@ -54,9 +54,11 @@ public:
 	//modify the driver through vehicle class
 	Driver getDriver();
 
-protected:
-	virtual void decelerate(int nAccelForce);
-	virtual void accelerate(int nDecelForce);
+	void setModel(Ogre::Entity *entity, Ogre::SceneNode *node);
+
+	virtual void decelerate(int nDecelForce);
+	virtual void accelerate(int nAccelForce);
+
 };
 
 
