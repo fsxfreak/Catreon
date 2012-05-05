@@ -12,6 +12,9 @@
 #include <OgreSubEntity.h>
 #include <OgreMaterialManager.h>
 
+#include "Vehicle.h"
+#include "Driver.h"
+
 enum QueryFlags
 {
 	OGRE_HEAD_MASK = 1 << 0,
@@ -46,6 +49,8 @@ public:
 	void itemSelected(OgreBites::SelectMenu *menu);
 
 	void update(double timeSinceLastFrame);
+
+	Vehicle *createVehicle();
 
 private:
 	Ogre::SceneNode			*mOgreHeadNode;

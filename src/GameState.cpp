@@ -92,6 +92,8 @@ void GameState::createScene()
 	mSceneMgr->getEntity("Cube01")->setQueryFlags(CUBE_MASK);
 	mSceneMgr->getEntity("Cube02")->setQueryFlags(CUBE_MASK);
 	mSceneMgr->getEntity("Cube03")->setQueryFlags(CUBE_MASK);
+
+	Vehicle *testVehicle = createVehicle();
 }
 //-------------------------------------------------------------------------------------------------------
 bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
@@ -372,4 +374,13 @@ void GameState::buildGUI()
 	chatModes.push_back("Wireframe mode");
 	chatModes.push_back("Point mode");
 	OgreFramework::getSingletonPtr()->mTrayMgr->createLongSelectMenu(OgreBites::TL_TOPRIGHT, "ChatModeSelMenu", "ChatMode", 200, 3, chatModes);
+}
+//-------------------------------------------------------------------------------------------------------
+Vehicle *GameState::createVehicle()
+{
+	Ogre::Entity* entityVehicle = mSceneMgr->createEntity("Vehicle", "car.mesh");
+	Ogre::SceneNode* nodeVehicle = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	nodeVehicle->attachObject(entityVehicle);
+
+	return new Vehicle(200, 2, entityVehicle, nodeVehicle);
 }
