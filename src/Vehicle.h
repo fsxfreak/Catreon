@@ -18,6 +18,9 @@ class Vehicle
 private:
 	int mnSpeed;
 
+	const int mnAccel;
+	const int mnDecel;
+
 	bool mbIsMoving;
 	//healthy as in not totaled
 	bool mbIsHealthy;
@@ -43,8 +46,8 @@ public:
 	bool isHealthy();
 	bool isInReverse();
 
-	int getCargo();
-	int getPassengers();
+	unsigned int getCargo();
+	unsigned int getPassengers();
 
 	//modify the driver through vehicle class
 	Driver getDriver();
@@ -52,6 +55,9 @@ public:
 protected:
 	virtual void decelerate(int nTargetSpeed);
 	virtual void accelerate(int nTargetSpeed);
+
+	virtual int calculateAccel();
+	virtual int calculateDecel();
 };
 
 

@@ -7,12 +7,19 @@ GNU Lesser General Public License version 3.0
 available at http://www.gnu.org/licenses/lgpl-3.0.txt
 */
 
+/**************************
+TODO
+Implement acceleration/deceleration
+
+***************************/
+
 #include "stdafx.h"
 #include <assert.h>
 #include "Vehicle.h"
 //-------------------------------------------------------------------------------------------------------
 Vehicle::Vehicle(int nCargo, int nPassengers) 
-	:	mnSpeed(0), mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1)
+	:	mnSpeed(0), mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1), 
+		mnAccel(calculateAccel()), mnDecel(calculateDecel())
 {
 
 }
@@ -46,22 +53,6 @@ void Vehicle::setSpeed(int nSpeed)
 	}
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::accelerate(int nTargetSpeed)
-{
-	//dirty base implementation, adding acceleration by time handling
-	mnSpeed += nTargetSpeed;
-	if (mnSpeed > 150)
-		mbIsHealthy = 0;
-}
-//-------------------------------------------------------------------------------------------------------
-void Vehicle::decelerate(int nTargetSpeed)
-{
-	//dirty base implementation, adding deceleration by time handling
-	mnSpeed -= nTargetSpeed;
-	if (mnSpeed < 0)
-		bool mbIsInReverse = 1;
-}
-//-------------------------------------------------------------------------------------------------------
 bool Vehicle::isMoving()
 {
 	return mbIsMoving;
@@ -80,12 +71,12 @@ bool Vehicle::isInReverse()
 	return mbIsInReverse;
 }
 //-------------------------------------------------------------------------------------------------------
-int Vehicle::getCargo()
+unsigned int Vehicle::getCargo()
 {
 	return mnCargo;
 }
 //-------------------------------------------------------------------------------------------------------
-int Vehicle::getPassengers()
+unsigned int Vehicle::getPassengers()
 {
 	return mnPassengers;
 }
@@ -93,4 +84,32 @@ int Vehicle::getPassengers()
 Driver Vehicle::getDriver()
 {
 	return mcDriver;
+}
+//-------------------------------------------------------------------------------------------------------
+void Vehicle::accelerate(int nTargetSpeed)
+{
+	//dirty base implementation, adding acceleration by time handling
+	mnSpeed += nTargetSpeed;
+	if (mnSpeed > 150)
+		mbIsHealthy = 0;
+}
+//-------------------------------------------------------------------------------------------------------
+void Vehicle::decelerate(int nTargetSpeed)
+{
+	//dirty base implementation, adding deceleration by time handling
+	mnSpeed -= nTargetSpeed;
+	if (mnSpeed < 0)
+		mbIsInReverse = 1;
+}
+//-------------------------------------------------------------------------------------------------------
+int Vehicle::calculateAccel()
+{
+	//trying to figure out car physics, this will do for now
+	int accelForce = rand();
+}
+//-------------------------------------------------------------------------------------------------------
+int Vehicle::calculateDecel()
+{
+	//trying to figure out car physics, this will do for now
+	int decelForce = rand();
 }
