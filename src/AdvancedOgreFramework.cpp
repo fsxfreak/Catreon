@@ -24,6 +24,9 @@ OgreFramework::~OgreFramework()
 		OIS::InputManager::destroyInputSystem(mInputMgr);
 	if (mRoot)
 		delete mRoot;
+	if (soundeng)
+		soundeng->drop();
+
 }
 //-------------------------------------------------------------------------------------------------------
 bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener, OIS::MouseListener *pMouseListener)
@@ -106,7 +109,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 
 	//graphics done, check if sound initialized
 	if (!soundeng)
-		return 2;
+		return 1;
 
 	mRenderWindow->setActive(true);
 
