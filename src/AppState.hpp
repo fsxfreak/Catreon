@@ -1,8 +1,6 @@
 //code largely based on Advanced Ogre Framework at ogre3d.org
 //minor formatting and name changes to fit my conventions
 
-
-
 #ifndef APP_STATE_HPP
 #define APP_STATE_HPP
 
@@ -52,9 +50,9 @@ protected:
 	void		popAllAndPushAppState(AppState *state)	{ mParent->popAllAndPushAppState(state); }
 
 	AppStateListener *mParent;
-
-	Ogre::Camera *mCamera;
 	Ogre::SceneManager *mSceneMgr;
+	Ogre::Camera *mCamera;
+	
 	Ogre::FrameEvent mFrameEvent;
 };
 //-------------------------------------------------------------------------------------------------------
