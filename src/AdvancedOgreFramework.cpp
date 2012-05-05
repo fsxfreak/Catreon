@@ -10,7 +10,7 @@ using namespace irrklang;
 template <>OgreFramework* Ogre::Singleton<OgreFramework>::ms_Singleton = 0;
 //-------------------------------------------------------------------------------------------------------
 OgreFramework::OgreFramework() :	mRoot(0), mRenderWindow(0), mViewport(0), mLog(0), mTimer(0),
-	mInputMgr(0), mKb(0), mMouse(0), mTrayMgr(0), soundeng(createIrrKlangDevice())
+	mInputMgr(0), mKb(0), mMouse(0), mTrayMgr(0), mTimeSinceLastFrame(0), soundeng(createIrrKlangDevice())
 {
 
 }
@@ -118,6 +118,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 //-------------------------------------------------------------------------------------------------------
 void OgreFramework::updateOgre(double timeSinceLastFrame)
 {
+	mTimeSinceLastFrame = timeSinceLastFrame;
 	//called once per frame, update something central to ogre
 }
 //-------------------------------------------------------------------------------------------------------
@@ -165,4 +166,9 @@ bool OgreFramework::mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseBu
 bool OgreFramework::mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
 {
 	return true;
+}
+//-------------------------------------------------------------------------------------------------------
+double OgreFramework::getTimeSinceLastFrame()
+{
+	return mTimeSinceLastFrame;
 }

@@ -46,6 +46,8 @@ public:
 	bool mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
 	bool mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
 
+	double getTimeSinceLastFrame();
+
 	Ogre::Root					*mRoot;
 	Ogre::RenderWindow			*mRenderWindow;
 	Ogre::Viewport				*mViewport;
@@ -59,6 +61,8 @@ public:
 	OgreBites::SdkTrayManager	*mTrayMgr;
 
 	Ogre::String				mPluginsCfg;
+	
+	double mTimeSinceLastFrame;
 
 	//sound
 	ISoundEngine *soundeng;
