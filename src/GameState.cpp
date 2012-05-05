@@ -373,4 +373,3 @@ void GameState::buildGUI()
 	chatModes.push_back("Point mode");
 	OgreFramework::getSingletonPtr()->mTrayMgr->createLongSelectMenu(OgreBites::TL_TOPRIGHT, "ChatModeSelMenu", "ChatMode", 200, 3, chatModes);
 }
-//-------------------------------------------------------------------------------------------------------
