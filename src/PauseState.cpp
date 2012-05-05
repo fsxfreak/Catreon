@@ -122,6 +122,7 @@ void PauseState::buttonHit(OgreBites::Button *button)
 	}
 	else if (button->getName() == "BackToGameBtn")
 	{
+		popAllAndPushAppState(findByName("GameState"));
 		mbQuit = true;
 	}
 	else if (button->getName() == "BackToMenuBtn")
