@@ -17,11 +17,11 @@ Create derived classes of this class, Car, Truck
 #include <assert.h>
 #include "Vehicle.h"
 //-------------------------------------------------------------------------------------------------------
-Vehicle::Vehicle(int nCargo, int nPassengers) 
-	:	mnSpeed(0), mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1), 
-		mnAccel(calculateAccel()), mnDecel(calculateDecel())
+Vehicle::Vehicle(int nCargo, int nPassengers, Ogre::Entity* entity, Ogre::SceneNode* node) 
+	:	mnSpeed(0), mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1)
 {
-
+	mVehicleEntity = entity;
+	mVehicleNode = node;
 }
 //-------------------------------------------------------------------------------------------------------
 Vehicle::~Vehicle()

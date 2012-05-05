@@ -30,11 +30,15 @@ private:
 
 	//AI
 	Driver mcDriver;
+	
+	//car model
+	Ogre::Entity *mVehicleEntity;
+	Ogre::SceneNode *mVehicleNode;
 
 	Vehicle& operator=(const Vehicle&);
 	
 public:
-	Vehicle(int nCargo, int nPassengers);
+	Vehicle(int nCargo, int nPassengers, Ogre::Entity* entity, Ogre::SceneNode* node);
 	~Vehicle();
 
 	int getSpeed();
