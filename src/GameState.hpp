@@ -50,8 +50,6 @@ public:
 
 	void update(double timeSinceLastFrame);
 
-	Vehicle *createVehicle();
-
 private:
 	Ogre::SceneNode			*mOgreHeadNode;
 	Ogre::Entity			*mOgreHeadEntity;

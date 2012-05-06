@@ -92,8 +92,6 @@ void GameState::createScene()
 	mSceneMgr->getEntity("Cube01")->setQueryFlags(CUBE_MASK);
 	mSceneMgr->getEntity("Cube02")->setQueryFlags(CUBE_MASK);
 	mSceneMgr->getEntity("Cube03")->setQueryFlags(CUBE_MASK);
-
-	Vehicle *testVehicle = createVehicle();
 }
 //-------------------------------------------------------------------------------------------------------
 bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
