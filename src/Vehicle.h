@@ -29,16 +29,12 @@ private:
 	unsigned int mnPassengers;
 
 	//AI
-	Driver mcDriver;
-	
-	//car model
-	Ogre::Entity *mVehicleEntity;
-	Ogre::SceneNode *mVehicleNode;
+	Driver *cDriver;
 
 	Vehicle& operator=(const Vehicle&);
 	
 public:
-	Vehicle(int nCargo, int nPassengers, Ogre::Entity* entity, Ogre::SceneNode* node);
+	Vehicle(int nCargo, int nPassengers);
 	~Vehicle();
 
 	int getSpeed();
@@ -50,11 +46,6 @@ public:
 
 	unsigned int getCargo();
 	unsigned int getPassengers();
-
-	//modify the driver through vehicle class
-	Driver getDriver();
-
-	void setModel(Ogre::Entity *entity, Ogre::SceneNode *node);
 
 	virtual void decelerate(int nDecelForce);
 	virtual void accelerate(int nAccelForce);

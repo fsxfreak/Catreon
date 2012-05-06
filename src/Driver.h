@@ -12,6 +12,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include "stdafx.h"
 #include <string>
+#include "Vehicle.h"
 
 class Driver
 {
@@ -23,11 +24,15 @@ private:
 	int mnNervousness;
 	int mnRiskTaker;
 
+	Vehicle *cVehicle;
+
 	Driver& operator=(const Driver& cDriver);
 public:
 	Driver(int nSkill, int nRiskTaker);
 	Driver();
 	~Driver();
+
+	void setCar(Vehicle *cVehicle);
 
 	void updateDestination(std::string strDest);
 	void updateDecision();

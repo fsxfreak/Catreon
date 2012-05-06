@@ -28,6 +28,12 @@ Driver::~Driver()
 
 }
 //-------------------------------------------------------------------------------------------------------
+void Driver::setCar(Vehicle *vehicle)
+{
+	cVehicle = vehicle;
+}
+
+//-------------------------------------------------------------------------------------------------------
 void Driver::updateDestination(std::string strDest)
 {
 	mstrDestination = strDest;

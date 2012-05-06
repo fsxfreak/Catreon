@@ -14,14 +14,12 @@ Create derived classes of this class, Car, Truck
 ********************************************************/
 
 #include "stdafx.h"
-#include <assert.h>
 #include "Vehicle.h"
 //-------------------------------------------------------------------------------------------------------
-Vehicle::Vehicle(int nCargo, int nPassengers, Ogre::Entity* entity, Ogre::SceneNode* node) 
+Vehicle::Vehicle(int nCargo, int nPassengers) 
 	:	mnSpeed(0), mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1)
 {
-	mVehicleEntity = entity;
-	mVehicleNode = node;
+	cDriver->setCar(this);
 }
 //-------------------------------------------------------------------------------------------------------
 Vehicle::~Vehicle()
