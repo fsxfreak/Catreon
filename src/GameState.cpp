@@ -78,6 +78,11 @@ void GameState::createScene()
 	pDotSceneLoader->parseDotScene("CubeScene.xml", "General", mSceneMgr, mSceneMgr->getRootSceneNode());
 	delete pDotSceneLoader;
 
+	//initialize the sphere for later creation
+	mSphereNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	mSphereEntity = mSceneMgr->createEntity("Sphere", Ogre::SceneManager::PT_SPHERE);
+	mSphereNode->setScale(0.1, 0.1, 0.1);
+
 	mOgreHeadEntity = mSceneMgr->createEntity("Cube", "ogrehead.mesh");
 	mOgreHeadEntity->setQueryFlags(OGRE_HEAD_MASK);
 	mOgreHeadNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("CubeNode");
@@ -146,10 +151,13 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
 	}
 
 	//on press enter
+	//mbsettingsmode true = buffered input(non continuous)
 	if (mbSettingsMode && OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_RETURN) ||
 		OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_NUMPADENTER))
 	{
-
+		mSphereNode->detachAllObjects();
+		mSphereNode->setPosition(mCamera->getPosition() + (mCamera->getDirection() * Ogre::Vector3(20, 20, 20)));
+		mSphereNode->attachObject(mSphereEntity);
 	}
 
 	//if not in settings mode (tab), or in settings mode and key isnt O, pass the keyevent to OgreFramework
@@ -288,6 +296,7 @@ void GameState::moveCamera()
 //-------------------------------------------------------------------------------------------------------
 void GameState::getInput()
 {
+	//false = unbuffered input
 	if (mbSettingsMode == false)
 	{
 		if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_A))
@@ -361,12 +370,6 @@ void GameState::buildGUI()
 	mDetailsPanel = OgreFramework::getSingletonPtr()->mTrayMgr->createParamsPanel(OgreBites::TL_TOPLEFT, "DetailsPanel", 200, items);
 	mDetailsPanel->show();
 
-	Ogre::String infoText = "[TAB] - Switch input mode\n\n[W] - Forward / Mode up\n[S] - Backwards/ Mode down\n[A] - Left\n";
-    infoText.append("[D] - Right\n\nPress [SHIFT] to move faster\n\n[O] - Toggle FPS / logo\n");
-	infoText.append("[Print] - Take screenshot\n\n[ESC] - Exit");
-
-	OgreFramework::getSingletonPtr()->mTrayMgr->createTextBox(OgreBites::TL_RIGHT, "InfoPanel", infoText, 300, 220);
-
 	Ogre::StringVector chatModes;
 	chatModes.push_back("Solid mode");
 	chatModes.push_back("Wireframe mode");
@@ -374,11 +377,3 @@ void GameState::buildGUI()
 	OgreFramework::getSingletonPtr()->mTrayMgr->createLongSelectMenu(OgreBites::TL_TOPRIGHT, "ChatModeSelMenu", "ChatMode", 200, 3, chatModes);
 }
 //-------------------------------------------------------------------------------------------------------
-Vehicle *GameState::createVehicle()
-{
-	Ogre::Entity* entityVehicle = mSceneMgr->createEntity("Vehicle", "car.mesh");
-	Ogre::SceneNode* nodeVehicle = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-	nodeVehicle->attachObject(entityVehicle);
-
-	return new Vehicle(200, 2, entityVehicle, nodeVehicle);
-}

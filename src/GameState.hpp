@@ -56,6 +56,9 @@ private:
 	Ogre::MaterialPtr		mOgreHeadMaterial;
 	Ogre::MaterialPtr		mOgreHeadMaterialHigh;
 
+	Ogre::SceneNode			*mSphereNode;
+	Ogre::Entity			*mSphereEntity;
+
 	OgreBites::ParamsPanel  *mDetailsPanel;
 	bool					mbQuit;
 
