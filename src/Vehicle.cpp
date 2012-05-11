@@ -19,7 +19,6 @@ Create derived classes of this class, Car, Truck
 Vehicle::Vehicle(int nCargo, int nPassengers) 
 	:	mnSpeed(0), mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1)
 {
-	cDriver->setCar(this);
 }
 //-------------------------------------------------------------------------------------------------------
 Vehicle::~Vehicle()
@@ -77,17 +76,6 @@ unsigned int Vehicle::getCargo()
 unsigned int Vehicle::getPassengers()
 {
 	return mnPassengers;
-}
-//-------------------------------------------------------------------------------------------------------
-Driver Vehicle::getDriver()
-{
-	return mcDriver;
-}
-//-------------------------------------------------------------------------------------------------------
-void Vehicle::setModel(Ogre::Entity *entity, Ogre::SceneNode *node)
-{
-	mVehicleEntity = entity;
-	mVehicleNode = node;
 }
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::accelerate(int nAccelForce)

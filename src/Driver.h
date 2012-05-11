@@ -24,7 +24,7 @@ private:
 	int mnNervousness;
 	int mnRiskTaker;
 
-	Vehicle *cVehicle;
+	Vehicle *pVehicle;
 
 	Driver& operator=(const Driver& cDriver);
 public:
@@ -32,7 +32,7 @@ public:
 	Driver();
 	~Driver();
 
-	void setCar(Vehicle *cVehicle);
+	void setCar(Vehicle *Vehicle);
 
 	void updateDestination(std::string strDest);
 	void updateDecision();

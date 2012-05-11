@@ -11,7 +11,6 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #define VEHICLE_H
 
 #include "stdafx.h"
-#include "Driver.h"
 #include "AdvancedOgreFramework.hpp"
 
 class Vehicle
@@ -27,9 +26,6 @@ private:
 	//in pounds
 	unsigned int mnCargo;
 	unsigned int mnPassengers;
-
-	//AI
-	Driver *cDriver;
 
 	Vehicle& operator=(const Vehicle&);
 	
