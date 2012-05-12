@@ -5,8 +5,8 @@
 
 #include "GameState.hpp"
 
-GameState::GameState() :	mMoveSpeed(0.1f), mRotateSpeed(0.3f), mbLMouseDown(false), mbRMouseDown(false), 
-							mbQuit(false), mbSettingsMode(false), mDetailsPanel(0)
+GameState::GameState() :    mMoveSpeed(0.1f), mRotateSpeed(0.3f), mbLMouseDown(false), mbRMouseDown(false), 
+                            mbQuit(false), mbSettingsMode(false), mDetailsPanel(0)
 {
 
 }
@@ -84,12 +84,16 @@ void GameState::createScene()
 	mSphereNode->setScale(0.1, 0.1, 0.1);
 
     //ground plane for testing
-    mGroundNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    mGroundNode->translate(0, -100, 0);
-    mGroundEntity = mSceneMgr->createEntity("Ground", Ogre::SceneManager::PT_PLANE);
-    mGroundNode->attachObject(mGroundEntity);
-    mGroundNode->setScale(5, 5, 5);
-    mGroundNode->pitch(Ogre::Angle(270), Ogre::Node::TS_LOCAL);
+    Ogre::Entity *entityGround;
+    Ogre::Plane planeGround;
+    planeGround.normal = Ogre::Vector3(0, 1, 0);
+    planeGround.d = 0;
+    Ogre::MeshManager::getSingleton().createPlane("GroundPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+    planeGround, 200000, 200000, 20, 20, true, 1, 9000, 9000, Ogre::Vector3::UNIT_Z);
+    entityGround = mSceneMgr->createEntity("Ground", "GroundPlane");
+    entityGround->setMaterialName("Examples/BumpyMetal");
+    Ogre::SceneNode *nodeGround = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    nodeGround->attachObject(entityGround);
 
 	mOgreHeadEntity = mSceneMgr->createEntity("Cube", "ogrehead.mesh");
 	mOgreHeadEntity->setQueryFlags(OGRE_HEAD_MASK);
