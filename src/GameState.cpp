@@ -320,9 +320,12 @@ void GameState::getInput()
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_E))
             mTranslateVector.y = mMoveScale;
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_Z))
-            mCamera->roll(Ogre::Angle(-2));
+            mCamera->roll(Ogre::Angle(-mMoveScale));
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_X))
-            mCamera->roll(Ogre::Angle(2));
+            mCamera->roll(Ogre::Angle(mMoveScale));
+        //reset roll
+        if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_C))
+            mCamera->roll(-(mCamera->getRealOrientation().getRoll()));
 	}
 }
 //-------------------------------------------------------------------------------------------------------
