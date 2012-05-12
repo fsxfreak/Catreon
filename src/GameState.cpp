@@ -83,6 +83,14 @@ void GameState::createScene()
 	mSphereEntity = mSceneMgr->createEntity("Sphere", Ogre::SceneManager::PT_SPHERE);
 	mSphereNode->setScale(0.1, 0.1, 0.1);
 
+    //ground plane for testing
+    mGroundNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    mGroundNode->translate(0, -100, 0);
+    mGroundEntity = mSceneMgr->createEntity("Ground", Ogre::SceneManager::PT_PLANE);
+    mGroundNode->attachObject(mGroundEntity);
+    mGroundNode->setScale(5, 5, 5);
+    mGroundNode->pitch(Ogre::Angle(270), Ogre::Node::TS_LOCAL);
+
 	mOgreHeadEntity = mSceneMgr->createEntity("Cube", "ogrehead.mesh");
 	mOgreHeadEntity->setQueryFlags(OGRE_HEAD_MASK);
 	mOgreHeadNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("CubeNode");

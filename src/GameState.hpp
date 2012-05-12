@@ -59,6 +59,9 @@ private:
 	Ogre::SceneNode			*mSphereNode;
 	Ogre::Entity			*mSphereEntity;
 
+    Ogre::SceneNode         *mGroundNode;
+    Ogre::Entity            *mGroundEntity;
+
 	OgreBites::ParamsPanel  *mDetailsPanel;
 	bool					mbQuit;
 
