@@ -10,7 +10,8 @@ using namespace irrklang;
 template <>OgreFramework* Ogre::Singleton<OgreFramework>::ms_Singleton = 0;
 //-------------------------------------------------------------------------------------------------------
 OgreFramework::OgreFramework() :	mRoot(0), mRenderWindow(0), mViewport(0), mLog(0), mTimer(0),
-	mInputMgr(0), mKb(0), mMouse(0), mTrayMgr(0), mTimeSinceLastFrame(0), soundeng(createIrrKlangDevice())
+	                                mInputMgr(0), mKb(0), mMouse(0), mTrayMgr(0), mTimeSinceLastFrame(0), 
+                                    soundeng(createIrrKlangDevice())
 {
 
 }

@@ -192,8 +192,8 @@ bool GameState::mouseMoved(const OIS::MouseEvent &mouseEvent)
 	//if right mouse down, camera look is activated
 	if (mbRMouseDown)
 	{
-		mCamera->yaw(Ogre::Degree(mouseEvent.state.X.rel * -0.13f));
-		mCamera->pitch(Ogre::Degree(mouseEvent.state.Y.rel * -0.13f));
+		mCamera->yaw(Ogre::Degree(mouseEvent.state.X.rel * -0.18f));
+		mCamera->pitch(Ogre::Degree(mouseEvent.state.Y.rel * -0.18f));
 	}
 
 	return true;
@@ -315,6 +315,14 @@ void GameState::getInput()
 			mTranslateVector.z = -mMoveScale;
 		if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_S))
 			mTranslateVector.z = mMoveScale;
+        if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_Q))
+            mTranslateVector.y = -mMoveScale;
+        if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_E))
+            mTranslateVector.y = mMoveScale;
+        if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_Z))
+            mCamera->roll(Ogre::Angle(-2));
+        if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_X))
+            mCamera->roll(Ogre::Angle(2));
 	}
 }
 //-------------------------------------------------------------------------------------------------------
