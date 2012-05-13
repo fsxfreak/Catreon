@@ -1,5 +1,14 @@
-//code largely based on Advanced Ogre Framework at ogre3d.org
-//minor formatting and name changes to fit my conventions
+/*
+Graphics and Input Handling code largely based on Advanced Ogre Framework at ogre3d.org
+
+author: Leon Cheung <me[at]leoncheung.com>
+Copyright (C) 2012
+
+This program is released under the terms of
+GNU Lesser General Public License version 3.0
+available at http://www.gnu.org/licenses/lgpl-3.0.txt
+*/
+
 
 #include "stdafx.h"
 
@@ -101,8 +110,9 @@ void GameState::createScene()
 	mSphereNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 	mSphereEntity = mSceneMgr->createEntity("Sphere", Ogre::SceneManager::PT_SPHERE);
 	mSphereNode->setScale(Ogre::Real(0.1), Ogre::Real(0.1), Ogre::Real(0.1));
-    btCollisionShape *sphere = new btSphereShape(3);
+    //0.1 scale = 1 unit (1 meter)
 
+    //initialize the plane as a rigid body
     btDefaultMotionState* groundMotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)));
     btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState, plane, btVector3(0, 0, 0));
     btRigidBody* groundRigidBody = new btRigidBody(groundRigidBodyCI);
@@ -182,8 +192,20 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
 		OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_NUMPADENTER))
 	{
 		mSphereNode->detachAllObjects();
-		mSphereNode->setPosition(mCamera->getPosition() + (mCamera->getDirection() * Ogre::Vector3(20, 20, 20)));
+        spherePosition = (mCamera->getPosition() + (mCamera->getDirection() * Ogre::Vector3(20, 20, 20)));
+		mSphereNode->setPosition(spherePosition);
 		mSphereNode->attachObject(mSphereEntity);
+        
+        delete btSphere;
+        btSphere = new btSphereShape(1);
+        delete motionStateSphere;
+        motionStateSphere = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), BulletPhys::ogreVecToBullet(spherePosition)));
+        btScalar massSphere = 1;
+        btVector3 fallInertia(0, 0, 0);
+        btSphere->calculateLocalInertia(massSphere, fallInertia);
+
+
+
 	}
 
 	//if not in settings mode (tab), or in settings mode and key isnt O, pass the keyevent to OgreFramework
@@ -417,6 +439,6 @@ void GameState::buildGUI()
 //-------------------------------------------------------------------------------------------------------
 void GameState::updatePhysics(double deltaTime)
 {
-    bullet->getWorld()->stepSimulation(deltaTime, 60);
+    bullet->mDynamicsWorld->stepSimulation(deltaTime, 60);
 }
 //-------------------------------------------------------------------------------------------------------
