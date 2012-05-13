@@ -15,10 +15,12 @@ public:
 	DemoApp();
 	~DemoApp();
 
-	void startDemo();
+    void startDemo();
 private:
 	AppStateManager *mAppStateManager;
+    
 };
 
+	
 
 #endif

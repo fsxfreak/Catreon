@@ -9,6 +9,8 @@
 #include "GameState.hpp"
 #include "PauseState.hpp"
 
+#include <boost\thread\thread.hpp>
+
 DemoApp::DemoApp() : mAppStateManager(0)
 {
 }
