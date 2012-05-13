@@ -100,16 +100,14 @@ void GameState::createScene()
 
     btTransform transform;
     transform.setIdentity();
-    transform.setOrigin(btVector3(0, 0, 0));
+    transform.setOrigin(btVector3(0, 0, 0));    //that works BUT
 
     btDefaultMotionState *motionState = new btDefaultMotionState(transform);
 
-    btCollisionShape *shape = new btStaticPlaneShape(btVector3(0, 1, 0), 0);
+    btCollisionShape *shape = new btStaticPlaneShape(btVector3(0, 0, 0), 0);    //this doesn't?
     bullet->addCollisionBox(shape);
 
-    shape->calculateLocalInertia(0, btVector3(0, 0, 0));
-
-    btRigidBody *rigidBody = new btRigidBody(0, motionState, shape, btVector3(0, 0, 0));
+    btRigidBody *rigidBody = new btRigidBody(0, motionState, shape, btVector3(0, 1, 0));
 
 	mOgreHeadEntity = mSceneMgr->createEntity("Cube", "ogrehead.mesh");
 	mOgreHeadEntity->setQueryFlags(OGRE_HEAD_MASK);
