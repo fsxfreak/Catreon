@@ -18,9 +18,6 @@ public:
     void startDemo();
 private:
 	AppStateManager *mAppStateManager;
-    
 };
-
-	
 
 #endif
