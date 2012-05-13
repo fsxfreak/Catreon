@@ -33,45 +33,45 @@ using namespace irrklang;
 class OgreFramework : public Ogre::Singleton<OgreFramework>, OIS::KeyListener, OIS::MouseListener
 {
 public:
-	OgreFramework();
-	~OgreFramework();
+    OgreFramework();
+    ~OgreFramework();
 
-	bool initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0);
-	void updateOgre(double timeSinceLastFrame);
+    bool initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0);
+    void updateOgre(double timeSinceLastFrame);
 
-	bool keyPressed(const OIS::KeyEvent &keyEvent);
-	bool keyReleased(const OIS::KeyEvent &keyEvent);
+    bool keyPressed(const OIS::KeyEvent &keyEvent);
+    bool keyReleased(const OIS::KeyEvent &keyEvent);
 
-	bool mouseMoved(const OIS::MouseEvent &mouseEvent);
-	bool mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
-	bool mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
+    bool mouseMoved(const OIS::MouseEvent &mouseEvent);
+    bool mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
+    bool mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
 
-	double getTimeSinceLastFrame();
+    double getTimeSinceLastFrame();
 
-	Ogre::Root					*mRoot;
-	Ogre::RenderWindow			*mRenderWindow;
-	Ogre::Viewport				*mViewport;
-	Ogre::Log					*mLog;
-	Ogre::Timer					*mTimer;
-	
-	OIS::InputManager			*mInputMgr;
-	OIS::Keyboard				*mKb;
-	OIS::Mouse					*mMouse;
+    Ogre::Root                    *mRoot;
+    Ogre::RenderWindow            *mRenderWindow;
+    Ogre::Viewport                *mViewport;
+    Ogre::Log                    *mLog;
+    Ogre::Timer                    *mTimer;
+    
+    OIS::InputManager            *mInputMgr;
+    OIS::Keyboard                *mKb;
+    OIS::Mouse                    *mMouse;
 
-	OgreBites::SdkTrayManager	*mTrayMgr;
+    OgreBites::SdkTrayManager    *mTrayMgr;
 
-	Ogre::String				mPluginsCfg;
-	
-	double mTimeSinceLastFrame;
+    Ogre::String                mPluginsCfg;
+    
+    double mTimeSinceLastFrame;
 
-	//sound
-	ISoundEngine *soundeng;
+    //sound
+    ISoundEngine *soundeng;
 
-	//physics
+    //physics
 
 private:
-	OgreFramework(const OgreFramework&);
-	OgreFramework& operator=(const OgreFramework&);
+    OgreFramework(const OgreFramework&);
+    OgreFramework& operator=(const OgreFramework&);
 
 };
 

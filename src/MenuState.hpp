@@ -10,27 +10,27 @@
 class MenuState : public AppState
 {
 public:
-	MenuState();
+    MenuState();
 
-	DECLARE_APPSTATE_CLASS(MenuState)
+    DECLARE_APPSTATE_CLASS(MenuState)
 
-	void enter();
-	void createScene();
-	void exit();
+    void enter();
+    void createScene();
+    void exit();
 
-	bool keyPressed(const OIS::KeyEvent &keyEvent);
-	bool keyReleased(const OIS::KeyEvent &keyEvent);
+    bool keyPressed(const OIS::KeyEvent &keyEvent);
+    bool keyReleased(const OIS::KeyEvent &keyEvent);
 
-	bool mouseMoved(const OIS::MouseEvent &mouseEvent);
-	bool mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
-	bool mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
+    bool mouseMoved(const OIS::MouseEvent &mouseEvent);
+    bool mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
+    bool mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
 
-	void buttonHit(OgreBites::Button *button);
+    void buttonHit(OgreBites::Button *button);
 
-	void update(double timeSinceLastFrame);
+    void update(double timeSinceLastFrame);
 
 private:
-	bool mbQuit;
+    bool mbQuit;
 };
 
 #endif

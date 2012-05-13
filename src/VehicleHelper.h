@@ -17,17 +17,17 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 class VehicleHelper
 {
 private:
-	std::vector<Vehicle*> mVehicles;
+    std::vector<Vehicle*> mVehicles;
 
-	//car model
-	Ogre::Entity *mVehicleEntity;
-	Ogre::SceneNode *mVehicleNode;
+    //car model
+    Ogre::Entity *mVehicleEntity;
+    Ogre::SceneNode *mVehicleNode;
 
 public:
-	VehicleHelper();
-	~VehicleHelper();
+    VehicleHelper();
+    ~VehicleHelper();
 
-	void addVehicle(const Vehicle& vehicle);
+    void addVehicle(const Vehicle& vehicle);
 
 };
 

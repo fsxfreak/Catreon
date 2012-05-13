@@ -19,8 +19,8 @@ Driver::Driver(int nSkill, int nRiskTaker) : mnSkill(nSkill), mnRiskTaker(nRiskT
 //random, default constructor
 Driver::Driver() : mnNervousness(25)
 {
-	mnSkill = rand() % 100;
-	mnRiskTaker = rand() % 100;
+    mnSkill = rand() % 100;
+    mnRiskTaker = rand() % 100;
 }
 //-------------------------------------------------------------------------------------------------------
 Driver::~Driver()
@@ -30,17 +30,17 @@ Driver::~Driver()
 //-------------------------------------------------------------------------------------------------------
 void Driver::setCar(Vehicle *vehicle)
 {
-	pVehicle = vehicle;
+    pVehicle = vehicle;
 }
 //-------------------------------------------------------------------------------------------------------
 void Driver::updateDestination(std::string strDest)
 {
-	mstrDestination = strDest;
+    mstrDestination = strDest;
 }
 //-------------------------------------------------------------------------------------------------------
 std::string Driver::getDestination()
 {
-	return mstrDestination;
+    return mstrDestination;
 }
 //-------------------------------------------------------------------------------------------------------
 void Driver::updateDecision()
@@ -50,20 +50,20 @@ void Driver::updateDecision()
 //-------------------------------------------------------------------------------------------------------
 int Driver::getSkill()
 {
-	return mnSkill;
+    return mnSkill;
 }
 //-------------------------------------------------------------------------------------------------------
 int Driver::getNervousness()
 {
-	return mnNervousness;
+    return mnNervousness;
 }
 //-------------------------------------------------------------------------------------------------------
 int Driver::getRiskTaker()
 {
-	return mnRiskTaker;
+    return mnRiskTaker;
 }
 //-------------------------------------------------------------------------------------------------------
 void Driver::setNervousness(int nNervous)
 {
-	mnNervousness += nNervous;
+    mnNervousness += nNervous;
 }
