@@ -76,12 +76,12 @@ private:
 
     Ogre::SceneNode         *mSphereNode;
 
-    Ogre::SceneNode            *mOgreHeadNode;
+    Ogre::SceneNode         *mOgreHeadNode;
     Ogre::Entity            *mOgreHeadEntity;
-    Ogre::MaterialPtr        mOgreHeadMaterial;
-    Ogre::MaterialPtr        mOgreHeadMaterialHigh;
+    Ogre::MaterialPtr       mOgreHeadMaterial;
+    Ogre::MaterialPtr       mOgreHeadMaterialHigh;
 
-    Ogre::SceneNode            *mSphereNode;
+    Ogre::SceneNode         *mSphereNode;
 
     Ogre::Entity            *mSphereEntity;
 
