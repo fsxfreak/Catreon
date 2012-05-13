@@ -31,17 +31,18 @@ BulletPhys::BulletPhys() :  mCollisionConfiguration(new btDefaultCollisionConfig
 //-------------------------------------------------------------------------------------------------------
 BulletPhys::~BulletPhys()
 {
+    delete mCollisionConfiguration;
+    delete mDispatcher;
+    delete mBroadphase;
+    delete mSolver;
+    delete mDynamicsWorld;
+
     exitPhysics();
 }
 //-------------------------------------------------------------------------------------------------------
 void BulletPhys::exitPhysics()
 {
 
-}
-//-------------------------------------------------------------------------------------------------------
-btDiscreteDynamicsWorld *BulletPhys::getWorld()
-{
-    return mDynamicsWorld;
 }
 //-------------------------------------------------------------------------------------------------------
 void BulletPhys::addCollisionBox(btCollisionShape* const shape)

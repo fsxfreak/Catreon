@@ -69,6 +69,8 @@ void GameState::exit()
 
 	if (mSceneMgr)
 		OgreFramework::getSingletonPtr()->mRoot->destroySceneManager(mSceneMgr);
+
+    delete bullet;
 }
 //-------------------------------------------------------------------------------------------------------
 //inherited from Appstate, fill the scene
@@ -79,11 +81,6 @@ void GameState::createScene()
 	DotSceneLoader* pDotSceneLoader = new DotSceneLoader();
 	pDotSceneLoader->parseDotScene("CubeScene.xml", "General", mSceneMgr, mSceneMgr->getRootSceneNode());
 	delete pDotSceneLoader;
-
-	//initialize the sphere for later creation
-	mSphereNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-	mSphereEntity = mSceneMgr->createEntity("Sphere", Ogre::SceneManager::PT_SPHERE);
-	mSphereNode->setScale(Ogre::Real(0.1), Ogre::Real(0.1), Ogre::Real(0.1));
 
     //ground plane for testing
     Ogre::Entity *entityGround;
@@ -98,16 +95,19 @@ void GameState::createScene()
     nodeGround->attachObject(entityGround);
     entityGround->setCastShadows(0);
 
-    btTransform transform;
-    transform.setIdentity();
-    transform.setOrigin(btVector3(0, 0, 0));    //that works BUT
+    btCollisionShape *plane = new btStaticPlaneShape(btVector3(0, 0, 0), 1);
 
-    btDefaultMotionState *motionState = new btDefaultMotionState(transform);
+    //initialize the sphere for later creation, physics test
+	mSphereNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	mSphereEntity = mSceneMgr->createEntity("Sphere", Ogre::SceneManager::PT_SPHERE);
+	mSphereNode->setScale(Ogre::Real(0.1), Ogre::Real(0.1), Ogre::Real(0.1));
+    btCollisionShape *sphere = new btSphereShape(3);
 
-    btCollisionShape *shape = new btStaticPlaneShape(btVector3(0, 0, 0), 0);    //this doesn't?
-    bullet->addCollisionBox(shape);
+    btDefaultMotionState* groundMotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)));
+    btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState, plane, btVector3(0, 0, 0));
+    btRigidBody* groundRigidBody = new btRigidBody(groundRigidBodyCI);
 
-    btRigidBody *rigidBody = new btRigidBody(0, motionState, shape, btVector3(0, 1, 0));
+    bullet->mDynamicsWorld->addRigidBody(groundRigidBody);
 
 	mOgreHeadEntity = mSceneMgr->createEntity("Cube", "ogrehead.mesh");
 	mOgreHeadEntity->setQueryFlags(OGRE_HEAD_MASK);

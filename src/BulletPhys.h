@@ -19,12 +19,6 @@ TODO
 class BulletPhys
 {
 private:
-    btDefaultCollisionConfiguration         *mCollisionConfiguration;
-    btCollisionDispatcher                   *mDispatcher;
-    btBroadphaseInterface                   *mBroadphase;
-    btSequentialImpulseConstraintSolver     *mSolver;
-    btDiscreteDynamicsWorld                 *mDynamicsWorld;
-
 	btAlignedObjectArray<btCollisionShape*> mCollisionShapes;
 
 public:
@@ -35,11 +29,16 @@ public:
     void exitPhysics();
 
     void addCollisionBox(btCollisionShape* const shape);
-    btDiscreteDynamicsWorld *getWorld();
 
     virtual void clientMoveAndDisplay();
 
     virtual void displayCallBack();
     virtual void clientResetScene();
+
+    btDefaultCollisionConfiguration         *mCollisionConfiguration;
+    btCollisionDispatcher                   *mDispatcher;
+    btBroadphaseInterface                   *mBroadphase;
+    btSequentialImpulseConstraintSolver     *mSolver;
+    btDiscreteDynamicsWorld                 *mDynamicsWorld;
 
 };
