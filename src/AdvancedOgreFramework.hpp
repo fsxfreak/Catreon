@@ -48,17 +48,17 @@ public:
 
     double getTimeSinceLastFrame();
 
-    Ogre::Root                    *mRoot;
-    Ogre::RenderWindow            *mRenderWindow;
-    Ogre::Viewport                *mViewport;
-    Ogre::Log                    *mLog;
-    Ogre::Timer                    *mTimer;
+    Ogre::Root                  *mRoot;
+    Ogre::RenderWindow          *mRenderWindow;
+    Ogre::Viewport              *mViewport;
+    Ogre::Log                   *mLog;
+    Ogre::Timer                 *mTimer;
     
-    OIS::InputManager            *mInputMgr;
-    OIS::Keyboard                *mKb;
-    OIS::Mouse                    *mMouse;
+    OIS::InputManager           *mInputMgr;
+    OIS::Keyboard               *mKb;
+    OIS::Mouse                  *mMouse;
 
-    OgreBites::SdkTrayManager    *mTrayMgr;
+    OgreBites::SdkTrayManager   *mTrayMgr;
 
     Ogre::String                mPluginsCfg;
     

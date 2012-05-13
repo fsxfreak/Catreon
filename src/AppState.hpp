@@ -17,7 +17,7 @@ public:
 
     virtual void manageAppState(Ogre::String stateName, AppState* state) = 0;
     
-    virtual AppState*    findByName(Ogre::String stateName) = 0;
+    virtual AppState*   findByName(Ogre::String stateName) = 0;
     virtual void        changeAppState(AppState *state) = 0;
     virtual bool        pushAppState(AppState *state) = 0;
     virtual void        popAppState() = 0;
@@ -42,12 +42,12 @@ public:
 protected:
     AppState() {};
 
-    AppState*    findByName(Ogre::String stateName)        { return mParent->findByName(stateName); }
-    void        changeAppState(AppState *state)            { mParent->changeAppState(state); }
-    bool        pushAppState(AppState *state)            { return mParent->pushAppState(state); }
-    void        popAppState()                            { mParent->popAppState(); }
-    void        shutdown()                                { mParent->shutdown(); }
-    void        popAllAndPushAppState(AppState *state)    { mParent->popAllAndPushAppState(state); }
+    AppState*    findByName(Ogre::String stateName)         { return mParent->findByName(stateName); }
+    void        changeAppState(AppState *state)             { mParent->changeAppState(state); }
+    bool        pushAppState(AppState *state)               { return mParent->pushAppState(state); }
+    void        popAppState()                               { mParent->popAppState(); }
+    void        shutdown()                                  { mParent->shutdown(); }
+    void        popAllAndPushAppState(AppState *state)      { mParent->popAllAndPushAppState(state); }
 
     AppStateListener *mParent;
     Ogre::SceneManager *mSceneMgr;
@@ -59,7 +59,7 @@ protected:
 #define DECLARE_APPSTATE_CLASS(T)                                        \
 static void create(AppStateListener* parent, const Ogre::String name)    \
 {                                                                        \
-    T* myAppState = new T();                                            \
+    T* myAppState = new T();                                             \
     myAppState->mParent = parent;                                        \
     parent->manageAppState(name, myAppState);                            \
 }
