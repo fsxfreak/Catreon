@@ -45,7 +45,7 @@ void BulletPhys::exitPhysics()
 
 }
 //-------------------------------------------------------------------------------------------------------
-void BulletPhys::addCollisionBox(btCollisionShape* const shape)
+void BulletPhys::addCollisionShape(btCollisionShape* const shape)
 {
     mCollisionShapes.push_back(shape);
 }
@@ -58,6 +58,11 @@ btVector3 BulletPhys::ogreVecToBullet(const Ogre::Vector3 &ogrevector)
 Ogre::Vector3 BulletPhys::bulletVecToOgre(const btVector3 &bulletvector)
 {
     return Ogre::Vector3(bulletvector.x(), bulletvector.y(), bulletvector.z());
+}
+//-------------------------------------------------------------------------------------------------------
+btRigidBody* createTestSphere(const btCollisionShape *sphere, const btVector3 &spherePosition)
+{
+
 }
 //-------------------------------------------------------------------------------------------------------
 void BulletPhys::clientMoveAndDisplay()

@@ -29,10 +29,12 @@ public:
     void initPhysics();
     void exitPhysics();
 
-    void addCollisionBox(btCollisionShape* const shape);
+    void addCollisionShape(btCollisionShape* const shape);
 
     static btVector3 ogreVecToBullet(const Ogre::Vector3 &ogrevector);
     static Ogre::Vector3 bulletVecToOgre(const btVector3 &bulletvector);
+
+    static btRigidBody* createTestSphere(const btCollisionShape *sphere, const btVector3 &spherePosition);
 
     virtual void clientMoveAndDisplay();
 

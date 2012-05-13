@@ -15,9 +15,9 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include "GameState.hpp"
 
 GameState::GameState() :    mMoveSpeed(0.1f), mRotateSpeed(0.3f), mbLMouseDown(false), mbRMouseDown(false), 
-                            mbQuit(false), mbSettingsMode(false), mDetailsPanel(0), bullet()
+                            mbQuit(false), mbSettingsMode(false), mDetailsPanel(0), physicsInitialized(false)
 {
- 
+    bullet = new BulletPhys();
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::enter()
@@ -112,10 +112,12 @@ void GameState::createScene()
 	mSphereNode->setScale(Ogre::Real(0.1), Ogre::Real(0.1), Ogre::Real(0.1));
     //0.1 scale = 1 unit (1 meter)
 
+    btSphere = new btSphereShape(1);
+
     //initialize the plane as a rigid body
-    btDefaultMotionState* groundMotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)));
+    groundMotionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)));
     btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState, plane, btVector3(0, 0, 0));
-    btRigidBody* groundRigidBody = new btRigidBody(groundRigidBodyCI);
+    groundRigidBody = new btRigidBody(groundRigidBodyCI);
 
     bullet->mDynamicsWorld->addRigidBody(groundRigidBody);
 
@@ -193,19 +195,42 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
 	{
 		mSphereNode->detachAllObjects();
         spherePosition = (mCamera->getPosition() + (mCamera->getDirection() * Ogre::Vector3(20, 20, 20)));
+        btVector3 btSpherePosition = BulletPhys::ogreVecToBullet(spherePosition);
 		mSphereNode->setPosition(spherePosition);
 		mSphereNode->attachObject(mSphereEntity);
         
-        delete btSphere;
+        /*********  old, semi working code*********
+        if (btSphere)
+            delete btSphere;
+        else 
+            btSphere = new btSphereShape(1);
+
         btSphere = new btSphereShape(1);
-        delete motionStateSphere;
+
+        if (motionStateSphere && physicsInitialized)
+            delete motionStateSphere;
+        else
+            motionStateSphere = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), BulletPhys::ogreVecToBullet(spherePosition)));
+
         motionStateSphere = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), BulletPhys::ogreVecToBullet(spherePosition)));
+        
         btScalar massSphere = 1;
         btVector3 fallInertia(0, 0, 0);
         btSphere->calculateLocalInertia(massSphere, fallInertia);
 
+        btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(massSphere, motionStateSphere, btSphere, fallInertia);
+
+        rigidBodySphere = new btRigidBody(fallRigidBodyCI);
+
+        bullet->mDynamicsWorld->removeRigidBody(rigidBodySphere);
+        bullet->mDynamicsWorld->addRigidBody(rigidBodySphere);
+        */
 
 
+
+
+
+        physicsInitialized = true;
 	}
 
 	//if not in settings mode (tab), or in settings mode and key isnt O, pass the keyevent to OgreFramework
@@ -439,6 +464,16 @@ void GameState::buildGUI()
 //-------------------------------------------------------------------------------------------------------
 void GameState::updatePhysics(double deltaTime)
 {
-    bullet->mDynamicsWorld->stepSimulation(deltaTime, 60);
+    if (physicsInitialized)
+    {
+        bullet->mDynamicsWorld->stepSimulation(deltaTime * 0.1, 60);
+
+        btTransform sphereTransform;
+        rigidBodySphere->getMotionState()->getWorldTransform(sphereTransform);
+
+        mSphereNode->setPosition(sphereTransform.getOrigin().getX(),
+                                 sphereTransform.getOrigin().getY(),
+                                 sphereTransform.getOrigin().getZ());
+    }
 }
 //-------------------------------------------------------------------------------------------------------

@@ -65,18 +65,23 @@ public:
     void updatePhysics(double deltaTime);
 
 private:
-    Ogre::SceneNode			*mOgreHeadNode;
-    Ogre::Entity			*mOgreHeadEntity;
-    Ogre::MaterialPtr		mOgreHeadMaterial;
-    Ogre::MaterialPtr		mOgreHeadMaterialHigh;
+    Ogre::SceneNode         *mOgreHeadNode;
+    Ogre::Entity            *mOgreHeadEntity;
+    Ogre::MaterialPtr       mOgreHeadMaterial;
+    Ogre::MaterialPtr       mOgreHeadMaterialHigh;
 
-    Ogre::SceneNode			*mSphereNode;
-    Ogre::Entity			*mSphereEntity;
+    btDefaultMotionState    *groundMotionState;
+    btRigidBody             *groundRigidBody;
+
+    Ogre::SceneNode         *mSphereNode;
+    Ogre::Entity            *mSphereEntity;
 
     Ogre::Vector3           spherePosition;
 
     btCollisionShape        *btSphere;
     btDefaultMotionState    *motionStateSphere;
+
+    btRigidBody             *rigidBodySphere;
                             
     OgreBites::ParamsPanel  *mDetailsPanel;
     bool                    mbQuit;
@@ -96,5 +101,6 @@ private:
 
     //physics engine
     BulletPhys              *bullet;
+    bool                    physicsInitialized;
 };
 #endif
