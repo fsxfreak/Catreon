@@ -15,6 +15,7 @@ TODO
 #include "stdafx.h"
 #include "btBulletCollisionCommon.h"
 #include "btBulletDynamicsCommon.h"
+#include "AdvancedOgreFramework.hpp"
 
 class BulletPhys
 {
@@ -29,6 +30,9 @@ public:
     void exitPhysics();
 
     void addCollisionBox(btCollisionShape* const shape);
+
+    static btVector3 ogreVecToBullet(const Ogre::Vector3 &ogrevector);
+    static Ogre::Vector3 bulletVecToOgre(const btVector3 &bulletvector);
 
     virtual void clientMoveAndDisplay();
 
