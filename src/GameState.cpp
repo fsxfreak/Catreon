@@ -6,9 +6,9 @@
 #include "GameState.hpp"
 
 GameState::GameState() :    mMoveSpeed(0.1f), mRotateSpeed(0.3f), mbLMouseDown(false), mbRMouseDown(false), 
-                            mbQuit(false), mbSettingsMode(false), mDetailsPanel(0)
+                            mbQuit(false), mbSettingsMode(false), mDetailsPanel(0), bullet()
 {
-
+ 
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::enter()
@@ -17,7 +17,8 @@ void GameState::enter()
 
 	//initialize the scene
 	mSceneMgr = OgreFramework::getSingletonPtr()->mRoot->createSceneManager(Ogre::ST_GENERIC, "GameSceneMgr");
-	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.7f, 0.7f));
+    mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_ADDITIVE);
+	//mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.7f, 0.7f));
 
 	mRaySceneQuery = mSceneMgr->createRayQuery(Ogre::Ray());
 	mRaySceneQuery->setQueryMask(OGRE_HEAD_MASK);
@@ -25,7 +26,8 @@ void GameState::enter()
 	mCamera = mSceneMgr->createCamera("GameCamera");
 	mCamera->setPosition(Ogre::Vector3(5, 60, 120));
 	mCamera->lookAt(Ogre::Vector3(0, 0, 0));
-	mCamera->setNearClipDistance(5);
+	mCamera->setNearClipDistance(1);
+    mCamera->setFarClipDistance(1000);
 
 	mCamera->setAspectRatio(Ogre::Real(OgreFramework::getSingletonPtr()->mViewport->getActualWidth()) / 
 		Ogre::Real(OgreFramework::getSingletonPtr()->mViewport->getActualHeight()));
@@ -72,7 +74,7 @@ void GameState::exit()
 //inherited from Appstate, fill the scene
 void GameState::createScene()
 {
-	mSceneMgr->createLight("Light")->setPosition(0, 75, 30);
+    mSceneMgr->createLight()->setPosition(Ogre::Vector3(0, 75, 0));
 
 	DotSceneLoader* pDotSceneLoader = new DotSceneLoader();
 	pDotSceneLoader->parseDotScene("CubeScene.xml", "General", mSceneMgr, mSceneMgr->getRootSceneNode());
@@ -81,7 +83,7 @@ void GameState::createScene()
 	//initialize the sphere for later creation
 	mSphereNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 	mSphereEntity = mSceneMgr->createEntity("Sphere", Ogre::SceneManager::PT_SPHERE);
-	mSphereNode->setScale(0.1, 0.1, 0.1);
+	mSphereNode->setScale(Ogre::Real(0.1), Ogre::Real(0.1), Ogre::Real(0.1));
 
     //ground plane for testing
     Ogre::Entity *entityGround;
@@ -94,6 +96,20 @@ void GameState::createScene()
     entityGround->setMaterialName("Examples/BumpyMetal");
     Ogre::SceneNode *nodeGround = mSceneMgr->getRootSceneNode()->createChildSceneNode();
     nodeGround->attachObject(entityGround);
+    entityGround->setCastShadows(0);
+
+    btTransform transform;
+    transform.setIdentity();
+    transform.setOrigin(btVector3(0, 0, 0));
+
+    btDefaultMotionState *motionState = new btDefaultMotionState(transform);
+
+    btCollisionShape *shape = new btStaticPlaneShape(btVector3(0, 1, 0), 0);
+    bullet->addCollisionBox(shape);
+
+    shape->calculateLocalInertia(0, btVector3(0, 0, 0));
+
+    btRigidBody *rigidBody = new btRigidBody(0, motionState, shape, btVector3(0, 0, 0));
 
 	mOgreHeadEntity = mSceneMgr->createEntity("Cube", "ogrehead.mesh");
 	mOgreHeadEntity->setQueryFlags(OGRE_HEAD_MASK);
@@ -371,6 +387,7 @@ void GameState::update(double timeSinceLastFrame)
 
 	getInput();
 	moveCamera();
+    updatePhysics(timeSinceLastFrame);
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::buildGUI()
@@ -398,5 +415,10 @@ void GameState::buildGUI()
 	chatModes.push_back("Wireframe mode");
 	chatModes.push_back("Point mode");
 	OgreFramework::getSingletonPtr()->mTrayMgr->createLongSelectMenu(OgreBites::TL_TOPRIGHT, "ChatModeSelMenu", "ChatMode", 200, 3, chatModes);
+}
+//-------------------------------------------------------------------------------------------------------
+void GameState::updatePhysics(double deltaTime)
+{
+    bullet->getWorld()->stepSimulation(deltaTime, 60);
 }
 //-------------------------------------------------------------------------------------------------------

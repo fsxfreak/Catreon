@@ -15,6 +15,10 @@
 #include "Vehicle.h"
 #include "Driver.h"
 
+#include "BulletPhys.h"
+#include "btBulletCollisionCommon.h"
+#include "btBulletDynamicsCommon.h"
+
 enum QueryFlags
 {
 	OGRE_HEAD_MASK = 1 << 0,
@@ -50,6 +54,8 @@ public:
 
 	void update(double timeSinceLastFrame);
 
+    void updatePhysics(double deltaTime);
+
 private:
 	Ogre::SceneNode			*mOgreHeadNode;
 	Ogre::Entity			*mOgreHeadEntity;
@@ -74,5 +80,8 @@ private:
 	bool					mbLMouseDown;
 	bool					mbRMouseDown;
 	bool					mbSettingsMode;
+
+    //physics engine
+    BulletPhys              *bullet;
 };
 #endif

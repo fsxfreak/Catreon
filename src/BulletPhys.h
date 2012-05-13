@@ -35,6 +35,7 @@ public:
     void exitPhysics();
 
     void addCollisionBox(btCollisionShape* const shape);
+    btDiscreteDynamicsWorld *getWorld();
 
     virtual void clientMoveAndDisplay();
 

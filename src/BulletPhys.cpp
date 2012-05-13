@@ -39,6 +39,11 @@ void BulletPhys::exitPhysics()
 
 }
 //-------------------------------------------------------------------------------------------------------
+btDiscreteDynamicsWorld *BulletPhys::getWorld()
+{
+    return mDynamicsWorld;
+}
+//-------------------------------------------------------------------------------------------------------
 void BulletPhys::addCollisionBox(btCollisionShape* const shape)
 {
     mCollisionShapes.push_back(shape);
