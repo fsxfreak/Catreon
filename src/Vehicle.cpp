@@ -17,7 +17,7 @@ Create derived classes of this class, Car, Truck
 #include "Vehicle.h"
 //-------------------------------------------------------------------------------------------------------
 Vehicle::Vehicle(int nCargo, int nPassengers) 
-	:	mnSpeed(0), mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1)
+    :    mnSpeed(0), mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1)
 {
 }
 //-------------------------------------------------------------------------------------------------------
@@ -28,70 +28,70 @@ Vehicle::~Vehicle()
 //-------------------------------------------------------------------------------------------------------
 int Vehicle::getSpeed()
 {
-	return mnSpeed;
+    return mnSpeed;
 }
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::setSpeed(int nSpeed)
 {
-	mnSpeed = nSpeed;
+    mnSpeed = nSpeed;
 
-	if (mnSpeed > 0)
-	{	
-		mbIsMoving = 1;
-		mbIsInReverse = 0;
-	}
-	else if (mnSpeed == 0)
-	{
-		mbIsMoving = 0;
-	}
-	else
-	{
-		mbIsInReverse = 1;
-	}
+    if (mnSpeed > 0)
+    {    
+        mbIsMoving = 1;
+        mbIsInReverse = 0;
+    }
+    else if (mnSpeed == 0)
+    {
+        mbIsMoving = 0;
+    }
+    else
+    {
+        mbIsInReverse = 1;
+    }
 }
 //-------------------------------------------------------------------------------------------------------
 bool Vehicle::isMoving()
 {
-	return mbIsMoving;
+    return mbIsMoving;
 }
 //-------------------------------------------------------------------------------------------------------
 bool Vehicle::isHealthy()
 {
-	return mbIsHealthy;
+    return mbIsHealthy;
 }
 //-------------------------------------------------------------------------------------------------------
 bool Vehicle::isInReverse()
 {
-	if (mnSpeed < 0)
-		mbIsInReverse = 1;
+    if (mnSpeed < 0)
+        mbIsInReverse = 1;
 
-	return mbIsInReverse;
+    return mbIsInReverse;
 }
 //-------------------------------------------------------------------------------------------------------
 unsigned int Vehicle::getCargo()
 {
-	return mnCargo;
+    return mnCargo;
 }
 //-------------------------------------------------------------------------------------------------------
 unsigned int Vehicle::getPassengers()
 {
-	return mnPassengers;
+    return mnPassengers;
 }
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::accelerate(int nAccelForce)
 {
-	//accelforce, in m/s, 1 - little acceleration, 5, normal acceleration, 10, flooring
-	//dirty base implementation, adding acceleration by time handling
-	mnSpeed = (nAccelForce * OgreFramework::getSingletonPtr()->getTimeSinceLastFrame()) + mnSpeed;
-	if (mnSpeed < 150)
-		mbIsHealthy = false;
+    //accelforce, in m/s, 1 - little acceleration, 5, normal acceleration, 10, flooring
+    //dirty base implementation, adding acceleration by time handling
+    mnSpeed = (nAccelForce * OgreFramework::getSingletonPtr()->getTimeSinceLastFrame()) + mnSpeed;
+    if (mnSpeed < 150)
+        mbIsHealthy = false;
 }
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::decelerate(int nDecelForce)
 {
-	//accelforce, in m/s, 1 - little decleration, 5, normal deceleration, 10, flooring breaks
-	//dirty base implementation, adding deceleration by time handling
-	mnSpeed = (nDecelForce * OgreFramework::getSingletonPtr()->getTimeSinceLastFrame()) - mnSpeed;
-	if (mnSpeed < 0)
-		mbIsInReverse = true;
+    //accelforce, in m/s, 1 - little decleration, 5, normal deceleration, 10, flooring breaks
+    //dirty base implementation, adding deceleration by time handling
+    mnSpeed = (nDecelForce * OgreFramework::getSingletonPtr()->getTimeSinceLastFrame()) - mnSpeed;
+    if (mnSpeed < 0)
+        mbIsInReverse = true;
 }

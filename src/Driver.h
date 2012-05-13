@@ -17,33 +17,33 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 class Driver
 {
 private:
-	std::string mstrDestination;
+    std::string mstrDestination;
 
-	//all personality on a scale of 1 to 100
-	int mnSkill;
-	int mnNervousness;
-	int mnRiskTaker;
+    //all personality on a scale of 1 to 100
+    int mnSkill;
+    int mnNervousness;
+    int mnRiskTaker;
 
-	Vehicle *pVehicle;
+    Vehicle *pVehicle;
 
-	Driver& operator=(const Driver& cDriver);
+    Driver& operator=(const Driver& cDriver);
 public:
-	Driver(int nSkill, int nRiskTaker);
-	Driver();
-	~Driver();
+    Driver(int nSkill, int nRiskTaker);
+    Driver();
+    ~Driver();
 
-	void setCar(Vehicle *Vehicle);
+    void setCar(Vehicle *Vehicle);
 
-	void updateDestination(std::string strDest);
-	void updateDecision();
+    void updateDestination(std::string strDest);
+    void updateDecision();
 
-	int getSkill();
-	int getNervousness();
-	int getRiskTaker();
+    int getSkill();
+    int getNervousness();
+    int getRiskTaker();
 
-	void setNervousness(int nNervous);
+    void setNervousness(int nNervous);
 
-	std::string getDestination();
+    std::string getDestination();
 
 };
 

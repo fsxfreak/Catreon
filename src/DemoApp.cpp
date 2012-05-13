@@ -17,24 +17,24 @@ DemoApp::DemoApp() : mAppStateManager(0)
 //-------------------------------------------------------------------------------------------------------
 DemoApp::~DemoApp()
 {
-	delete mAppStateManager;
-	delete OgreFramework::getSingletonPtr();
+    delete mAppStateManager;
+    delete OgreFramework::getSingletonPtr();
 }
 //-------------------------------------------------------------------------------------------------------
 void DemoApp::startDemo()
 {
-	new OgreFramework();
+    new OgreFramework();
 
-	if (!OgreFramework::getSingletonPtr()->initOgre("Catreon", 0, 0))
-		return;
+    if (!OgreFramework::getSingletonPtr()->initOgre("Catreon", 0, 0))
+        return;
 
-	OgreFramework::getSingletonPtr()->mLog->logMessage("Catreon initialized!");
+    OgreFramework::getSingletonPtr()->mLog->logMessage("Catreon initialized!");
 
-	mAppStateManager = new AppStateManager();
+    mAppStateManager = new AppStateManager();
 
-	MenuState::create(mAppStateManager, "MenuState");
-	GameState::create(mAppStateManager, "GameState");
-	PauseState::create(mAppStateManager, "PauseState");
+    MenuState::create(mAppStateManager, "MenuState");
+    GameState::create(mAppStateManager, "GameState");
+    PauseState::create(mAppStateManager, "PauseState");
 
-	mAppStateManager->start(mAppStateManager->findByName("MenuState"));
+    mAppStateManager->start(mAppStateManager->findByName("MenuState"));
 }

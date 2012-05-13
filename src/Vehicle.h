@@ -16,35 +16,35 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 class Vehicle
 {
 private:
-	int mnSpeed;
+    int mnSpeed;
 
-	bool mbIsMoving;
-	//healthy as in not totaled
-	bool mbIsHealthy;
-	bool mbIsInReverse;
+    bool mbIsMoving;
+    //healthy as in not totaled
+    bool mbIsHealthy;
+    bool mbIsInReverse;
 
-	//in pounds
-	unsigned int mnCargo;
-	unsigned int mnPassengers;
+    //in pounds
+    unsigned int mnCargo;
+    unsigned int mnPassengers;
 
-	Vehicle& operator=(const Vehicle&);
-	
+    Vehicle& operator=(const Vehicle&);
+    
 public:
-	Vehicle(int nCargo, int nPassengers);
-	~Vehicle();
+    Vehicle(int nCargo, int nPassengers);
+    ~Vehicle();
 
-	int getSpeed();
-	void setSpeed(int nSpeed);
+    int getSpeed();
+    void setSpeed(int nSpeed);
 
-	bool isMoving();
-	bool isHealthy();
-	bool isInReverse();
+    bool isMoving();
+    bool isHealthy();
+    bool isInReverse();
 
-	unsigned int getCargo();
-	unsigned int getPassengers();
+    unsigned int getCargo();
+    unsigned int getPassengers();
 
-	virtual void decelerate(int nDecelForce);
-	virtual void accelerate(int nAccelForce);
+    virtual void decelerate(int nDecelForce);
+    virtual void accelerate(int nAccelForce);
 
 };
 

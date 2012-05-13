@@ -20,7 +20,7 @@ TODO
 class BulletPhys
 {
 private:
-	btAlignedObjectArray<btCollisionShape*> mCollisionShapes;
+    btAlignedObjectArray<btCollisionShape*> mCollisionShapes;
 
 public:
     BulletPhys();

@@ -37,7 +37,7 @@ class GameState: public AppState
 {
 public:
     GameState();
-	
+    
     DECLARE_APPSTATE_CLASS(GameState)
 
     void enter();
@@ -65,13 +65,13 @@ public:
     void updatePhysics(double deltaTime);
 
 private:
-    Ogre::SceneNode			*mOgreHeadNode;
-    Ogre::Entity			*mOgreHeadEntity;
-    Ogre::MaterialPtr		mOgreHeadMaterial;
-    Ogre::MaterialPtr		mOgreHeadMaterialHigh;
+    Ogre::SceneNode            *mOgreHeadNode;
+    Ogre::Entity            *mOgreHeadEntity;
+    Ogre::MaterialPtr        mOgreHeadMaterial;
+    Ogre::MaterialPtr        mOgreHeadMaterialHigh;
 
-    Ogre::SceneNode			*mSphereNode;
-    Ogre::Entity			*mSphereEntity;
+    Ogre::SceneNode            *mSphereNode;
+    Ogre::Entity            *mSphereEntity;
 
     Ogre::Vector3           spherePosition;
 

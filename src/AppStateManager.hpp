@@ -12,34 +12,34 @@
 class AppStateManager : public AppStateListener
 {
 public:
-	typedef struct
-	{
-		Ogre::String name;
-		AppState* state;
-	} state_info;
+    typedef struct
+    {
+        Ogre::String name;
+        AppState* state;
+    } state_info;
 
-	AppStateManager();
-	~AppStateManager();
+    AppStateManager();
+    ~AppStateManager();
 
-	void manageAppState(Ogre::String stateName, AppState *state);
+    void manageAppState(Ogre::String stateName, AppState *state);
 
-	AppState* findByName(Ogre::String stateName);
+    AppState* findByName(Ogre::String stateName);
 
-	void start(AppState *state);
-	void changeAppState(AppState *state);
-	bool pushAppState(AppState *state);
-	void popAppState();
-	void pauseAppState();
-	void shutdown();
+    void start(AppState *state);
+    void changeAppState(AppState *state);
+    bool pushAppState(AppState *state);
+    void popAppState();
+    void pauseAppState();
+    void shutdown();
     void popAllAndPushAppState(AppState *state);
-	
+    
 protected:
-	void init(AppState *state);
+    void init(AppState *state);
 
-	std::vector<AppState*>	mActiveStateStack;
-	std::vector<state_info>	mStates;
+    std::vector<AppState*>    mActiveStateStack;
+    std::vector<state_info>    mStates;
 
-	bool mbShutdown;
+    bool mbShutdown;
 };
 
 

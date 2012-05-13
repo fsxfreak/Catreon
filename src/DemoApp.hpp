@@ -12,12 +12,12 @@
 class DemoApp
 {
 public:
-	DemoApp();
-	~DemoApp();
+    DemoApp();
+    ~DemoApp();
 
     void startDemo();
 private:
-	AppStateManager *mAppStateManager;
+    AppStateManager *mAppStateManager;
 };
 
 #endif
