@@ -7,6 +7,9 @@ GNU Lesser General Public License version 3.0
 available at http://www.gnu.org/licenses/lgpl-3.0.txt
 */
 
+#ifndef BULLET_PHYS_H
+#define BULLET_PHYS_H
+
 /********************************************************
 TODO
 
@@ -16,6 +19,7 @@ TODO
 #include "btBulletCollisionCommon.h"
 #include "btBulletDynamicsCommon.h"
 #include "AdvancedOgreFramework.hpp"
+#include "BtOgMotionState.h"
 
 class BulletPhys
 {
@@ -34,7 +38,7 @@ public:
     static btVector3 ogreVecToBullet(const Ogre::Vector3 &ogrevector);
     static Ogre::Vector3 bulletVecToOgre(const btVector3 &bulletvector);
 
-    static btRigidBody* createTestSphere(const btCollisionShape *sphere, const btVector3 &spherePosition);
+    //static btRigidBody* createTestSphere(const btCollisionShape *sphere, const btVector3 &spherePosition);
 
     virtual void clientMoveAndDisplay();
 
@@ -48,3 +52,5 @@ public:
     btDiscreteDynamicsWorld                 *mDynamicsWorld;
 
 };
+
+#endif

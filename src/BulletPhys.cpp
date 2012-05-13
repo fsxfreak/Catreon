@@ -24,9 +24,6 @@ BulletPhys::BulletPhys() :  mCollisionConfiguration(new btDefaultCollisionConfig
 
 {
     mDynamicsWorld->setGravity(btVector3(0, -10, 0));
-    //ground rigid body
-    btCollisionShape* shapeGround = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.0)));
-    mCollisionShapes.push_back(shapeGround);
 }
 //-------------------------------------------------------------------------------------------------------
 BulletPhys::~BulletPhys()
@@ -42,7 +39,8 @@ BulletPhys::~BulletPhys()
 //-------------------------------------------------------------------------------------------------------
 void BulletPhys::exitPhysics()
 {
-
+    mCollisionShapes.clear();
+    
 }
 //-------------------------------------------------------------------------------------------------------
 void BulletPhys::addCollisionShape(btCollisionShape* const shape)
@@ -60,10 +58,10 @@ Ogre::Vector3 BulletPhys::bulletVecToOgre(const btVector3 &bulletvector)
     return Ogre::Vector3(bulletvector.x(), bulletvector.y(), bulletvector.z());
 }
 //-------------------------------------------------------------------------------------------------------
-btRigidBody* createTestSphere(const btCollisionShape *sphere, const btVector3 &spherePosition)
-{
-
-}
+//btRigidBody* createTestSphere(const btCollisionShape *sphere, const BtOgMotionState &stateSphere)
+//{
+    
+//}
 //-------------------------------------------------------------------------------------------------------
 void BulletPhys::clientMoveAndDisplay()
 {

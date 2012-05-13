@@ -26,6 +26,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include "BulletPhys.h"
 #include "btBulletCollisionCommon.h"
 #include "btBulletDynamicsCommon.h"
+#include "BtOgMotionState.h"
 
 enum QueryFlags
 {
@@ -71,26 +72,19 @@ private:
     Ogre::MaterialPtr       mOgreHeadMaterial;
     Ogre::MaterialPtr       mOgreHeadMaterialHigh;
 
-    btDefaultMotionState    *groundMotionState;
+    Ogre::SceneNode         *nodeGround;
+    Ogre::Entity            *entityGround;
+    Ogre::Plane             planeGround;
+    BtOgMotionState         *groundMotionState;
     btRigidBody             *groundRigidBody;
 
     Ogre::SceneNode         *mSphereNode;
-
-    Ogre::SceneNode         *mOgreHeadNode;
-    Ogre::Entity            *mOgreHeadEntity;
-    Ogre::MaterialPtr       mOgreHeadMaterial;
-    Ogre::MaterialPtr       mOgreHeadMaterialHigh;
-
-    Ogre::SceneNode         *mSphereNode;
-
     Ogre::Entity            *mSphereEntity;
-
     Ogre::Vector3           spherePosition;
-
     btCollisionShape        *btSphere;
-    btDefaultMotionState    *motionStateSphere;
-
-    btRigidBody             *rigidBodySphere;
+    std::deque<BtOgMotionState*> sphereMotionStates;
+    btRigidBody             *sphereRigidBody;
+    BtOgMotionState         *sphereMotionState; 
                             
     OgreBites::ParamsPanel  *mDetailsPanel;
     bool                    mbQuit;

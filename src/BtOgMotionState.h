@@ -31,7 +31,6 @@ public:
     virtual void getWorldTransform(btTransform &worldTransform) const;
 
     virtual void setWorldTransform(const btTransform &worldTransform);
-    
 protected:
     Ogre::SceneNode *mObject;
     btTransform mPosition;
