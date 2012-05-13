@@ -230,16 +230,8 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         bullet->mDynamicsWorld->addRigidBody(rigidBodySphere);
         */
 
-<<<<<<< HEAD
-
-
-
-
         physicsInitialized = true;
-	}
-=======
     }
->>>>>>> fbdb0792118e6f331615c026c5af76066c4d33c3
 
     //if not in settings mode (tab), or in settings mode and key isnt O, pass the keyevent to OgreFramework
     if (!mbSettingsMode || (mbSettingsMode && !OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_O)))
