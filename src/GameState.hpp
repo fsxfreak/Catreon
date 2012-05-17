@@ -23,7 +23,6 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include "Vehicle.h"
 #include "Driver.h"
 
-#include "BulletPhys.h"
 #include "btBulletCollisionCommon.h"
 #include "btBulletDynamicsCommon.h"
 #include "BtOgMotionState.h"
@@ -65,45 +64,57 @@ public:
 
     void updatePhysics(double deltaTime);
 
+    btVector3 ogreVecToBullet(const Ogre::Vector3 &ogrevector);
+    Ogre::Vector3 bulletVecToOgre(const btVector3 &bulletvector);
+
 private:
 
-    Ogre::SceneNode         *mOgreHeadNode;
-    Ogre::Entity            *mOgreHeadEntity;
-    Ogre::MaterialPtr       mOgreHeadMaterial;
-    Ogre::MaterialPtr       mOgreHeadMaterialHigh;
+    Ogre::SceneNode             *mOgreHeadNode;
+    Ogre::Entity                *mOgreHeadEntity;
+    Ogre::MaterialPtr           mOgreHeadMaterial;
+    Ogre::MaterialPtr           mOgreHeadMaterialHigh;
 
-    Ogre::SceneNode         *nodeGround;
-    Ogre::Entity            *entityGround;
-    Ogre::Plane             planeGround;
-    BtOgMotionState         *groundMotionState;
-    btRigidBody             *groundRigidBody;
+    Ogre::SceneNode             *nodeGround;
+    Ogre::Entity                *entityGround;
+    Ogre::Plane                 planeGround;
+    BtOgMotionState             *groundMotionState;
+    btRigidBody                 *groundRigidBody;
 
-    Ogre::SceneNode         *mSphereNode;
-    Ogre::Entity            *mSphereEntity;
-    Ogre::Vector3           spherePosition;
-    btCollisionShape        *btSphere;
+    Ogre::SceneNode             *mSphereNode;
+    Ogre::Entity                *mSphereEntity;
+    Ogre::Vector3               spherePosition;
+    btCollisionShape            *btSphere;
     std::deque<BtOgMotionState*> sphereMotionStates;
-    btRigidBody             *sphereRigidBody;
-    BtOgMotionState         *sphereMotionState; 
+    btRigidBody                 *sphereRigidBody;
+    BtOgMotionState             *sphereMotionState; 
                             
-    OgreBites::ParamsPanel  *mDetailsPanel;
-    bool                    mbQuit;
+    OgreBites::ParamsPanel      *mDetailsPanel;
+    bool                        mbQuit;
 
-    Ogre::Vector3           mTranslateVector;
-    Ogre::Real              mMoveSpeed;
-    Ogre::Degree            mRotateSpeed;
-    float                   mMoveScale;
-    Ogre::Degree            mRotateScale;
+    Ogre::Vector3               mTranslateVector;
+    Ogre::Real                  mMoveSpeed;
+    Ogre::Degree                mRotateSpeed;
+    float                       mMoveScale;
+    Ogre::Degree                mRotateScale;
 
-    Ogre::RaySceneQuery     *mRaySceneQuery;
-    Ogre::SceneNode         *mCurrentObject;
-    Ogre::Entity            *mCurrentEntity;
-    bool                    mbLMouseDown;
-    bool                    mbRMouseDown;
-    bool                    mbSettingsMode;
+    Ogre::RaySceneQuery         *mRaySceneQuery;
+    Ogre::SceneNode             *mCurrentObject;
+    Ogre::Entity                *mCurrentEntity;
+    bool                        mbLMouseDown;
+    bool                        mbRMouseDown;
+    bool                        mbSettingsMode;
 
     //physics engine
-    BulletPhys              *bullet;
-    bool                    physicsInitialized;
+    bool                                    physicsInitialized;
+
+    btDefaultCollisionConfiguration         *mCollisionConfiguration;
+    btCollisionDispatcher                   *mDispatcher;
+    btBroadphaseInterface                   *mBroadphase;
+    btSequentialImpulseConstraintSolver     *mSolver;
+    btDiscreteDynamicsWorld                 *mDynamicsWorld;
+
+    std::deque<OgreBulletDynamics::RigidBody *>         mRigidBodies;
+	std::deque<OgreBulletCollisions::CollisionShape *>  mCollisionShapes;
+
 };
 #endif

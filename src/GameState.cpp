@@ -15,9 +15,15 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include "GameState.hpp"
 
 GameState::GameState() :    mMoveSpeed(0.1f), mRotateSpeed(0.3f), mbLMouseDown(false), mbRMouseDown(false), 
-                            mbQuit(false), mbSettingsMode(false), mDetailsPanel(0), physicsInitialized(false)
+                            mbQuit(false), mbSettingsMode(false), mDetailsPanel(0), 
+                            physicsInitialized(false),
+                            mCollisionConfiguration(new btDefaultCollisionConfiguration()),
+                            mDispatcher(new btCollisionDispatcher(mCollisionConfiguration)),
+                            mBroadphase(new btDbvtBroadphase()),
+                            mSolver(new btSequentialImpulseConstraintSolver),
+                            mDynamicsWorld(new btDiscreteDynamicsWorld(mDispatcher, mBroadphase, mSolver, mCollisionConfiguration))
 {
-    bullet = new BulletPhys();
+    mDynamicsWorld->setGravity(btVector3(0, -9.81, 0));
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::enter()
@@ -79,7 +85,12 @@ void GameState::exit()
     if (mSceneMgr)
         OgreFramework::getSingletonPtr()->mRoot->destroySceneManager(mSceneMgr);
 
-    delete bullet;
+    delete mCollisionConfiguration;
+    delete mDispatcher;
+    delete mBroadphase;
+    delete mSolver;
+    delete mDynamicsWorld;
+    mCollisionShapes.resize(0);
 }
 //-------------------------------------------------------------------------------------------------------
 //inherited from Appstate, fill the scene
@@ -447,10 +458,19 @@ void GameState::updatePhysics(double deltaTime)
 {
     if (physicsInitialized)
     {
-        bullet->mDynamicsWorld->stepSimulation(deltaTime, 10);
+        mDynamicsWorld->stepSimulation(deltaTime, 10);
 
         btTransform sphereTransform;
         sphereRigidBody->getMotionState()->getWorldTransform(sphereTransform);
     }
 }
 //-------------------------------------------------------------------------------------------------------
+btVector3 Gamestate::ogreVecToBullet(const Ogre::Vector3 &ogrevector)
+{
+    return btVector3(ogrevector.x, ogrevector.y, ogrevector.z);
+}
+//-------------------------------------------------------------------------------------------------------
+Ogre::Vector3 Gamestate::bulletVecToOgre(const btVector3 &bulletvector)
+{
+    return Ogre::Vector3(bulletvector.x(), bulletvector.y(), bulletvector.z());
+}
