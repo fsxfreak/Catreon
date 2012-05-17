@@ -102,7 +102,6 @@ void GameState::createScene()
     pDotSceneLoader->parseDotScene("CubeScene.xml", "General", mSceneMgr, mSceneMgr->getRootSceneNode());
     delete pDotSceneLoader;
 
-
     //ground plane for testing
     planeGround.normal = Ogre::Vector3(0, 1, 0);
     planeGround.d = 0;
@@ -115,14 +114,14 @@ void GameState::createScene()
     entityGround->setCastShadows(0);
 
     btCollisionShape *plane = new btStaticPlaneShape(btVector3(0, 1, 0), 1);
-    bullet->addCollisionShape(plane);
+    mCollisionShapes.push_back(plane);
 
     //initialize the plane as a rigid body
     groundMotionState = new BtOgMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)), nodeGround);
     btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState, plane, btVector3(0, 0, 0));
     groundRigidBody = new btRigidBody(groundRigidBodyCI);
 
-    bullet->mDynamicsWorld->addRigidBody(groundRigidBody);
+    mDynamicsWorld->addRigidBody(groundRigidBody);
     
     //initialize the sphere for later creation, physics test
     mSphereNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
@@ -131,7 +130,7 @@ void GameState::createScene()
     //0.1 scale = 1 unit (1 meter)
 
     btSphere = new btSphereShape(1);
-    bullet->addCollisionShape(btSphere);
+    mCollisionShapes.push_back(btSphere);
 
     mOgreHeadEntity = mSceneMgr->createEntity("Cube", "ogrehead.mesh");
     mOgreHeadEntity->setQueryFlags(OGRE_HEAD_MASK);
@@ -208,7 +207,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         mSphereNode->detachAllObjects();
         spherePosition = (mCamera->getPosition() + (mCamera->getDirection() * Ogre::Vector3(20, 20, 20)));
 
-        btVector3 btSpherePosition = BulletPhys::ogreVecToBullet(spherePosition);
+        btVector3 btSpherePosition = ogreVecToBullet(spherePosition);
 		mSphereNode->setPosition(spherePosition);
 		mSphereNode->attachObject(mSphereEntity);
 
@@ -220,7 +219,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
 
         btRigidBody::btRigidBodyConstructionInfo sphereRigidBodyCI(massSphere, sphereMotionState, btSphere, fallInertia);
         sphereRigidBody = new btRigidBody(sphereRigidBodyCI);
-        bullet->mDynamicsWorld->addRigidBody(sphereRigidBody);
+        mDynamicsWorld->addRigidBody(sphereRigidBody);
 
         physicsInitialized = true;
     }
@@ -465,12 +464,12 @@ void GameState::updatePhysics(double deltaTime)
     }
 }
 //-------------------------------------------------------------------------------------------------------
-btVector3 Gamestate::ogreVecToBullet(const Ogre::Vector3 &ogrevector)
+btVector3 GameState::ogreVecToBullet(const Ogre::Vector3 &ogrevector)
 {
     return btVector3(ogrevector.x, ogrevector.y, ogrevector.z);
 }
 //-------------------------------------------------------------------------------------------------------
-Ogre::Vector3 Gamestate::bulletVecToOgre(const btVector3 &bulletvector)
+Ogre::Vector3 GameState::bulletVecToOgre(const btVector3 &bulletvector)
 {
     return Ogre::Vector3(bulletvector.x(), bulletvector.y(), bulletvector.z());
 }

@@ -113,8 +113,8 @@ private:
     btSequentialImpulseConstraintSolver     *mSolver;
     btDiscreteDynamicsWorld                 *mDynamicsWorld;
 
-    std::deque<OgreBulletDynamics::RigidBody *>         mRigidBodies;
-	std::deque<OgreBulletCollisions::CollisionShape *>  mCollisionShapes;
+    std::deque<btRigidBody*>                mRigidBodies;
+	std::deque<btCollisionShape*>           mCollisionShapes;
 
 };
 #endif
