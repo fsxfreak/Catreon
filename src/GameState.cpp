@@ -145,11 +145,8 @@ void GameState::createScene()
 
     mDynamicsWorld->addRigidBody(groundRigidBody);
     mRigidBodies.push_back(groundRigidBody);
-    
-    //initialize the sphere for later creation, physics test
-    //mSphereEntity = mSceneMgr->createEntity("Sphere", Ogre::SceneManager::PT_SPHERE);
-    //0.1 scale = 1 unit (1 meter)
 
+    //4 meters = 0.1 * 50 meters (default PT_SPHERE radius)
     btCollisionShape* btSphere = new btSphereShape(4);
     mCollisionShapes.push_back(btSphere);
 
@@ -224,29 +221,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
     //mbsettingsmode true = buffered input(non continuous)
     if (mbSettingsMode && OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_RETURN) ||
         OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_NUMPADENTER))
-    {
-        /*
-        mSphereNode->detachAllObjects();
-        spherePosition = (mCamera->getPosition() + (mCamera->getDirection() * Ogre::Vector3(20, 20, 20)));
-
-        btVector3 btSpherePosition = ogreVecToBullet(spherePosition);
-		mSphereNode->setPosition(spherePosition);
-		mSphereNode->attachObject(mSphereEntity);
-
-        sphereMotionState = new BtOgMotionState(btTransform(btQuaternion(0, 0, 0, 1), btSpherePosition), mSphereNode);
-        sphereMotionStates.push_back(sphereMotionState);
-        btScalar massSphere = 1;
-        btVector3 fallInertia(0, 0, 0);
-        btSphere->calculateLocalInertia(massSphere, fallInertia);
-
-        btRigidBody::btRigidBodyConstructionInfo sphereRigidBodyCI(massSphere, sphereMotionState, btSphere, fallInertia);
-        sphereRigidBody = new btRigidBody(sphereRigidBodyCI);
-        mDynamicsWorld->addRigidBody(sphereRigidBody);
-        
-
-        physicsInitialized = true;
-        */
-        
+    {        
         //default sphere has radius of 50 units
         Ogre::Entity* mSphereEntity = mSceneMgr->createEntity(Ogre::SceneManager::PT_SPHERE);
         //get a position slightly in front of the camera
