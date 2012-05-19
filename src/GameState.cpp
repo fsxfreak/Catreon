@@ -32,7 +32,7 @@ void GameState::enter()
 
     //initialize the scene
     mSceneMgr = OgreFramework::getSingletonPtr()->mRoot->createSceneManager(Ogre::ST_GENERIC, "GameSceneMgr");
-    mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_ADDITIVE);
+    mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
     //mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.7f, 0.7f));
 
     mRaySceneQuery = mSceneMgr->createRayQuery(Ogre::Ray());
@@ -85,12 +85,26 @@ void GameState::exit()
     if (mSceneMgr)
         OgreFramework::getSingletonPtr()->mRoot->destroySceneManager(mSceneMgr);
 
+    for (int body = 0; body < mRigidBodies.size(); ++body)
+    {
+        mDynamicsWorld->removeRigidBody(mRigidBodies[body]);
+        delete mRigidBodies[body]->getMotionState();
+        delete mRigidBodies[body];
+    }
+
+    auto shapesIt = mCollisionShapes.begin();
+    auto shapesEnd = mCollisionShapes.end();
+    for (shapesIt; shapesIt != shapesEnd; ++shapesIt)
+    {
+        delete *shapesIt;
+    }
+    mCollisionShapes.clear();
+
+    delete mDynamicsWorld;
+    delete mSolver;
     delete mCollisionConfiguration;
     delete mDispatcher;
     delete mBroadphase;
-    delete mSolver;
-    delete mDynamicsWorld;
-    mCollisionShapes.resize(0);
 }
 //-------------------------------------------------------------------------------------------------------
 //inherited from Appstate, fill the scene
@@ -112,24 +126,31 @@ void GameState::createScene()
     nodeGround = mSceneMgr->getRootSceneNode()->createChildSceneNode();
     nodeGround->attachObject(entityGround);
     entityGround->setCastShadows(0);
-
-    btCollisionShape *plane = new btStaticPlaneShape(btVector3(0, 1, 0), 1);
+    
+    btCollisionShape *plane = new btBoxShape(btVector3(btScalar(1500.), btScalar(1.), btScalar(1500.)));
     mCollisionShapes.push_back(plane);
 
+    btTransform planeTransform;
+    planeTransform.setIdentity();
+    planeTransform.setOrigin(btVector3(0, -2, 0));
+
+    btScalar mass(0);
+    btVector3 localInertia(0, 0, 0);
+    plane->calculateLocalInertia(mass, localInertia);
+
     //initialize the plane as a rigid body
-    groundMotionState = new BtOgMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)), nodeGround);
-    btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState, plane, btVector3(0, 0, 0));
+    BtOgMotionState* groundMotionState = new BtOgMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)), nodeGround);
+    btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState, plane, localInertia);
     groundRigidBody = new btRigidBody(groundRigidBodyCI);
 
     mDynamicsWorld->addRigidBody(groundRigidBody);
+    mRigidBodies.push_back(groundRigidBody);
     
     //initialize the sphere for later creation, physics test
-    mSphereNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    mSphereEntity = mSceneMgr->createEntity("Sphere", Ogre::SceneManager::PT_SPHERE);
-    mSphereNode->setScale(Ogre::Real(0.1), Ogre::Real(0.1), Ogre::Real(0.1));
+    //mSphereEntity = mSceneMgr->createEntity("Sphere", Ogre::SceneManager::PT_SPHERE);
     //0.1 scale = 1 unit (1 meter)
 
-    btSphere = new btSphereShape(1);
+    btCollisionShape* btSphere = new btSphereShape(4);
     mCollisionShapes.push_back(btSphere);
 
     mOgreHeadEntity = mSceneMgr->createEntity("Cube", "ogrehead.mesh");
@@ -204,6 +225,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
     if (mbSettingsMode && OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_RETURN) ||
         OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_NUMPADENTER))
     {
+        /*
         mSphereNode->detachAllObjects();
         spherePosition = (mCamera->getPosition() + (mCamera->getDirection() * Ogre::Vector3(20, 20, 20)));
 
@@ -220,8 +242,44 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         btRigidBody::btRigidBodyConstructionInfo sphereRigidBodyCI(massSphere, sphereMotionState, btSphere, fallInertia);
         sphereRigidBody = new btRigidBody(sphereRigidBodyCI);
         mDynamicsWorld->addRigidBody(sphereRigidBody);
+        
 
         physicsInitialized = true;
+        */
+        
+        //default sphere has radius of 50 units
+        Ogre::Entity* mSphereEntity = mSceneMgr->createEntity(Ogre::SceneManager::PT_SPHERE);
+        //get a position slightly in front of the camera
+        Ogre::Vector3 spherePosition = mCamera->getPosition() + (mCamera->getDerivedDirection() * Ogre::Vector3(20, 20, 20));
+        Ogre::SceneNode *sphereNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(spherePosition, Ogre::Quaternion(Ogre::Real(0)));
+        //make a radius of 5 meters
+        sphereNode->setScale(0.1, 0.1, 0.1);
+        sphereNode->attachObject(mSphereEntity);
+        //mSphereNodes.push_back(sphereNode);
+
+        //let bullet have the position sphere is intiailized on
+        btVector3 btSpherePosition = ogreVecToBullet(spherePosition);
+
+        btTransform sphereTransform;
+        sphereTransform.setIdentity();
+
+        btScalar sphereMass(1);
+        btVector3 sphereInertia(0, 0, -1);
+        mCollisionShapes[1]->calculateLocalInertia(sphereMass, sphereInertia);
+
+        sphereTransform.setOrigin(btSpherePosition);
+
+        BtOgMotionState* sphereState = new BtOgMotionState(sphereTransform, sphereNode);
+        btRigidBody::btRigidBodyConstructionInfo sphereInfo(sphereMass, sphereState, mCollisionShapes[1], sphereInertia);
+        btRigidBody* spherebody = new btRigidBody(sphereInfo);
+
+        spherebody->setLinearVelocity(ogreVecToBullet(mCamera->getDerivedDirection().normalisedCopy() * 50));
+
+        mDynamicsWorld->addRigidBody(spherebody);
+        mRigidBodies.push_back(spherebody);
+
+        physicsInitialized = true;
+        
     }
 
     //if not in settings mode (tab), or in settings mode and key isnt O, pass the keyevent to OgreFramework
@@ -457,10 +515,7 @@ void GameState::updatePhysics(double deltaTime)
 {
     if (physicsInitialized)
     {
-        mDynamicsWorld->stepSimulation(deltaTime, 10);
-
-        btTransform sphereTransform;
-        sphereRigidBody->getMotionState()->getWorldTransform(sphereTransform);
+        mDynamicsWorld->stepSimulation(deltaTime / 500, 50);
     }
 }
 //-------------------------------------------------------------------------------------------------------

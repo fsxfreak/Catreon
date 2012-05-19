@@ -68,41 +68,35 @@ public:
     Ogre::Vector3 bulletVecToOgre(const btVector3 &bulletvector);
 
 private:
+    Ogre::SceneNode                         *mOgreHeadNode;
+    Ogre::Entity                            *mOgreHeadEntity;
+    Ogre::MaterialPtr                       mOgreHeadMaterial;
+    Ogre::MaterialPtr                       mOgreHeadMaterialHigh;
 
-    Ogre::SceneNode             *mOgreHeadNode;
-    Ogre::Entity                *mOgreHeadEntity;
-    Ogre::MaterialPtr           mOgreHeadMaterial;
-    Ogre::MaterialPtr           mOgreHeadMaterialHigh;
+    Ogre::SceneNode                         *nodeGround;
+    Ogre::Entity                            *entityGround;
+    Ogre::Plane                             planeGround;
+    BtOgMotionState                         *groundMotionState;
+    btRigidBody                             *groundRigidBody;
 
-    Ogre::SceneNode             *nodeGround;
-    Ogre::Entity                *entityGround;
-    Ogre::Plane                 planeGround;
-    BtOgMotionState             *groundMotionState;
-    btRigidBody                 *groundRigidBody;
-
-    Ogre::SceneNode             *mSphereNode;
-    Ogre::Entity                *mSphereEntity;
-    Ogre::Vector3               spherePosition;
-    btCollisionShape            *btSphere;
-    std::deque<BtOgMotionState*> sphereMotionStates;
-    btRigidBody                 *sphereRigidBody;
-    BtOgMotionState             *sphereMotionState; 
+    Ogre::Vector3                           spherePosition;
+    std::deque<Ogre::SceneNode*>            mSphereNodes;
                             
-    OgreBites::ParamsPanel      *mDetailsPanel;
-    bool                        mbQuit;
+    OgreBites::ParamsPanel                  *mDetailsPanel;
+    bool                                    mbQuit;
 
-    Ogre::Vector3               mTranslateVector;
-    Ogre::Real                  mMoveSpeed;
-    Ogre::Degree                mRotateSpeed;
-    float                       mMoveScale;
-    Ogre::Degree                mRotateScale;
+    Ogre::Vector3                           mTranslateVector;
+    Ogre::Real                              mMoveSpeed;
+    Ogre::Degree                            mRotateSpeed;
+    float                                   mMoveScale;
+    Ogre::Degree                            mRotateScale;
 
-    Ogre::RaySceneQuery         *mRaySceneQuery;
-    Ogre::SceneNode             *mCurrentObject;
-    Ogre::Entity                *mCurrentEntity;
-    bool                        mbLMouseDown;
-    bool                        mbRMouseDown;
-    bool                        mbSettingsMode;
+    Ogre::RaySceneQuery                     *mRaySceneQuery;
+    Ogre::SceneNode                         *mCurrentObject;
+    Ogre::Entity                            *mCurrentEntity;
+    bool                                    mbLMouseDown;
+    bool                                    mbRMouseDown;
+    bool                                    mbSettingsMode;
 
     //physics engine
     bool                                    physicsInitialized;
@@ -113,8 +107,8 @@ private:
     btSequentialImpulseConstraintSolver     *mSolver;
     btDiscreteDynamicsWorld                 *mDynamicsWorld;
 
-    std::deque<btRigidBody*>                mRigidBodies;
 	std::deque<btCollisionShape*>           mCollisionShapes;
+    std::deque<btRigidBody*>                mRigidBodies;
 
 };
 #endif
