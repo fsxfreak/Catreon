@@ -75,6 +75,11 @@ public:
 
 private:
     Ogre::Timer                             *mTimer;
+
+    //scale model for testing
+    Ogre::SceneNode                         *mScaleModel;
+    Ogre::Entity                            *mScaleEntity;
+
     Ogre::SceneNode                         *mOgreHeadNode;
     Ogre::Entity                            *mOgreHeadEntity;
     Ogre::MaterialPtr                       mOgreHeadMaterial;
@@ -116,6 +121,9 @@ private:
 
     std::deque<btCollisionShape*>           mCollisionShapes;
     std::deque<btRigidBody*>                mRigidBodies;
+
+    //sound engine
+    ISoundEngine                            *sound;
 
 };
 #endif

@@ -41,6 +41,7 @@ void GameState::enter()
     mCamera->lookAt(Ogre::Vector3(0, 0, 0));
     mCamera->setNearClipDistance(1);
     mCamera->setFarClipDistance(1000);
+    mCamera->setFOVy(Ogre::Radian(45));
 
     mCamera->setAspectRatio(Ogre::Real(OgreFramework::getSingletonPtr()->mViewport->getActualWidth()) / 
         Ogre::Real(OgreFramework::getSingletonPtr()->mViewport->getActualHeight()));
@@ -55,7 +56,12 @@ void GameState::enter()
     mSolver = new btSequentialImpulseConstraintSolver;
     mDynamicsWorld = new btDiscreteDynamicsWorld(mDispatcher, mBroadphase, mSolver, mCollisionConfiguration);
 
-    mDynamicsWorld->setGravity(btVector3(0, -100, 0));
+    mDynamicsWorld->setGravity(btVector3(0, -9.81, 0));
+
+
+    sound = createIrrKlangDevice();
+    if (!sound)
+        return;
 
     buildGUI();
 
@@ -112,6 +118,8 @@ void GameState::exit()
     delete mCollisionConfiguration;
     delete mDispatcher;
     delete mBroadphase;
+
+    sound->drop();
 }
 //-------------------------------------------------------------------------------------------------------
 //inherited from Appstate, fill the scene
@@ -125,6 +133,12 @@ void GameState::createScene()
     pDotSceneLoader->parseDotScene("CubeScene.xml", "General", mSceneMgr, mSceneMgr->getRootSceneNode());
     delete pDotSceneLoader;
 
+    //scale model for reference
+    mScaleModel = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    mScaleEntity = mSceneMgr->createEntity("Scale", "scalingtest.mesh");
+    mScaleModel->attachObject(mScaleEntity);
+    mScaleModel->setPosition(-30, 4, 0);
+
     //ground plane for testing
     planeGround.normal = Ogre::Vector3(0, 1, 0);
     planeGround.d = 0;
@@ -135,7 +149,7 @@ void GameState::createScene()
     nodeGround = mSceneMgr->getRootSceneNode()->createChildSceneNode();
     nodeGround->attachObject(entityGround);
     
-    btCollisionShape *plane = new btBoxShape(btVector3(btScalar(1500.), btScalar(1.), btScalar(1500.)));
+    btCollisionShape *plane = new btBoxShape(btVector3(btScalar(9000.), btScalar(1.), btScalar(9000.)));
     mCollisionShapes.push_back(plane);
 
     btTransform planeTransform;
@@ -234,6 +248,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
     {        
         //default sphere has radius of 50 units
         Ogre::Entity* mSphereEntity = mSceneMgr->createEntity(Ogre::SceneManager::PT_SPHERE);
+        mSphereEntity->setMaterialName("Examples/BumpyMetal");
         //get a position slightly in front of the camera
         Ogre::Vector3 spherePosition = mCamera->getPosition() + (mCamera->getDerivedDirection() * Ogre::Vector3(20, 20, 20));
         Ogre::SceneNode *sphereNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(spherePosition, Ogre::Quaternion(Ogre::Real(0)));
@@ -248,7 +263,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         btTransform sphereTransform;
         sphereTransform.setIdentity();
 
-        btScalar sphereMass(5);
+        btScalar sphereMass(50);
         btVector3 sphereInertia(0, 0, 0);
         mCollisionShapes[1]->calculateLocalInertia(sphereMass, sphereInertia);
 
