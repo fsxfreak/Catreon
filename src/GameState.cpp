@@ -14,16 +14,14 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include "GameState.hpp"
 
+using namespace irrklang;
+
 GameState::GameState() :    mMoveSpeed(0.1f), mRotateSpeed(0.3f), mbLMouseDown(false), mbRMouseDown(false), 
                             mbQuit(false), mbSettingsMode(false), mDetailsPanel(0), 
                             physicsInitialized(false),
-                            mCollisionConfiguration(new btDefaultCollisionConfiguration()),
-                            mDispatcher(new btCollisionDispatcher(mCollisionConfiguration)),
-                            mBroadphase(new btDbvtBroadphase()),
-                            mSolver(new btSequentialImpulseConstraintSolver),
-                            mDynamicsWorld(new btDiscreteDynamicsWorld(mDispatcher, mBroadphase, mSolver, mCollisionConfiguration))
+                            mTimer(new Ogre::Timer)
 {
-    mDynamicsWorld->setGravity(btVector3(0, -9.81, 0));
+
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::enter()
@@ -33,7 +31,7 @@ void GameState::enter()
     //initialize the scene
     mSceneMgr = OgreFramework::getSingletonPtr()->mRoot->createSceneManager(Ogre::ST_GENERIC, "GameSceneMgr");
     mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
-    //mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.7f, 0.7f));
+    mSceneMgr->setAmbientLight(Ogre::ColourValue(0.1f, 0.1f, 0.1f));
 
     mRaySceneQuery = mSceneMgr->createRayQuery(Ogre::Ray());
     mRaySceneQuery->setQueryMask(OGRE_HEAD_MASK);
@@ -51,10 +49,19 @@ void GameState::enter()
     //object is a scene node
     mCurrentObject = 0;
 
+    mCollisionConfiguration = new btDefaultCollisionConfiguration();
+    mDispatcher = new btCollisionDispatcher(mCollisionConfiguration);
+    mBroadphase = new btDbvtBroadphase();
+    mSolver = new btSequentialImpulseConstraintSolver;
+    mDynamicsWorld = new btDiscreteDynamicsWorld(mDispatcher, mBroadphase, mSolver, mCollisionConfiguration);
+
+    mDynamicsWorld->setGravity(btVector3(0, -100, 0));
+
     buildGUI();
 
     createScene();
 
+    mTimer->reset();
 }
 //-------------------------------------------------------------------------------------------------------
 bool GameState::pause()
@@ -85,12 +92,12 @@ void GameState::exit()
     if (mSceneMgr)
         OgreFramework::getSingletonPtr()->mRoot->destroySceneManager(mSceneMgr);
 
-    for (int body = 0; body < mRigidBodies.size(); ++body)
+    for (int body = mDynamicsWorld->getNumCollisionObjects() - 1; body >= 0; body--)
     {
-        mDynamicsWorld->removeRigidBody(mRigidBodies[body]);
-        delete mRigidBodies[body]->getMotionState();
-        delete mRigidBodies[body];
+        btCollisionObject *object = mDynamicsWorld->getCollisionObjectArray()[body];
+        mDynamicsWorld->removeCollisionObject(object);
     }
+    mRigidBodies.clear();
 
     auto shapesIt = mCollisionShapes.begin();
     auto shapesEnd = mCollisionShapes.end();
@@ -110,7 +117,9 @@ void GameState::exit()
 //inherited from Appstate, fill the scene
 void GameState::createScene()
 {
-    mSceneMgr->createLight()->setPosition(Ogre::Vector3(0, 75, 0));
+    Ogre::Light *directional = mSceneMgr->createLight("directionallight");
+    directional->setType(Ogre::Light::LT_DIRECTIONAL);
+    directional->setDirection(0, -1, 0);
 
     DotSceneLoader* pDotSceneLoader = new DotSceneLoader();
     pDotSceneLoader->parseDotScene("CubeScene.xml", "General", mSceneMgr, mSceneMgr->getRootSceneNode());
@@ -125,7 +134,6 @@ void GameState::createScene()
     entityGround->setMaterialName("Examples/BumpyMetal");
     nodeGround = mSceneMgr->getRootSceneNode()->createChildSceneNode();
     nodeGround->attachObject(entityGround);
-    entityGround->setCastShadows(0);
     
     btCollisionShape *plane = new btBoxShape(btVector3(btScalar(1500.), btScalar(1.), btScalar(1500.)));
     mCollisionShapes.push_back(plane);
@@ -142,6 +150,8 @@ void GameState::createScene()
     BtOgMotionState* groundMotionState = new BtOgMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)), nodeGround);
     btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState, plane, localInertia);
     groundRigidBody = new btRigidBody(groundRigidBodyCI);
+
+    groundRigidBody->setFriction(20);
 
     mDynamicsWorld->addRigidBody(groundRigidBody);
     mRigidBodies.push_back(groundRigidBody);
@@ -220,7 +230,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
     //on press enter
     //mbsettingsmode true = buffered input(non continuous)
     if (mbSettingsMode && OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_RETURN) ||
-        OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_NUMPADENTER))
+        OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_F))
     {        
         //default sphere has radius of 50 units
         Ogre::Entity* mSphereEntity = mSceneMgr->createEntity(Ogre::SceneManager::PT_SPHERE);
@@ -230,7 +240,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         //make a radius of 5 meters
         sphereNode->setScale(0.1, 0.1, 0.1);
         sphereNode->attachObject(mSphereEntity);
-        //mSphereNodes.push_back(sphereNode);
+        mSphereNodes.push_back(sphereNode);
 
         //let bullet have the position sphere is intiailized on
         btVector3 btSpherePosition = ogreVecToBullet(spherePosition);
@@ -238,8 +248,8 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         btTransform sphereTransform;
         sphereTransform.setIdentity();
 
-        btScalar sphereMass(1);
-        btVector3 sphereInertia(0, 0, -1);
+        btScalar sphereMass(5);
+        btVector3 sphereInertia(0, 0, 0);
         mCollisionShapes[1]->calculateLocalInertia(sphereMass, sphereInertia);
 
         sphereTransform.setOrigin(btSpherePosition);
@@ -248,13 +258,42 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         btRigidBody::btRigidBodyConstructionInfo sphereInfo(sphereMass, sphereState, mCollisionShapes[1], sphereInertia);
         btRigidBody* spherebody = new btRigidBody(sphereInfo);
 
-        spherebody->setLinearVelocity(ogreVecToBullet(mCamera->getDerivedDirection().normalisedCopy() * 50));
+        spherebody->setFriction(50);
+
+        int sphereForce = 0;
+        if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_LSHIFT))
+            sphereForce = 300;
+        else
+            sphereForce = 50;
+
+
+        spherebody->setLinearVelocity(ogreVecToBullet(mCamera->getDerivedDirection().normalisedCopy() * sphereForce));
 
         mDynamicsWorld->addRigidBody(spherebody);
         mRigidBodies.push_back(spherebody);
 
         physicsInitialized = true;
-        
+    }
+
+    //clear all spheres
+    if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_NUMPAD0))
+    {
+        for (int iii = 0; iii < mSphereNodes.size(); ++iii)
+        {
+            if (mSphereNodes[iii] && mSphereNodes[iii] != mSceneMgr->getRootSceneNode())
+            {
+                mSphereNodes[iii]->detachAllObjects();
+                mSceneMgr->destroySceneNode(mSphereNodes[iii]);
+            }
+        }
+        mSphereNodes.clear();
+        //iterator starts at one because the ground plane is at 0
+        for (int body = mDynamicsWorld->getNumCollisionObjects() - 1; body >= 1; body--)
+        {
+            btCollisionObject *object = mDynamicsWorld->getCollisionObjectArray()[body];
+            mDynamicsWorld->removeCollisionObject(object);
+        }
+        mRigidBodies.clear();
     }
 
     //if not in settings mode (tab), or in settings mode and key isnt O, pass the keyevent to OgreFramework
@@ -456,7 +495,7 @@ void GameState::update(double timeSinceLastFrame)
 
     getInput();
     moveCamera();
-    updatePhysics(timeSinceLastFrame);
+    updatePhysics();
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::buildGUI()
@@ -486,11 +525,12 @@ void GameState::buildGUI()
     OgreFramework::getSingletonPtr()->mTrayMgr->createLongSelectMenu(OgreBites::TL_TOPRIGHT, "ChatModeSelMenu", "ChatMode", 200, 3, chatModes);
 }
 //-------------------------------------------------------------------------------------------------------
-void GameState::updatePhysics(double deltaTime)
+void GameState::updatePhysics()
 {
     if (physicsInitialized)
     {
-        mDynamicsWorld->stepSimulation(deltaTime / 500, 50);
+        int milliseconds = getMillisecondsFromLastCall();
+        mDynamicsWorld->stepSimulation(static_cast<double>(milliseconds) / 1000, 30);
     }
 }
 //-------------------------------------------------------------------------------------------------------
@@ -502,4 +542,13 @@ btVector3 GameState::ogreVecToBullet(const Ogre::Vector3 &ogrevector)
 Ogre::Vector3 GameState::bulletVecToOgre(const btVector3 &bulletvector)
 {
     return Ogre::Vector3(bulletvector.x(), bulletvector.y(), bulletvector.z());
+}
+//-------------------------------------------------------------------------------------------------------
+int GameState::getMillisecondsFromLastCall()
+{
+    int nTime = mTimer->getMilliseconds();
+
+    mTimer->reset();
+    return nTime;
+
 }

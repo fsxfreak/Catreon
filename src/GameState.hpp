@@ -20,12 +20,16 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include <OgreSubEntity.h>
 #include <OgreMaterialManager.h>
 
+#include <btBulletCollisionCommon.h>
+#include <btBulletDynamicsCommon.h>
+#include "BtOgMotionState.h"
+
+#include <irrKlang.h>
+
 #include "Vehicle.h"
 #include "Driver.h"
 
-#include "btBulletCollisionCommon.h"
-#include "btBulletDynamicsCommon.h"
-#include "BtOgMotionState.h"
+using namespace irrklang;
 
 enum QueryFlags
 {
@@ -62,12 +66,15 @@ public:
 
     void update(double timeSinceLastFrame);
 
-    void updatePhysics(double deltaTime);
+    void updatePhysics();
+
+    int getMillisecondsFromLastCall();
 
     btVector3 ogreVecToBullet(const Ogre::Vector3 &ogrevector);
     Ogre::Vector3 bulletVecToOgre(const btVector3 &bulletvector);
 
 private:
+    Ogre::Timer                             *mTimer;
     Ogre::SceneNode                         *mOgreHeadNode;
     Ogre::Entity                            *mOgreHeadEntity;
     Ogre::MaterialPtr                       mOgreHeadMaterial;
