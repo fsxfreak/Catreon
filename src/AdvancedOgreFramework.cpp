@@ -5,13 +5,11 @@
 
 #include "AdvancedOgreFramework.hpp"
 
-using namespace irrklang;
 
 template <>OgreFramework* Ogre::Singleton<OgreFramework>::ms_Singleton = 0;
 //-------------------------------------------------------------------------------------------------------
 OgreFramework::OgreFramework() :    mRoot(0), mRenderWindow(0), mViewport(0), mLog(0), mTimer(0), 
-                                    mInputMgr(0), mKb(0), mMouse(0), mTrayMgr(0), mTimeSinceLastFrame(0), 
-                                    soundeng(createIrrKlangDevice())
+                                    mInputMgr(0), mKb(0), mMouse(0), mTrayMgr(0), mTimeSinceLastFrame(0)                                  
 {
 
 }
@@ -25,9 +23,6 @@ OgreFramework::~OgreFramework()
         OIS::InputManager::destroyInputSystem(mInputMgr);
     if (mRoot)
         delete mRoot;
-    if (soundeng)
-        soundeng->drop();
-
 }
 //-------------------------------------------------------------------------------------------------------
 bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener, OIS::MouseListener *pMouseListener)
@@ -107,10 +102,6 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
 
     mTimer = new Ogre::Timer();
     mTimer->reset();
-
-    //graphics done, check if sound initialized
-    if (!soundeng)
-        return 1;
 
     mRenderWindow->setActive(true);
 
