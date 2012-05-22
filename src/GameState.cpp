@@ -41,7 +41,6 @@ void GameState::enter()
     mCamera->lookAt(Ogre::Vector3(0, 0, 0));
     mCamera->setNearClipDistance(1);
     mCamera->setFarClipDistance(1000);
-    mCamera->setFOVy(Ogre::Radian(45));
 
     mCamera->setAspectRatio(Ogre::Real(OgreFramework::getSingletonPtr()->mViewport->getActualWidth()) / 
         Ogre::Real(OgreFramework::getSingletonPtr()->mViewport->getActualHeight()));
@@ -252,7 +251,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         //get a position slightly in front of the camera
         Ogre::Vector3 spherePosition = mCamera->getPosition() + (mCamera->getDerivedDirection() * Ogre::Vector3(20, 20, 20));
         Ogre::SceneNode *sphereNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(spherePosition, Ogre::Quaternion(Ogre::Real(0)));
-        //make a radius of 5 meters
+        //make a radius of 4 meters
         sphereNode->setScale(0.1, 0.1, 0.1);
         sphereNode->attachObject(mSphereEntity);
         mSphereNodes.push_back(sphereNode);
