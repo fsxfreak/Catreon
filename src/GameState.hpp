@@ -65,13 +65,17 @@ public:
     void itemSelected(OgreBites::SelectMenu *menu);
 
     void update(double timeSinceLastFrame);
+    int getMillisecondsFromLastCall();
 
     void updatePhysics();
 
-    int getMillisecondsFromLastCall();
-
     btVector3 ogreVecToBullet(const Ogre::Vector3 &ogrevector);
     Ogre::Vector3 bulletVecToOgre(const btVector3 &bulletvector);
+
+    void updateSound();
+
+    vec3df ogreVecToIrr(const Ogre::Vector3 &ogrevector);
+    Ogre::Vector3 irrVecToOgre(const vec3df &irrvector);
 
 private:
     Ogre::Timer                             *mTimer;
@@ -124,6 +128,5 @@ private:
 
     //sound engine
     ISoundEngine                            *sound;
-
 };
 #endif

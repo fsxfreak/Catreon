@@ -510,6 +510,7 @@ void GameState::update(double timeSinceLastFrame)
     getInput();
     moveCamera();
     updatePhysics();
+    updateSound();
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::buildGUI()
@@ -565,4 +566,19 @@ int GameState::getMillisecondsFromLastCall()
     mTimer->reset();
     return nTime;
 
+}
+//-------------------------------------------------------------------------------------------------------
+void GameState::updateSound()
+{
+    sound->setListenerPosition(ogreVecToIrr(mCamera->getDerivedPosition()), ogreVecToIrr(mCamera->getDerivedDirection()));
+}
+//-------------------------------------------------------------------------------------------------------
+vec3df GameState::ogreVecToIrr(const Ogre::Vector3 &ogrevector)
+{
+    return vec3df(ogrevector.x, ogrevector.y, ogrevector.z);
+}
+//-------------------------------------------------------------------------------------------------------
+Ogre::Vector3 GameState::irrVecToOgre(const vec3df &irrvector)
+{
+    return Ogre::Vector3(irrvector.X, irrvector.Y, irrvector.Z);
 }
