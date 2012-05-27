@@ -9,6 +9,14 @@ GNU Lesser General Public License version 3.0
 available at http://www.gnu.org/licenses/lgpl-3.0.txt
 */
 
+/********************************************************
+TODO
+-Overhaul object creation, combine physics, graphics, and sound intialization into one class per object
+-Begin treating GameState like an actual world, instead of the current test world state
+-Begin creating the world in Maya
+-Get sound update framework into place after object creation is completed
+********************************************************/
+
 
 #include "stdafx.h"
 

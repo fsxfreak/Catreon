@@ -9,8 +9,9 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 /********************************************************
 TODO
-Implement acceleration/deceleration
-Create derived classes of this class, Car, Truck
+-Implement acceleration/deceleration
+-Create derived classes of this class, Car, Truck
+-Initialize physics, sound, and graphics for the vehicle object
 ********************************************************/
 
 #include "stdafx.h"

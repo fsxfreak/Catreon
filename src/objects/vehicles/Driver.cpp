@@ -7,6 +7,12 @@ GNU Lesser General Public License version 3.0
 available at http://www.gnu.org/licenses/lgpl-3.0.txt
 */
 
+/********************************************************
+TODO
+-Take inputs from various sources for a neural network AI
+-Find a way to "know" where the car is in the city
+********************************************************/
+
 #include "stdafx.h"
 #include "objects\vehicles\Driver.h"
 

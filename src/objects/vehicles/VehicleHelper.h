@@ -19,10 +19,6 @@ class VehicleHelper
 private:
     std::vector<Vehicle*> mVehicles;
 
-    //car model
-    Ogre::Entity *mVehicleEntity;
-    Ogre::SceneNode *mVehicleNode;
-
 public:
     VehicleHelper();
     ~VehicleHelper();

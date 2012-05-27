@@ -9,7 +9,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 /********************************************************
 TODO
-
+-Store all cars here
 ********************************************************/
 
 #include "stdafx.h"
