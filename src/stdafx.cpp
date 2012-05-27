@@ -10,15 +10,15 @@
 #include <OgreEntity.h>
 #include <OgreWindowEventUtilities.h>
 
-#include "Vehicle.h"
-#include "Driver.h"
+#include "objects\vehicles\Vehicle.h"
+#include "objects\vehicles\Driver.h"
 
-#include "DemoApp.hpp"
+#include "framework\DemoApp.hpp"
 
-#include "AdvancedOgreFramework.hpp"
-#include "AppState.hpp"
-#include "AppStateManager.hpp"
-#include "MenuState.hpp"
+#include "framework\AdvancedOgreFramework.hpp"
+#include "framework\AppState.hpp"
+#include "framework\AppStateManager.hpp"
+#include "framework\MenuState.hpp"
 #include "GameState.hpp"
 
     #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32

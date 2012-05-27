@@ -1,18 +1,18 @@
 //code largely based on Advanced Ogre Framework at ogre3d.org
 //minor formatting and name changes to fit my conventions
 
-#ifndef MENU_STATE_HPP
-#define MENU_STATE_HPP
+#ifndef PAUSE_STATE_HPP
+#define PAUSE_STATE_HPP
 #include "stdafx.h"
 
-#include "AppState.hpp"
+#include "framework\AppState.hpp"
 
-class MenuState : public AppState
+class PauseState : public AppState
 {
 public:
-    MenuState();
+    PauseState();
 
-    DECLARE_APPSTATE_CLASS(MenuState)
+    DECLARE_APPSTATE_CLASS(PauseState)
 
     void enter();
     void createScene();
@@ -26,11 +26,12 @@ public:
     bool mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
 
     void buttonHit(OgreBites::Button *button);
+    void yesNoDialogClosed(const Ogre::DisplayString &question, bool yesHit);
 
     void update(double timeSinceLastFrame);
 
 private:
     bool mbQuit;
+    bool mbQuestionActive;
 };
-
 #endif

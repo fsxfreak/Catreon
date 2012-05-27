@@ -13,9 +13,9 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #define GAME_STATE_HPP
 
 #include "stdafx.h"
-#include "AppState.hpp"
+#include "framework\AppState.hpp"
 
-#include "DotSceneLoader.h"
+#include "framework\DotSceneLoader.h"
 
 #include <OgreSubEntity.h>
 #include <OgreMaterialManager.h>
@@ -26,8 +26,8 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include <irrKlang.h>
 
-#include "Vehicle.h"
-#include "Driver.h"
+#include "objects\vehicles\Vehicle.h"
+#include "objects\vehicles\Driver.h"
 
 using namespace irrklang;
 

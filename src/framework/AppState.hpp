@@ -5,7 +5,7 @@
 #define APP_STATE_HPP
 
 #include "stdafx.h"
-#include "AdvancedOgreFramework.hpp"
+#include "framework\AdvancedOgreFramework.hpp"
 
 class AppState;
 

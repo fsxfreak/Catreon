@@ -12,7 +12,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include "stdafx.h"
 #include <string>
-#include "Vehicle.h"
+#include "objects\vehicles\Vehicle.h"
 
 class Driver
 {

@@ -14,7 +14,7 @@ Create derived classes of this class, Car, Truck
 ********************************************************/
 
 #include "stdafx.h"
-#include "Vehicle.h"
+#include "objects\vehicles\Vehicle.h"
 //-------------------------------------------------------------------------------------------------------
 Vehicle::Vehicle(int nCargo, int nPassengers) 
     :    mnSpeed(0), mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1)

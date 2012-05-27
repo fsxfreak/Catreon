@@ -6,8 +6,8 @@
 
 #include "stdafx.h"
 
-#include "AdvancedOgreFramework.hpp"
-#include "AppStateManager.hpp"
+#include "framework\AdvancedOgreFramework.hpp"
+#include "framework\AppStateManager.hpp"
 
 class DemoApp
 {

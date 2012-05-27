@@ -11,7 +11,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #define VEHICLE_H
 
 #include "stdafx.h"
-#include "AdvancedOgreFramework.hpp"
+#include "framework\AdvancedOgreFramework.hpp"
 
 class Vehicle
 {
