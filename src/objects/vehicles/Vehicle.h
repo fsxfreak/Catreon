@@ -13,11 +13,9 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include "stdafx.h"
 #include "framework\AdvancedOgreFramework.hpp"
 
-class Vehicle
+class Vehicle : public Object
 {
 private:
-    int mnSpeed;
-
     bool mbIsMoving;
     //healthy as in not totaled
     bool mbIsHealthy;

@@ -95,4 +95,5 @@ void Vehicle::decelerate(int nDecelForce)
     mnSpeed = (nDecelForce * OgreFramework::getSingletonPtr()->getTimeSinceLastFrame()) - mnSpeed;
     if (mnSpeed < 0)
         mbIsInReverse = true;
+
 }
