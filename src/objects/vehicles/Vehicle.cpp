@@ -17,8 +17,8 @@ TODO
 #include "stdafx.h"
 #include "objects\vehicles\Vehicle.h"
 //-------------------------------------------------------------------------------------------------------
-Vehicle::Vehicle(int nCargo, int nPassengers) 
-    :    mnSpeed(0), mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1)
+Vehicle::Vehicle(int nCargo, int nPassengers) : mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1),
+                                                Object(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0, 0, 0), 0)
 {
 }
 //-------------------------------------------------------------------------------------------------------
@@ -32,6 +32,7 @@ int Vehicle::getSpeed()
     return mnSpeed;
 }
 //-------------------------------------------------------------------------------------------------------
+//will be depreciated
 void Vehicle::setSpeed(int nSpeed)
 {
     mnSpeed = nSpeed;
@@ -79,6 +80,7 @@ unsigned int Vehicle::getPassengers()
     return mnPassengers;
 }
 //-------------------------------------------------------------------------------------------------------
+//will be replaced by actual physics
 void Vehicle::accelerate(int nAccelForce)
 {
     //accelforce, in m/s, 1 - little acceleration, 5, normal acceleration, 10, flooring
@@ -88,6 +90,7 @@ void Vehicle::accelerate(int nAccelForce)
         mbIsHealthy = false;
 }
 //-------------------------------------------------------------------------------------------------------
+//will be replaced by actual physics
 void Vehicle::decelerate(int nDecelForce)
 {
     //accelforce, in m/s, 1 - little decleration, 5, normal deceleration, 10, flooring breaks

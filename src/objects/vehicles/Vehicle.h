@@ -12,6 +12,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include "stdafx.h"
 #include "framework\AdvancedOgreFramework.hpp"
+#include "objects\Object.hpp"
 
 class Vehicle : public Object
 {

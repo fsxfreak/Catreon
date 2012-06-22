@@ -32,7 +32,7 @@ public:
     Driver();
     ~Driver();
 
-    void setCar(Vehicle *Vehicle);
+    void setCar(Vehicle *vehicle);
 
     void updateDestination(std::string strDest);
     void updateDecision();
