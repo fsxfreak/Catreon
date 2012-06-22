@@ -12,6 +12,7 @@
 
 #include "objects\vehicles\Vehicle.h"
 #include "objects\vehicles\Driver.h"
+#include "objects\Object.hpp"
 
 #include "framework\DemoApp.hpp"
 
