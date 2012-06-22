@@ -78,6 +78,7 @@ public:
     Ogre::Vector3 irrVecToOgre(const vec3df &irrvector);
 
 private:
+    Ogre::SceneManager                      *mSceneMgr;
     Ogre::Timer                             *mTimer;
 
     //scale model for testing
