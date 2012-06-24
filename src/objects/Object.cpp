@@ -17,29 +17,38 @@ TODO
 #include "stdafx.h"
 #include "objects\Object.hpp"
 //-------------------------------------------------------------------------------------------------------
-Object::Object() :  mDirection(0, 0, 0), mPosition(0, 0, 0), mnSpeed(0)
+Object::Object() :  mPosition(0, 0, 0), mDirection(0, 0, 0)
 {
-    //mObjectNode(new Ogre::SceneNode(mSceneMgr->getRootSceneNode()->
-                                        //createChildSceneNode(mPosition, Ogre::Quaternion(0, 0, 0, 0))));
+    //mObjectNode = GameState::mSceneMgr->getRootSceneNode()->createChildSceneNode(mPosition, Ogre::Quaternion(0, 0, 0, 0));
+    //maybe something like this implemented in base classes
 }
 //-------------------------------------------------------------------------------------------------------
 Object::~Object()
 {
-    //pure virtual, no implementation
 }
 //-------------------------------------------------------------------------------------------------------
-Object::Object(Ogre::Vector3 direction, Ogre::Vector3 position, int initialspeed) : 
-                                        mDirection(direction), mPosition(position), mnSpeed(initialspeed) 
+Object::Object(Ogre::Vector3 position, Ogre::Quaternion direction = Ogre::Quaternion(0, 0, 0, 0))
+    : mPosition(position), mDirection(direction)
 {
-
+    //mObjectNode = GameState::mSceneMgr->getRootSceneNode()->createChildSceneNode(mPosition, mDirection);
 }
 //-------------------------------------------------------------------------------------------------------
-void Object::accelerate(const Ogre::Vector3 &direction, const btScalar &force)
+void Object::accelerate(const btScalar &force)
 {
-
+    //pure virtual
 }
 //-------------------------------------------------------------------------------------------------------
 void Object::decelerate(const btScalar &force)
 {
-
+    //pure virtual
+}
+//-------------------------------------------------------------------------------------------------------
+void Object::initializePhysics()
+{
+    //pure virtual
+}
+//-------------------------------------------------------------------------------------------------------
+void Object::initializeMaterial()
+{
+    //pure virtual
 }

@@ -11,7 +11,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #define OBJECT_HPP
 
 #include "stdafx.h"
-//#include "framework\AdvancedOgreFramework.hpp"
+#include "framework\AdvancedOgreFramework.hpp"
 //#include "GameState.hpp"
 
 #include <btBulletCollisionCommon.h>
@@ -21,26 +21,22 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 class Object
 {
 protected:
-    Ogre::Vector3 mDirection;
     Ogre::Vector3 mPosition;
+    Ogre::Quaternion mDirection;
 
-    std::unique_ptr<Ogre::SceneNode> mObjectNode;
-
-    int mnSpeed;
+    btScalar mMass;
 
     Object();
-    Object(Ogre::Vector3 direction, Ogre::Vector3 position, int initialspeed);
+    Object(Ogre::Vector3 position, Ogre::Quaternion direction);
 
-    virtual ~Object() = 0;
+    virtual ~Object();
 
 public:
-    virtual void accelerate(const Ogre::Vector3 &direction, const btScalar &force); 
-    virtual void decelerate(const btScalar &force);
+    virtual void accelerate(const btScalar &force) = 0; 
+    virtual void decelerate(const btScalar &force) = 0;
 
-private:
-    Object(const Object& obj);
-    Object(Object &&obj);
-
+    virtual void initializePhysics() = 0;
+    virtual void initializeMaterial() = 0;
 };
 
 #endif
