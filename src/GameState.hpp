@@ -26,9 +26,6 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include <irrKlang.h>
 
-#include "objects\vehicles\Vehicle.h"
-#include "objects\vehicles\Driver.h"
-
 using namespace irrklang;
 
 enum QueryFlags
@@ -69,16 +66,17 @@ public:
 
     void updatePhysics();
 
-    btVector3 ogreVecToBullet(const Ogre::Vector3 &ogrevector);
-    Ogre::Vector3 bulletVecToOgre(const btVector3 &bulletvector);
+    static btVector3 ogreVecToBullet(const Ogre::Vector3 &ogrevector);
+    static Ogre::Vector3 bulletVecToOgre(const btVector3 &bulletvector);
 
     void updateSound();
 
-    vec3df ogreVecToIrr(const Ogre::Vector3 &ogrevector);
-    Ogre::Vector3 irrVecToOgre(const vec3df &irrvector);
+    static vec3df ogreVecToIrr(const Ogre::Vector3 &ogrevector);
+    static Ogre::Vector3 irrVecToOgre(const vec3df &irrvector);
+
+    Ogre::SceneManager *mSceneMgr;
 
 private:
-    Ogre::SceneManager                      *mSceneMgr;
     Ogre::Timer                             *mTimer;
 
     //scale model for testing

@@ -24,12 +24,14 @@ TODO
 
 using namespace irrklang;
 
+
+
 GameState::GameState() :    mMoveSpeed(0.1f), mRotateSpeed(0.3f), mbLMouseDown(false), mbRMouseDown(false), 
                             mbQuit(false), mbSettingsMode(false), mDetailsPanel(0), 
                             physicsInitialized(false),
                             mTimer(new Ogre::Timer)
 {
-
+    
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::enter()
