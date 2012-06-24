@@ -32,6 +32,8 @@ protected:
 
     */
 private:
+    Ball(); //none of that bouncy shit will work without a scenemgr
+
     //mbtBall could be static, but we want flexibility in terms of size
     btCollisionShape* mbtBall;
 
@@ -43,7 +45,6 @@ private:
     Ogre::SceneManager *mSceneMgr;
 
 public:
-    Ball();
     Ball(Ogre::SceneManager *scenemgr, int size, Ogre::Vector3 position, Ogre::Quaternion direction);
     virtual ~Ball();
 

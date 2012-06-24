@@ -25,7 +25,7 @@ to do with the ball
 #include "objects\ball\Ball.hpp"
 
 //-------------------------------------------------------------------------------------------------------
-Ball::Ball() : mnSize(1), Object(Ogre::Vector3(0, 0, 0), Ogre::Quaternion(0, 0, 0, 0)), scenemgr(0)
+Ball::Ball() : mnSize(1), Object(Ogre::Vector3(0, 0, 0), Ogre::Quaternion(0, 0, 0, 0)), mSceneMgr(0)
 {
 
 }
