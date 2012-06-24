@@ -22,6 +22,8 @@ private:
     bool mbIsHealthy;
     bool mbIsInReverse;
 
+    int mnSpeed;
+
     //in pounds
     unsigned int mnCargo;
     unsigned int mnPassengers;
@@ -29,7 +31,7 @@ private:
     Vehicle& operator=(const Vehicle&);
     
 public:
-    Vehicle(int nCargo, int nPassengers);
+    Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position, Ogre::Quaternion direction);
     ~Vehicle();
 
     int getSpeed();
