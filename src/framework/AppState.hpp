@@ -50,7 +50,7 @@ protected:
     void        popAllAndPushAppState(AppState *state)      { mParent->popAllAndPushAppState(state); }
 
     AppStateListener *mParent;
-    Ogre::SceneManager *mSceneMgr;
+    //Ogre::SceneManager *mSceneMgr;
     Ogre::Camera *mCamera;
     
     Ogre::FrameEvent mFrameEvent;
