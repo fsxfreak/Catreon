@@ -132,7 +132,9 @@ private:
     ISoundEngine                            *sound;
 };
 
-inline GameState* getGame()
+//just a little of what I like to call function typedef
+//singleton design thanks to Jabberwocky at Ogre3d
+inline GameState* getGameState()
 {
     return GameState::getSingleton();
 }

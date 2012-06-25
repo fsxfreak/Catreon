@@ -42,13 +42,11 @@ private:
     Ogre::SceneNode *mNode;
     Ogre::Entity *mEntity;
 
-    Ogre::SceneManager *mSceneMgr;
-
     virtual void initializePhysics();
     virtual void initializeMaterial();
 
 public:
-    Ball(Ogre::SceneManager *scenemgr, int size, Ogre::Vector3 position, Ogre::Quaternion direction);
+    Ball(int size, Ogre::Vector3 position, Ogre::Quaternion direction);
     virtual ~Ball();
 
     virtual void accelerate(const btScalar &force);
