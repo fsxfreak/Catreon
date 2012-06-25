@@ -78,7 +78,7 @@ public:
 
     static GameState* getSingleton() { return mGameSingleton; }
 
-private:
+//private: (public for singleton access)
     static GameState                        *mGameSingleton;
     Ogre::Timer                             *mTimer;
 
