@@ -76,7 +76,10 @@ public:
 
     Ogre::SceneManager *mSceneMgr;
 
+    static GameState* getSingleton() { return mGameSingleton; }
+
 private:
+    static GameState                        *mGameSingleton;
     Ogre::Timer                             *mTimer;
 
     //scale model for testing
@@ -122,10 +125,15 @@ private:
     btSequentialImpulseConstraintSolver     *mSolver;
     btDiscreteDynamicsWorld                 *mDynamicsWorld;
 
-    std::deque<btCollisionShape*>           mCollisionShapes;
-    std::deque<btRigidBody*>                mRigidBodies;
+    std::vector<btCollisionShape*>           mCollisionShapes;
+    std::vector<btRigidBody*>                mRigidBodies;
 
     //sound engine
     ISoundEngine                            *sound;
 };
+
+inline GameState* getGame()
+{
+    return GameState::getSingleton();
+}
 #endif
