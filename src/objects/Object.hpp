@@ -31,12 +31,12 @@ protected:
 
     virtual ~Object();
 
+    virtual void initializePhysics() = 0;
+    virtual void initializeMaterial() = 0;
+
 public:
     virtual void accelerate(const btScalar &force) = 0; 
     virtual void decelerate(const btScalar &force) = 0;
-
-    virtual void initializePhysics() = 0;
-    virtual void initializeMaterial() = 0;
 };
 
 #endif
