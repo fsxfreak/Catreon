@@ -31,7 +31,7 @@ private:
     Vehicle& operator=(const Vehicle&);
     
 public:
-    Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position, Ogre::Quaternion direction);
+    Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position, Ogre::Vector3 direction);
     ~Vehicle();
 
     int getSpeed();

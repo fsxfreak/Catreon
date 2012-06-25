@@ -22,12 +22,12 @@ class Object
 {
 protected:
     Ogre::Vector3 mPosition;
-    Ogre::Quaternion mDirection;
+    Ogre::Vector3 mDirection;
 
     btScalar mMass;
 
     Object();
-    Object(Ogre::Vector3 position, Ogre::Quaternion direction);
+    Object(Ogre::Vector3 position, Ogre::Vector3 direction);
 
     virtual ~Object();
 

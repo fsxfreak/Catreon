@@ -27,7 +27,7 @@ Object::~Object()
 {
 }
 //-------------------------------------------------------------------------------------------------------
-Object::Object(Ogre::Vector3 position, Ogre::Quaternion direction = Ogre::Quaternion(0, 0, 0, 0))
+Object::Object(Ogre::Vector3 position, Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0))
     : mPosition(position), mDirection(direction)
 {
     //mObjectNode = GameState::mSceneMgr->getRootSceneNode()->createChildSceneNode(mPosition, mDirection);

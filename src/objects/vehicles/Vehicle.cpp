@@ -18,7 +18,7 @@ TODO
 #include "objects\vehicles\Vehicle.h"
 //-------------------------------------------------------------------------------------------------------
 Vehicle::Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position = Ogre::Vector3(0, 0, 0),
-    Ogre::Quaternion direction = Ogre::Quaternion(0, 0, 0, 0)) 
+    Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0)) 
     : mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1),
       Object(position, direction)
 {
