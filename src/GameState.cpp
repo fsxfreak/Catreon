@@ -24,14 +24,14 @@ TODO
 
 using namespace irrklang;
 
-
+GameState* GameState::mGameSingleton = NULL;
 
 GameState::GameState() :    mMoveSpeed(0.1f), mRotateSpeed(0.3f), mbLMouseDown(false), mbRMouseDown(false), 
                             mbQuit(false), mbSettingsMode(false), mDetailsPanel(0), 
                             physicsInitialized(false),
                             mTimer(new Ogre::Timer)
 {
-    
+    mGameSingleton = this;  //is that even right? - doesn't matter, works
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::enter()
@@ -254,7 +254,8 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
     //mbsettingsmode true = buffered input(non continuous)
     if (mbSettingsMode && OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_RETURN) ||
         OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_F))
-    {        
+    {   
+        /*
         //default sphere has radius of 50 units
         Ogre::Entity* mSphereEntity = mSceneMgr->createEntity(Ogre::SceneManager::PT_SPHERE);
         mSphereEntity->setMaterialName("Examples/BumpyMetal");
@@ -295,7 +296,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
 
         mDynamicsWorld->addRigidBody(spherebody);
         mRigidBodies.push_back(spherebody);
-
+        */
         physicsInitialized = true;
     }
 
@@ -552,11 +553,8 @@ void GameState::buildGUI()
 //-------------------------------------------------------------------------------------------------------
 void GameState::updatePhysics()
 {
-    if (physicsInitialized)
-    {
-        int milliseconds = getMillisecondsFromLastCall();
-        mDynamicsWorld->stepSimulation(static_cast<double>(milliseconds) / 1000, 30);
-    }
+    int milliseconds = getMillisecondsFromLastCall();
+    mDynamicsWorld->stepSimulation(static_cast<double>(milliseconds) / 1000, 30);
 }
 //-------------------------------------------------------------------------------------------------------
 btVector3 GameState::ogreVecToBullet(const Ogre::Vector3 &ogrevector)
