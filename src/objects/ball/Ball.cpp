@@ -25,7 +25,7 @@ to do with the ball
 #include "objects\ball\Ball.hpp"
 
 //-------------------------------------------------------------------------------------------------------
-Ball::Ball() : mnSize(1), Object(Ogre::Vector3(0, 0, 0), Ogre::Quaternion(0, 0, 0, 0)), mSceneMgr(0)
+Ball::Ball() : mnSize(1), Object(Ogre::Vector3(0, 0, 0), Ogre::Quaternion(0, 0, 0, 0))
 {
 
 }
@@ -36,7 +36,6 @@ Ball::Ball(int size, Ogre::Vector3 position,
         Object(position, direction)
 {
     initializeMaterial();
-    initializePhysics();
 }
 //-------------------------------------------------------------------------------------------------------
 Ball::~Ball()
@@ -73,9 +72,6 @@ void Ball::initializePhysics()
     BtOgMotionState *ballState = new BtOgMotionState(ballTransform, mNode);
     btRigidBody::btRigidBodyConstructionInfo ballInfo(ballMass, ballState, mbtBallShape, ballInertia);
     btRigidBody *ballBody = new btRigidBody(ballInfo);
-
-
-
 }
 //-------------------------------------------------------------------------------------------------------
 void Ball::initializeMaterial()
