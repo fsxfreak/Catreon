@@ -75,6 +75,7 @@ public:
     static Ogre::Vector3 irrVecToOgre(const vec3df &irrvector);
 
     Ogre::SceneManager *mSceneMgr;
+    Ogre::Camera       *mCamera;
 
     static GameState* getSingleton() { return mGameSingleton; }
 
