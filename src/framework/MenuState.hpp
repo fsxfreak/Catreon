@@ -30,6 +30,7 @@ public:
     void update(double timeSinceLastFrame);
 
     Ogre::SceneManager *mSceneMgr;
+    Ogre::Camera       *mCamera;
 private:
     bool mbQuit;
 };

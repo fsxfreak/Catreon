@@ -51,7 +51,7 @@ protected:
 
     AppStateListener *mParent;
     //Ogre::SceneManager *mSceneMgr;
-    Ogre::Camera *mCamera;
+    //Ogre::Camera *mCamera;
     
     Ogre::FrameEvent mFrameEvent;
 };
