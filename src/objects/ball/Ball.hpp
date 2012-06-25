@@ -35,14 +35,17 @@ private:
     Ball(); //none of that bouncy shit will work without a scenemgr
 
     //mbtBall could be static, but we want flexibility in terms of size
-    btCollisionShape* mbtBall;
+    btCollisionShape *mbtBallShape;
 
-    int mnSize;
+    int mnSize; //mnSize = actual radius in meters
 
     Ogre::SceneNode *mNode;
     Ogre::Entity *mEntity;
 
     Ogre::SceneManager *mSceneMgr;
+
+    virtual void initializePhysics();
+    virtual void initializeMaterial();
 
 public:
     Ball(Ogre::SceneManager *scenemgr, int size, Ogre::Vector3 position, Ogre::Quaternion direction);
@@ -50,9 +53,6 @@ public:
 
     virtual void accelerate(const btScalar &force);
     virtual void decelerate(const btScalar &force);
-
-    virtual void initializePhysics();
-    virtual void initializeMaterial();
 };
 
 #endif

@@ -31,7 +31,7 @@ Ball::Ball() : mnSize(1), Object(Ogre::Vector3(0, 0, 0), Ogre::Quaternion(0, 0, 
 }
 //-------------------------------------------------------------------------------------------------------
 Ball::Ball(Ogre::SceneManager *scenemgr, int size, Ogre::Vector3 position, 
-                                Ogre::Quaternion direction = Ogre::Quaternion(0, 0, 0, 0)) 
+           Ogre::Quaternion direction = Ogre::Quaternion(0, 0, 0, 0)) 
     :   mSceneMgr(scenemgr),
         mnSize(size), 
         Object(position, direction)
@@ -42,7 +42,9 @@ Ball::Ball(Ogre::SceneManager *scenemgr, int size, Ogre::Vector3 position,
 //-------------------------------------------------------------------------------------------------------
 Ball::~Ball()
 {
-    delete mbtBall;
+    delete mbtBallShape;
+    delete mNode;
+    delete mEntity;
 }
 //-------------------------------------------------------------------------------------------------------
 void Ball::accelerate(const btScalar &force)
@@ -57,6 +59,21 @@ void Ball::decelerate(const btScalar &force)
 //-------------------------------------------------------------------------------------------------------
 void Ball::initializePhysics()
 {
+    mbtBallShape = new btSphereShape(mnSize);
+    
+    btVector3 btPosition = GameState::ogreVecToBullet(mPosition);
+    btTransform ballTransform;
+    ballTransform.setIdentity();
+
+    btScalar ballMass(1);   //any positive value = dynamic body
+    btVector3 ballInertia(0, 0, 0);
+    mbtBallShape->calculateLocalInertia(ballMass, ballInertia);
+
+    ballTransform.setOrigin(btPosition);
+
+    BtOgMotionState *ballState = new BtOgMotionState(ballTransform, mNode);
+    btRigidBody::btRigidBodyConstructionInfo ballInfo(ballMass, ballState, mbtBallShape, ballInertia);
+    btRigidBody *ballBody = new btRigidBody(ballInfo);
 
 }
 //-------------------------------------------------------------------------------------------------------
@@ -64,4 +81,10 @@ void Ball::initializeMaterial()
 {
     mEntity = mSceneMgr->createEntity(Ogre::SceneManager::PT_SPHERE);
     mEntity->setMaterialName("Examples/BumpyMetal");
+    mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(mPosition, mDirection);
+    float ballsize = static_cast<float>(mnSize) / 50.0f;    //have to translate scale of PT_SPHERE
+    mNode->setScale(ballsize, ballsize, ballsize);
+    mNode->attachObject(mEntity);
+
+    initializePhysics();
 }
