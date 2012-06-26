@@ -35,7 +35,7 @@ Ball::Ball(int size, Ogre::Vector3 position, Ogre::Vector3 direction)
         Object(position, direction)
 {
     initializeMaterial();
-    accelerate(200 * mnSize, getGameState()->mCamera->getDerivedDirection().normalisedCopy()); 
+    accelerate(500 * mnSize, getGameState()->mCamera->getDerivedDirection().normalisedCopy()); 
     //just a little initial acceleration to get the ball moving(see what I did there)
 }
 //-------------------------------------------------------------------------------------------------------
