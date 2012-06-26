@@ -24,6 +24,8 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include <btBulletDynamicsCommon.h>
 #include "BtOgMotionState.h"
 
+#include "objects\ball\Ball.hpp"
+
 #include <irrKlang.h>
 
 using namespace irrklang;
@@ -118,7 +120,6 @@ public:
     bool                                    mbSettingsMode;
 
     //physics engine
-    bool                                    physicsInitialized;
 
     btDefaultCollisionConfiguration         *mCollisionConfiguration;
     btCollisionDispatcher                   *mDispatcher;

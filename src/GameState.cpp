@@ -28,7 +28,6 @@ GameState* GameState::mGameSingleton = NULL;
 
 GameState::GameState() :    mMoveSpeed(0.1f), mRotateSpeed(0.3f), mbLMouseDown(false), mbRMouseDown(false), 
                             mbQuit(false), mbSettingsMode(false), mDetailsPanel(0), 
-                            physicsInitialized(false),
                             mTimer(new Ogre::Timer)
 {
     mGameSingleton = this;  //is that even right? - doesn't matter, works
@@ -174,14 +173,10 @@ void GameState::createScene()
     btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState, plane, localInertia);
     groundRigidBody = new btRigidBody(groundRigidBodyCI);
 
-    groundRigidBody->setFriction(20);
+    groundRigidBody->setFriction(8000);
 
     mDynamicsWorld->addRigidBody(groundRigidBody);
     mRigidBodies.push_back(groundRigidBody);
-
-    //4 meters = 0.1 * 50 meters (default PT_SPHERE radius)
-    btCollisionShape* btSphere = new btSphereShape(4);
-    mCollisionShapes.push_back(btSphere);
 
     mOgreHeadEntity = mSceneMgr->createEntity("Cube", "ogrehead.mesh");
     mOgreHeadEntity->setQueryFlags(OGRE_HEAD_MASK);
@@ -297,7 +292,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         mDynamicsWorld->addRigidBody(spherebody);
         mRigidBodies.push_back(spherebody);
         */
-        physicsInitialized = true;
+        Ball *ball = new Ball(1, mCamera->getPosition() + (mCamera->getDerivedDirection() * Ogre::Vector3(20, 20, 20))); 
     }
 
     //clear all spheres
