@@ -25,17 +25,16 @@ protected:
     /* inherited protected members
 
     Ogre::Vector3 mPosition;
-    Ogre::Quaternion mDirection;
+    Ogre::Vector3 mDirection;
 
     int mnSpeed;
-    btScalar mMass;
-
     */
 private:
     Ball(); //none of that bouncy shit will work without a scenemgr
 
     //mbtBall could be static, but we want flexibility in terms of size
     btCollisionShape *mbtBallShape;
+    btRigidBody *mbtBallBody;
 
     int mnSize; //mnSize = actual radius in meters
 
@@ -46,10 +45,12 @@ private:
     virtual void initializeMaterial();
 
 public:
-    Ball(int size, Ogre::Vector3 position, Ogre::Quaternion direction);
+    //according to copy elision, passing by value is most efficient here
+    Ball(int size, Ogre::Vector3 position, Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0));
     virtual ~Ball();
 
     virtual void accelerate(const btScalar &force);
+    virtual void accelerate(const btScalar &force, const Ogre::Vector3 &direction);
     virtual void decelerate(const btScalar &force);
 };
 
