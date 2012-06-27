@@ -24,7 +24,7 @@ TODO
 
 using namespace irrklang;
 
-GameState* GameState::mGameSingleton = NULL;
+GameState* GameState::mGameSingleton = nullptr;
 
 GameState::GameState() :    mMoveSpeed(0.1f), mRotateSpeed(0.3f), mbLMouseDown(false), mbRMouseDown(false), 
                             mbQuit(false), mbSettingsMode(false), mDetailsPanel(0), 
