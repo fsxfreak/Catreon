@@ -1,0 +1,30 @@
+material lambert1
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+
+			ambient 0.113817 0.113817 0.113817 1
+			diffuse 0.650401 0.650401 0.650401 1
+			specular 0 0 0 1
+			emissive 0 0 0
+		}
+	}
+}
+material road_lamb
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+
+			ambient 0.422766 0.364706 0.364706 1
+			diffuse 0.154467 0.154467 0.154467 1
+			specular 0 0 0 1
+			emissive 0 0 0
+		}
+	}
+}
