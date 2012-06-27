@@ -30,12 +30,12 @@ Ball::Ball() : mnSize(1), Object(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0, 0, 0))
 
 }
 //-------------------------------------------------------------------------------------------------------
-Ball::Ball(int size, Ogre::Vector3 position, Ogre::Vector3 direction) 
+Ball::Ball(float size, Ogre::Vector3 position, Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0)) 
     :   mnSize(size), 
         Object(position, direction)
 {
     initializeMaterial();
-    accelerate(500 * mnSize, getGameState()->mCamera->getDerivedDirection().normalisedCopy()); 
+    accelerate(5000.0f * mnSize, getGameState()->mCamera->getDerivedDirection().normalisedCopy());
     //just a little initial acceleration to get the ball moving(see what I did there)
 }
 //-------------------------------------------------------------------------------------------------------
@@ -80,9 +80,9 @@ void Ball::initializePhysics()
     btRigidBody::btRigidBodyConstructionInfo ballInfo(ballMass, ballState, mbtBallShape, ballInertia);
     mbtBallBody = new btRigidBody(ballInfo);
 
-    mbtBallBody->setFriction(900);
-    mbtBallBody->setRestitution(20);
-    mbtBallBody->setDamping(0.1, 0.1);
+    mbtBallBody->setFriction(900);      //some arbitrary friction number that doesn't seem to work
+    mbtBallBody->setRestitution(50);    //bounciness
+    mbtBallBody->setDamping(0.1, 0.1);  //rate at which ball loses speed (0.0 - 1.0)
 
     getGameState()->mDynamicsWorld->addRigidBody(mbtBallBody);
     getGameState()->mRigidBodies.push_back(mbtBallBody);
@@ -93,7 +93,7 @@ void Ball::initializeMaterial()
     mEntity = getGameState()->mSceneMgr->createEntity(Ogre::SceneManager::PT_SPHERE);
     mEntity->setMaterialName("Examples/BumpyMetal");
     mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(mPosition, Ogre::Quaternion(0, 0, 0, 0));
-    float ballsize = (static_cast<float>(mnSize) / 50.0f) + 0.02;    //have to translate scale of PT_SPHERE
+    float ballsize = mnSize / 50.0f + 0.02;    //have to translate scale of PT_SPHERE
     mNode->setScale(ballsize, ballsize, ballsize);
     mNode->attachObject(mEntity);
 
