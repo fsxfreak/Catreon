@@ -36,6 +36,8 @@ enum QueryFlags
     CUBE_MASK = 1 << 1
 };
 
+class Ball;
+
 class GameState: public AppState
 {
 public:
@@ -129,6 +131,7 @@ public:
 
     std::vector<btCollisionShape*>           mCollisionShapes;
     std::vector<btRigidBody*>                mRigidBodies;
+    std::vector<Ball*>                       mBalls;
 
     //sound engine
     ISoundEngine                            *sound;
