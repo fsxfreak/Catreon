@@ -292,21 +292,19 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         mDynamicsWorld->addRigidBody(spherebody);
         mRigidBodies.push_back(spherebody);
         */
-        Ball *ball = new Ball(1, mCamera->getPosition() + (mCamera->getDerivedDirection() * Ogre::Vector3(20, 20, 20))); 
+
+        Ball *ball = new Ball(0.5, mCamera->getDerivedPosition() + (mCamera->getDerivedDirection() * Ogre::Vector3(20, 20, 20)), Ogre::Vector3(0, 0, 0));
+        mBalls.push_back(ball);
     }
 
-    //clear all spheres
+    //clear all balls
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_NUMPAD0))
     {
-        for (int iii = 0; iii < mSphereNodes.size(); ++iii)
+        std::vector<Ball*>::iterator it = mBalls.begin();
+        for (it; it != mBalls.end(); ++it)
         {
-            if (mSphereNodes[iii] && mSphereNodes[iii] != mSceneMgr->getRootSceneNode())
-            {
-                mSphereNodes[iii]->detachAllObjects();
-                mSceneMgr->destroySceneNode(mSphereNodes[iii]);
-            }
+            delete *it;
         }
-        mSphereNodes.clear();
         //iterator starts at one because the ground plane is at 0
         for (int body = mDynamicsWorld->getNumCollisionObjects() - 1; body >= 1; body--)
         {
