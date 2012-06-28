@@ -27,23 +27,24 @@ to do with the ball
 //-------------------------------------------------------------------------------------------------------
 Ball::Ball() : mnSize(1), Object(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0, 0, 0))
 {
-
+    initializeMaterial();
+    accelerate(5000.0f * mnSize, getGameState()->mCamera->getDerivedDirection().normalisedCopy());
 }
 //-------------------------------------------------------------------------------------------------------
-Ball::Ball(float size, Ogre::Vector3 position, Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0)) 
-    :   mnSize(size), 
+Ball::Ball(float size, float initacceleration, Ogre::Vector3 position, Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0)) 
+    :   mnSize(size),
         Object(position, direction)
 {
     initializeMaterial();
-    accelerate(5000.0f * mnSize, getGameState()->mCamera->getDerivedDirection().normalisedCopy());
+    accelerate(initacceleration * mnSize, getGameState()->mCamera->getDerivedDirection().normalisedCopy());
     //just a little initial acceleration to get the ball moving(see what I did there)
 }
 //-------------------------------------------------------------------------------------------------------
 Ball::~Ball()
 {
     delete mbtBallShape;
-    delete mNode;
-    delete mEntity;
+    getGameState()->mSceneMgr->destroyEntity(mEntity);
+    getGameState()->mSceneMgr->destroySceneNode(mNode);
 }
 //-------------------------------------------------------------------------------------------------------
 void Ball::accelerate(const btScalar &force)

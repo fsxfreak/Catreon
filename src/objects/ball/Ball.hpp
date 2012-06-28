@@ -29,8 +29,6 @@ protected:
 
     */
 private:
-     
-
     //mbtBall could be static, but we want flexibility in terms of size
     btCollisionShape *mbtBallShape;
     btRigidBody *mbtBallBody;
@@ -44,9 +42,9 @@ private:
     virtual void initializeMaterial();
 
 public:
-    Ball(); //none of that bouncy shit will work without a scenemgr, though
+    Ball();
     //according to copy elision, passing by value is most efficient here
-    Ball(float size, Ogre::Vector3 position, Ogre::Vector3 direction);
+    Ball(float size, float initacceleration, Ogre::Vector3 position, Ogre::Vector3 direction);
     virtual ~Ball();
 
     virtual void accelerate(const btScalar &force);
