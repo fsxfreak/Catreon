@@ -106,6 +106,13 @@ void GameState::exit()
     if (mSceneMgr)
         OgreFramework::getSingletonPtr()->mRoot->destroySceneManager(mSceneMgr);
 
+    std::vector<Ball*>::iterator it = mBalls.begin();
+    for (it; it != mBalls.end(); ++it)
+    {
+        if (*it)
+            delete *it;
+    }
+
     for (int body = mDynamicsWorld->getNumCollisionObjects() - 1; body >= 0; body--)
     {
         btCollisionObject *object = mDynamicsWorld->getCollisionObjectArray()[body];
@@ -143,9 +150,9 @@ void GameState::createScene()
 
     //scale model for reference
     mScaleModel = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    mScaleEntity = mSceneMgr->createEntity("Scale", "scalingtest.mesh");
+    mScaleEntity = mSceneMgr->createEntity("Scale", "cityblocktestogre.mesh");
     mScaleModel->attachObject(mScaleEntity);
-    mScaleModel->setPosition(-30, 4, 0);
+    mScaleModel->setPosition(-50, 0, 0);
 
     //ground plane for testing
     planeGround.normal = Ogre::Vector3(0, 1, 0);
@@ -245,55 +252,9 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         return true;
     }
 
-    //on press enter
-    //mbsettingsmode true = buffered input(non continuous)
-    if (mbSettingsMode && OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_RETURN) ||
-        OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_F))
+    if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_F))
     {   
-        /*
-        //default sphere has radius of 50 units
-        Ogre::Entity* mSphereEntity = mSceneMgr->createEntity(Ogre::SceneManager::PT_SPHERE);
-        mSphereEntity->setMaterialName("Examples/BumpyMetal");
-        //get a position slightly in front of the camera
-        Ogre::Vector3 spherePosition = mCamera->getPosition() + (mCamera->getDerivedDirection() * Ogre::Vector3(20, 20, 20));
-        Ogre::SceneNode *sphereNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(spherePosition, Ogre::Quaternion(Ogre::Real(0)));
-        //make a radius of 4 meters
-        sphereNode->setScale(0.1, 0.1, 0.1);
-        sphereNode->attachObject(mSphereEntity);
-        mSphereNodes.push_back(sphereNode);
-
-        //let bullet have the position sphere is intiailized on
-        btVector3 btSpherePosition = ogreVecToBullet(spherePosition);
-
-        btTransform sphereTransform;
-        sphereTransform.setIdentity();
-
-        btScalar sphereMass(50);
-        btVector3 sphereInertia(0, 0, 0);
-        mCollisionShapes[1]->calculateLocalInertia(sphereMass, sphereInertia);
-
-        sphereTransform.setOrigin(btSpherePosition);
-
-        BtOgMotionState* sphereState = new BtOgMotionState(sphereTransform, sphereNode);
-        btRigidBody::btRigidBodyConstructionInfo sphereInfo(sphereMass, sphereState, mCollisionShapes[1], sphereInertia);
-        btRigidBody* spherebody = new btRigidBody(sphereInfo);
-
-        spherebody->setFriction(50);
-
-        int sphereForce = 0;
-        if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_LSHIFT))
-            sphereForce = 300;
-        else
-            sphereForce = 50;
-
-
-        spherebody->setLinearVelocity(ogreVecToBullet(mCamera->getDerivedDirection().normalisedCopy() * sphereForce));
-
-        mDynamicsWorld->addRigidBody(spherebody);
-        mRigidBodies.push_back(spherebody);
-        */
-
-        Ball *ball = new Ball(0.5, mCamera->getDerivedPosition() + (mCamera->getDerivedDirection() * Ogre::Vector3(20, 20, 20)), Ogre::Vector3(0, 0, 0));
+        Ball *ball = new Ball(0.5, 5000.0, mCamera->getDerivedPosition() + (mCamera->getDerivedDirection() * Ogre::Vector3(20, 20, 20)), Ogre::Vector3(0, 0, 0));
         mBalls.push_back(ball);
     }
 
@@ -305,6 +266,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         {
             delete *it;
         }
+        mBalls.clear();
         //iterator starts at one because the ground plane is at 0
         for (int body = mDynamicsWorld->getNumCollisionObjects() - 1; body >= 1; body--)
         {
