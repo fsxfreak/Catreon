@@ -66,6 +66,7 @@ void Ball::decelerate(const btScalar &force)
 void Ball::initializePhysics()
 {
     mbtBallShape = new btSphereShape(mnSize);
+    getGameState()->mCollisionShapes.push_back(mbtBallShape);
     
     btVector3 btPosition = GameState::ogreVecToBullet(mPosition);
     btTransform ballTransform;

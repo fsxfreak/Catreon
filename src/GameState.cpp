@@ -103,15 +103,15 @@ void GameState::exit()
     mSceneMgr->destroyCamera(mCamera);
     mSceneMgr->destroyQuery(mRaySceneQuery);
 
-    if (mSceneMgr)
-        OgreFramework::getSingletonPtr()->mRoot->destroySceneManager(mSceneMgr);
-
     std::vector<Ball*>::iterator it = mBalls.begin();
     for (it; it != mBalls.end(); ++it)
     {
         if (*it)
             delete *it;
     }
+
+    if (mSceneMgr)
+        OgreFramework::getSingletonPtr()->mRoot->destroySceneManager(mSceneMgr);
 
     for (int body = mDynamicsWorld->getNumCollisionObjects() - 1; body >= 0; body--)
     {
@@ -120,12 +120,6 @@ void GameState::exit()
     }
     mRigidBodies.clear();
 
-    auto shapesIt = mCollisionShapes.begin();
-    auto shapesEnd = mCollisionShapes.end();
-    for (shapesIt; shapesIt != shapesEnd; ++shapesIt)
-    {
-        delete *shapesIt;
-    }
     mCollisionShapes.clear();
 
     delete mDynamicsWorld;
@@ -150,9 +144,11 @@ void GameState::createScene()
 
     //scale model for reference
     mScaleModel = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    mScaleEntity = mSceneMgr->createEntity("Scale", "cityblocktestogre.mesh");
+    mScaleEntity = mSceneMgr->createEntity("CityBlock", "cityblocktestogre.mesh");
+    mScaleEntity->setMaterialName("cityblocktestogre/Building");
     mScaleModel->attachObject(mScaleEntity);
-    mScaleModel->setPosition(-50, 0, 0);
+    mScaleModel->setPosition(-50, 1, 0);
+    mScaleEntity->setCastShadows(true);
 
     //ground plane for testing
     planeGround.normal = Ogre::Vector3(0, 1, 0);
@@ -301,7 +297,20 @@ bool GameState::mouseMoved(const OIS::MouseEvent &mouseEvent)
     if (mbRMouseDown)
     {
         mCamera->yaw(Ogre::Degree(mouseEvent.state.X.rel * -0.18f));
-        mCamera->pitch(Ogre::Degree(mouseEvent.state.Y.rel * -0.18f));
+
+        Ogre::Degree oldpitch = mCamera->getOrientation().getPitch();
+        Ogre::Degree newpitch = (Ogre::Degree(mouseEvent.state.Y.rel * -0.18f)) + oldpitch;
+
+        if (newpitch < Ogre::Degree(90.0f) 
+            && newpitch > Ogre::Degree(-90.0f))
+        {
+            mCamera->pitch(Ogre::Degree(mouseEvent.state.Y.rel * -0.18f));
+        }
+
+        if (Ogre::Degree(mCamera->getOrientation().getPitch()) < Ogre::Degree(-90))
+            mCamera->pitch(Ogre::Degree(1));
+        else if (Ogre::Degree(mCamera->getOrientation().getPitch()) > Ogre::Degree(90))
+            mCamera->pitch(Ogre::Degree(-1));
     }
 
     return true;

@@ -1,4 +1,4 @@
-material lambert1
+material CityBlock/Building
 {
 	technique
 	{
@@ -13,7 +13,7 @@ material lambert1
 		}
 	}
 }
-material road_lamb
+material CityBlock/Road
 {
 	technique
 	{
