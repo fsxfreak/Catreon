@@ -47,7 +47,6 @@ public:
     Ball(float size, float initacceleration, Ogre::Vector3 position, Ogre::Vector3 direction);
     virtual ~Ball();
 
-    virtual void accelerate(const btScalar &force);
     virtual void accelerate(const btScalar &force, const Ogre::Vector3 &direction);
     virtual void decelerate(const btScalar &force);
 };

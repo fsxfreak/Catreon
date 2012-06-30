@@ -9,16 +9,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 /********************************************************
 TODO
--Make it so that initializing Ball initializes everything 
-to do with the ball
-=Create the entity (PT_SPHERE), give entity a material
-=Using position passed in as a param, create a scenenode there
-=Scale node accordingly to size, attach entity to node
-=Physics time, initialize collison shape (btSphereShape)
-=Give bullet the position acquired from param
-=Calculate mass and inertia
-=use BtOgMotionState, give it the bttransform and the node
-=construct a btRigidBody with info
+-All done!
 ********************************************************/
 
 #include "stdafx.h"
@@ -42,14 +33,10 @@ Ball::Ball(float size, float initacceleration, Ogre::Vector3 position, Ogre::Vec
 //-------------------------------------------------------------------------------------------------------
 Ball::~Ball()
 {
-    delete mbtBallShape;
+    if (mbtBallShape)    
+        delete mbtBallShape;
     getGameState()->mSceneMgr->destroyEntity(mEntity);
     getGameState()->mSceneMgr->destroySceneNode(mNode);
-}
-//-------------------------------------------------------------------------------------------------------
-void Ball::accelerate(const btScalar &force)
-{
-
 }
 //-------------------------------------------------------------------------------------------------------
 void Ball::accelerate(const btScalar &force, const Ogre::Vector3 &direction)
