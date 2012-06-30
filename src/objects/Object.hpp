@@ -33,7 +33,7 @@ protected:
     virtual void initializeMaterial() = 0;
 
 public:
-    virtual void accelerate(const btScalar &force) = 0; 
+    virtual void accelerate(const btScalar &force, const Ogre::Vector3 &direction) = 0; 
     virtual void decelerate(const btScalar &force) = 0;
 };
 

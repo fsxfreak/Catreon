@@ -33,7 +33,7 @@ Object::Object(Ogre::Vector3 position, Ogre::Vector3 direction = Ogre::Vector3(0
     //mObjectNode = GameState::mSceneMgr->getRootSceneNode()->createChildSceneNode(mPosition, mDirection);
 }
 //-------------------------------------------------------------------------------------------------------
-void Object::accelerate(const btScalar &force)
+void Object::accelerate(const btScalar &force, const Ogre::Vector3 &direction)
 {
     //pure virtual
 }
