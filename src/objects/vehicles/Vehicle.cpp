@@ -12,6 +12,9 @@ TODO
 -Implement acceleration/deceleration
 -Create derived classes of this class, Car, Truck
 -Initialize physics, sound, and graphics for the vehicle object
+-Get a valid spawn point somewhere and start driving
+-Actually drive around itself using physics
+-Make a simple car already
 ********************************************************/
 
 #include "stdafx.h"

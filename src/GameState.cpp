@@ -15,6 +15,10 @@ TODO
 -Begin treating GameState like an actual world, instead of the current test world state
 -Begin creating the world in Maya
 -Get sound update framework into place after object creation is completed
+-Get work done on that vehicle class
+-Find a way to spawn vehicles in the world according to the driver stats
+-Find a way to find valid spawn points (not in some building)
+-Move scene creation to an xml for use with RapidXML dotscene loader
 ********************************************************/
 
 
@@ -36,6 +40,11 @@ GameState::GameState() :    mMoveSpeed(0.1f), mRotateSpeed(0.3f), mbLMouseDown(f
 void GameState::enter()
 {
     OgreFramework::getSingletonPtr()->mLog->logMessage("Entering Gamestate...");
+
+    DotSceneLoader* pDotSceneLoader = new DotSceneLoader();
+    pDotSceneLoader->parseDotScene("CubeScene.xml", "General", mSceneMgr, mSceneMgr->getRootSceneNode());
+    delete pDotSceneLoader;
+
 
     //initialize the scene
     mSceneMgr = OgreFramework::getSingletonPtr()->mRoot->createSceneManager(Ogre::ST_GENERIC, "GameSceneMgr");
@@ -138,14 +147,19 @@ void GameState::createScene()
     directional->setType(Ogre::Light::LT_DIRECTIONAL);
     directional->setDirection(0, -1, 0);
 
-    DotSceneLoader* pDotSceneLoader = new DotSceneLoader();
-    pDotSceneLoader->parseDotScene("CubeScene.xml", "General", mSceneMgr, mSceneMgr->getRootSceneNode());
-    delete pDotSceneLoader;
+    Ogre::Light *point = mSceneMgr->createLight("pointlight");
+    point->setType(Ogre::Light::LT_POINT);
+    point->setCastShadows(true);
+    point->setPosition(100, 20, -3);
 
     //scale model for reference
     mScaleModel = mSceneMgr->getRootSceneNode()->createChildSceneNode();
     mScaleEntity = mSceneMgr->createEntity("CityBlock", "cityblocktestogre.mesh");
-    mScaleEntity->setMaterialName("cityblocktestogre/Building");
+    mScaleEntity->getSubEntity(0)->setMaterialName("lambert1");
+    mScaleEntity->getSubEntity(1)->setMaterialName("road_lamb");
+    mScaleEntity->getSubEntity(2)->setMaterialName("pyramidlamb");
+    mScaleEntity->getSubEntity(3)->setMaterialName("glasslamb");
+    mScaleEntity->getSubEntity(4)->setMaterialName("grassparklamb");
     mScaleModel->attachObject(mScaleEntity);
     mScaleModel->setPosition(-50, 1, 0);
     mScaleEntity->setCastShadows(true);
@@ -286,16 +300,16 @@ bool GameState::mouseMoved(const OIS::MouseEvent &mouseEvent)
         Ogre::Degree oldpitch = mCamera->getOrientation().getPitch();
         Ogre::Degree newpitch = (Ogre::Degree(mouseEvent.state.Y.rel * -0.18f)) + oldpitch;
 
-        if (newpitch < Ogre::Degree(89.0f) 
-            && newpitch > Ogre::Degree(-89.0f))
+        if (newpitch < Ogre::Degree(88.0f) 
+            && newpitch > Ogre::Degree(-88.0f))
         {
             mCamera->pitch(Ogre::Degree(mouseEvent.state.Y.rel * -0.18f));
         }
 
         if (Ogre::Degree(mCamera->getOrientation().getPitch()) < Ogre::Degree(-90))
-            mCamera->pitch(Ogre::Degree(20));
+            mCamera->pitch(Ogre::Degree(1));
         else if (Ogre::Degree(mCamera->getOrientation().getPitch()) > Ogre::Degree(90))
-            mCamera->pitch(Ogre::Degree(-20));
+            mCamera->pitch(Ogre::Degree(-1));
     }
 
     return true;
