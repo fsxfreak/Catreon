@@ -41,10 +41,9 @@ void GameState::enter()
 {
     OgreFramework::getSingletonPtr()->mLog->logMessage("Entering Gamestate...");
 
-    DotSceneLoader* pDotSceneLoader = new DotSceneLoader();
-    pDotSceneLoader->parseDotScene("CubeScene.xml", "General", mSceneMgr, mSceneMgr->getRootSceneNode());
-    delete pDotSceneLoader;
-
+    /*DotSceneLoader* pDotSceneLoader = new DotSceneLoader();
+    pDotSceneLoader->parseDotScene("SampleDotScene.scene", "General", mSceneMgr, mSceneMgr->getRootSceneNode());
+    delete pDotSceneLoader;*/
 
     //initialize the scene
     mSceneMgr = OgreFramework::getSingletonPtr()->mRoot->createSceneManager(Ogre::ST_GENERIC, "GameSceneMgr");
@@ -154,12 +153,8 @@ void GameState::createScene()
 
     //scale model for reference
     mScaleModel = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    mScaleEntity = mSceneMgr->createEntity("CityBlock", "cityblocktestogre.mesh");
-    mScaleEntity->getSubEntity(0)->setMaterialName("lambert1");
-    mScaleEntity->getSubEntity(1)->setMaterialName("road_lamb");
-    mScaleEntity->getSubEntity(2)->setMaterialName("pyramidlamb");
-    mScaleEntity->getSubEntity(3)->setMaterialName("glasslamb");
-    mScaleEntity->getSubEntity(4)->setMaterialName("grassparklamb");
+    mScaleEntity = mSceneMgr->createEntity("CityBlock", "city.mesh");
+    mScaleEntity->getSubEntity(0)->setMaterialName("fourlaneroadlamb");
     mScaleModel->attachObject(mScaleEntity);
     mScaleModel->setPosition(-50, 1, 0);
     mScaleEntity->setCastShadows(true);
