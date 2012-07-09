@@ -1,0 +1,31 @@
+One way ----
+	=/ One lane = 3.7m
+	=/ Four lanes = 14.8m
+
+Two ways ----
+	Oncoming ---
+		Highway -- 
+			= Two lane = 8.4m (4.2m per lane)	-15r -15l -25r -25l
+		City --
+			= Four lane = 15.8m (3.7m per lane, 1m separation)	-25r -25l
+			= Six lane = 23.2m (3.7m per lane, 1m separation)	-25r -25l
+			Neighborhood -
+				= Two lane = 6.6m (3.3m per lane)
+	Non-oncoming ---
+		Highway --
+			= Eight lane = 31.6m (3.7m per lane, 2m divider)	-15r -15l -25r -25l
+			= Six lane = 24.2m (3.7m per lane, 2m divider)	-15r -15l -25r -25l
+			= Four lane = 16.8m (3.7m per lane, 2m divider)		-15r -15l -25r -25l
+				
+For all highway lanes, 15º slight right, 15º slight left, and 25º right and left
+
+
+Generic cars - 
+	Sedan -
+		= Length = 4.72m
+		= Width = 1.75m
+		= Height = 1.41m
+	Suv - 
+		= Length = 5.18m
+		= Width = 1.94m
+		= Height = 1.88m
