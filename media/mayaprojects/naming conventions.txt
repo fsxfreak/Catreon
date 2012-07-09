@@ -1,0 +1,11 @@
+Objects in maya -
+	Actual object - 
+		type_[optional:environmenttype]_size(# of lanes/something sensible)_[optional:turntype]_meshtype
+		ex: road_city_fourlane_plane
+	Material
+		type__[optional:environmenttype]size(# of lanes/something sensible)_[optional:turntype]_materialtype
+		ex: road_city_fourlane_blinn
+		
+Textures -
+	type_[optional:environmenttype]_size(# of lanes/something sensible)_[optional:turntype]_"texture"
+	ex: road_city_fourlane_texture
