@@ -1,16 +1,13 @@
 One way ----
-	=/ One lane = 3.7m
 	=/ Four lanes = 14.8m
 
 Two ways ----
 	Oncoming ---
-		Highway -- 
-			= Two lane = 8.4m (4.2m per lane)	-15r -15l -25r -25l
 		City --
-			= Four lane = 15.8m (3.7m per lane, 1m separation)	-25r -25l
-			= Six lane = 23.2m (3.7m per lane, 1m separation)	-25r -25l
+			= Four lane = 15.8m (3.7m per lane, 1m separation)	-25r -25l		[road_city_oncoming_fourlane_plane]
+			= Six lane = 23.2m (3.7m per lane, 1m separation)	-25r -25l		[road_city_oncoming_sixlane_plane]
 			Neighborhood -
-				= Two lane = 6.6m (3.3m per lane)
+				= Two lane = 6.6m (3.3m per lane)								[road_neighbor_oncoming_twolane_plane]
 	Non-oncoming ---
 		Highway --
 			= Eight lane = 31.6m (3.7m per lane, 2m divider)	-15r -15l -25r -25l
@@ -29,3 +26,8 @@ Generic cars -
 		= Length = 5.18m
 		= Width = 1.94m
 		= Height = 1.88m
+
+PSD sizes - 1024x1024
+Lane line width = 0.45in
+Lane line height = 4.0in
+Lane line separation = 4.6in
