@@ -4,17 +4,18 @@ One way ----
 Two ways ----
 	Oncoming ---
 		City --
-			= Four lane = 15.8m (3.7m per lane, 1m separation)	-25r -25l		[road_city_oncoming_fourlane_plane]
-			= Six lane = 23.2m (3.7m per lane, 1m separation)	-25r -25l		[road_city_oncoming_sixlane_plane]
+			=/ Four lane = 15.8m (3.7m per lane, 1m separation)					[road_city_oncoming_fourlane_plane]
+			=/ Six lane = 23.2m (3.7m per lane, 1m separation)					[road_city_oncoming_sixlane_plane]
 			Neighborhood -
 				= Two lane = 6.6m (3.3m per lane)								[road_neighbor_oncoming_twolane_plane]
 	Non-oncoming ---
 		Highway --
-			= Eight lane = 31.6m (3.7m per lane, 2m divider)	-15r -15l -25r -25l
-			= Six lane = 24.2m (3.7m per lane, 2m divider)	-15r -15l -25r -25l
-			= Four lane = 16.8m (3.7m per lane, 2m divider)		-15r -15l -25r -25l
+			= Eight lane = 31.6m (3.7m per lane, 2m divider)
+			= Six lane = 24.2m (3.7m per lane, 2m divider)
+			= Four lane = 16.8m (3.7m per lane, 2m divider)		
 				
 For all highway lanes, 15º slight right, 15º slight left, and 25º right and left
+		-Never mind, I can bend combinations of road tiles to create a custom turn
 
 
 Generic cars - 
@@ -28,6 +29,13 @@ Generic cars -
 		= Height = 1.88m
 
 PSD sizes - 1024x1024
-Lane line width = 0.45in
-Lane line height = 4.0in
-Lane line separation = 4.6in
+Total document size = 14.222in x 14.222in
+Four lane - 
+	Lane line width = 0.45in
+	Lane line height = 4.0in
+	Lane line separation = 3.44in
+Six lane - 
+	width = 0.3in
+	height = 2.66in
+	separation = 2.29in
+	
