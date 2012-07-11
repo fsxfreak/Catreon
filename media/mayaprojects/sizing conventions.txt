@@ -11,7 +11,7 @@ Two ways ----
 	Non-oncoming ---
 		Highway --
 			=/ Eight lane = 31.6m (3.7m per lane, 2m divider)					[road_hwy_divided_eightlane_plane]
-			= Six lane = 24.2m (3.7m per lane, 2m divider)
+			=/ Six lane = 24.2m (3.7m per lane, 2m divider)(0.588 in/m)			[road_hwy_divided_sixlane_plane]
 			= Four lane = 16.8m (3.7m per lane, 2m divider)		
 				
 For all highway lanes, 15º slight right, 15º slight left, and 25º right and left
@@ -37,7 +37,7 @@ Four lane -
 Six lane - 
 	width = 0.3in
 	height = 2.66in
-	separation = 2.29in
+	separation = 2.08in
 Eight lane - 
 	width = 0.225
 	height = 1.995
