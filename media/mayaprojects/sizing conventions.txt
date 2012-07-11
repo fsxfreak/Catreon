@@ -12,7 +12,7 @@ Two ways ----
 		Highway --
 			=/ Eight lane = 31.6m (3.7m per lane, 2m divider)					[road_hwy_divided_eightlane_plane]
 			=/ Six lane = 24.2m (3.7m per lane, 2m divider)(0.588 in/m)			[road_hwy_divided_sixlane_plane]
-			= Four lane = 16.8m (3.7m per lane, 2m divider)		
+			=/ Four lane = 16.8m (3.7m per lane, 2m divider)(0.847 in/m)			[road_hwy_divided_fourlane_plane]
 				
 For all highway lanes, 15º slight right, 15º slight left, and 25º right and left
 		-Never mind, I can bend combinations of road tiles to create a custom turn
@@ -33,7 +33,7 @@ Total document size = 14.222in x 14.222in
 Four lane - 
 	Lane line width = 0.45in
 	Lane line height = 4.0in
-	Lane line separation = 3.44in
+	Lane line separation = 3.111in
 Six lane - 
 	width = 0.3in
 	height = 2.66in
