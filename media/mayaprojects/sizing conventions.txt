@@ -7,10 +7,10 @@ Two ways ----
 			=/ Four lane = 15.8m (3.7m per lane, 1m separation)					[road_city_oncoming_fourlane_plane]
 			=/ Six lane = 23.2m (3.7m per lane, 1m separation)					[road_city_oncoming_sixlane_plane]
 			Neighborhood -
-				= Two lane = 6.6m (3.3m per lane)								[road_neighbor_oncoming_twolane_plane]
+				=/ Two lane = 6.6m (3.3m per lane)								[road_neighbor_oncoming_twolane_plane]
 	Non-oncoming ---
 		Highway --
-			= Eight lane = 31.6m (3.7m per lane, 2m divider)
+			=/ Eight lane = 31.6m (3.7m per lane, 2m divider)					[road_hwy_divided_eightlane_plane]
 			= Six lane = 24.2m (3.7m per lane, 2m divider)
 			= Four lane = 16.8m (3.7m per lane, 2m divider)		
 				
@@ -38,4 +38,8 @@ Six lane -
 	width = 0.3in
 	height = 2.66in
 	separation = 2.29in
+Eight lane - 
+	width = 0.225
+	height = 1.995
+	separation = 1.717
 	
