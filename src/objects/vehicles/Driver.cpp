@@ -11,6 +11,8 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 TODO
 -Take inputs from various sources for a neural network AI
 -Find a way to "know" where the car is in the city
+-The driver drives the vehicle
+-The vehicle doesn't have the driver
 ********************************************************/
 
 #include "stdafx.h"
@@ -25,8 +27,8 @@ Driver::Driver(int nSkill, int nRiskTaker) : mnSkill(nSkill), mnRiskTaker(nRiskT
 //random, default constructor
 Driver::Driver() : mnNervousness(25)
 {
-    mnSkill = rand() % 100;
-    mnRiskTaker = rand() % 100;
+    mnSkill = rand() % 100 + 1;
+    mnRiskTaker = rand() % 100 + 1;
 }
 //-------------------------------------------------------------------------------------------------------
 Driver::~Driver()

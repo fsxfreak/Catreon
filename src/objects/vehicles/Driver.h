@@ -17,7 +17,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 class Driver
 {
 private:
-    std::string mstrDestination;
+    std::string mstrGoal;
 
     //all personality on a scale of 1 to 100
     int mnSkill;
