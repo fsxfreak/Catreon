@@ -19,12 +19,16 @@ TODO
 
 #include "stdafx.h"
 #include "objects\vehicles\Vehicle.h"
+
+long int Vehicle::nVehiclesCreated = 0;
+
 //-------------------------------------------------------------------------------------------------------
 Vehicle::Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position = Ogre::Vector3(0, 0, 0),
     Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0)) 
     : mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1),
       Object(position, direction)
 {
+    mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode("Vehicle_"+nVehiclesCreated, position); 
 }
 //-------------------------------------------------------------------------------------------------------
 Vehicle::~Vehicle()
@@ -55,6 +59,27 @@ void Vehicle::setSpeed(int nSpeed)
     {
         mbIsInReverse = 1;
     }
+}
+//-------------------------------------------------------------------------------------------------------
+Ogre::Vector3 Vehicle::getPosition()
+{
+    return mNode->getPosition();
+}
+//-------------------------------------------------------------------------------------------------------
+Ogre::Vector3 Vehicle::getDirection()
+{
+    //Converts quaternions into a direction vector for easier direction checking of AI driving on roads
+    Ogre::Quaternion temp = mNode->getOrientation();
+    Ogre::Vector3 dir(0, 0, 0);
+    if (temp.z == 1.0f)
+    {
+        Ogre::Radian radangle =  2 * Ogre::Math::ACos(temp.w);
+        dir.x = Ogre::Math::Cos(radangle);
+        dir.y = 0;
+        dir.z = Ogre::Math::Sin(radangle);
+    }
+
+    return dir;
 }
 //-------------------------------------------------------------------------------------------------------
 bool Vehicle::isMoving()
@@ -105,3 +130,5 @@ void Vehicle::decelerate(int nDecelForce)
         mbIsInReverse = true;
 
 }
+//-------------------------------------------------------------------------------------------------------
+

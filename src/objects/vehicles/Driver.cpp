@@ -19,9 +19,11 @@ TODO
 #include "objects\vehicles\Driver.h"
 
 //-------------------------------------------------------------------------------------------------------
-Driver::Driver(int nSkill, int nRiskTaker) : mnSkill(nSkill), mnRiskTaker(nRiskTaker)
+Driver::Driver(int nSkill, int nRiskTaker, 
+                int nCargo, int nPassengers, Ogre::Vector3 position) 
+                : mnSkill(nSkill), mnRiskTaker(nRiskTaker), mnNervousness(0)
 {
-
+    pVehicle = new Vehicle(nCargo, nPassengers, position);
 }
 //-------------------------------------------------------------------------------------------------------
 //random, default constructor
@@ -41,14 +43,14 @@ void Driver::setCar(Vehicle *vehicle)
     pVehicle = vehicle;
 }
 //-------------------------------------------------------------------------------------------------------
-void Driver::updateDestination(std::string strDest)
+void Driver::updateGoal(std::string strGoal)
 {
-    mstrDestination = strDest;
+    mstrGoal = strGoal;
 }
 //-------------------------------------------------------------------------------------------------------
 std::string Driver::getDestination()
 {
-    return mstrDestination;
+    return mstrGoal;
 }
 //-------------------------------------------------------------------------------------------------------
 void Driver::updateDecision()

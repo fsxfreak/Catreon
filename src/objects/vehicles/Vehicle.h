@@ -13,14 +13,25 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include "stdafx.h"
 #include "framework\AdvancedOgreFramework.hpp"
 #include "objects\Object.hpp"
+#include "GameState.hpp"
 
 class Vehicle : public Object
 {
 private:
+    /*  inherited members
+    Ogre::Vector3 mPosition;
+    Ogre::Vector3 mDirection;
+    */
+    static long int nVehiclesCreated;
+
+    Ogre::SceneNode *mNode;
+    
+    //state variables
     bool mbIsMoving;
-    //healthy as in not totaled
-    bool mbIsHealthy;
+    bool mbIsHealthy;       //healthy as in not totaled
     bool mbIsInReverse;
+
+    bool isFollowingClosely;
 
     int mnSpeed;
 
@@ -37,12 +48,18 @@ public:
     int getSpeed();
     void setSpeed(int nSpeed);
 
+    Ogre::Vector3 getPosition();
+    Ogre::Vector3 getDirection();
+
     bool isMoving();
     bool isHealthy();
     bool isInReverse();
 
     unsigned int getCargo();
     unsigned int getPassengers();
+
+    virtual void initializePhysics();
+    virtual void intializeMaterial();
 
     virtual void decelerate(int nDecelForce);
     virtual void accelerate(int nAccelForce);

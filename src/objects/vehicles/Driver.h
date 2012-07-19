@@ -28,13 +28,13 @@ private:
 
     Driver& operator=(const Driver& cDriver);
 public:
-    Driver(int nSkill, int nRiskTaker);
+    Driver(int nSkill, int nRiskTaker, int nCargo, int nPassengers, Ogre::Vector3 position);
     Driver();
     ~Driver();
 
     void setCar(Vehicle *vehicle);
 
-    void updateDestination(std::string strDest);
+    void updateGoal(std::string strDest);
     void updateDecision();
 
     int getSkill();
