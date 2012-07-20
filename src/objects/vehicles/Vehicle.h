@@ -42,7 +42,8 @@ private:
     Vehicle& operator=(const Vehicle&);
     
 public:
-    Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position, Ogre::Vector3 direction);
+    Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position = Ogre::Vector3(0, 0, 0), 
+                                        Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0));
     ~Vehicle();
 
     int getSpeed();
@@ -59,12 +60,10 @@ public:
     unsigned int getPassengers();
 
     virtual void initializePhysics();
-    virtual void intializeMaterial();
+    virtual void initializeMaterial();
 
-    virtual void decelerate(int nDecelForce);
-    virtual void accelerate(int nAccelForce);
-
+    virtual void accelerate(const btScalar &force, const Ogre::Vector3 &direction);
+    virtual void decelerate(const btScalar &force);
 };
-
 
 #endif

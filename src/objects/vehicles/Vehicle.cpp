@@ -20,15 +20,23 @@ TODO
 #include "stdafx.h"
 #include "objects\vehicles\Vehicle.h"
 
+#include <sstream>
+
+
+
 long int Vehicle::nVehiclesCreated = 0;
 
 //-------------------------------------------------------------------------------------------------------
-Vehicle::Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position = Ogre::Vector3(0, 0, 0),
-    Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0)) 
+Vehicle::Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position, Ogre::Vector3 direction) 
     : mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1),
       Object(position, direction)
 {
-    mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode("Vehicle_"+nVehiclesCreated, position); 
+    std::ostringstream oss;
+    oss << nVehiclesCreated;
+    std::string name = "Vehicle_";
+    name += oss.str();
+
+    mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(name, position); 
 }
 //-------------------------------------------------------------------------------------------------------
 Vehicle::~Vehicle()
@@ -110,24 +118,34 @@ unsigned int Vehicle::getPassengers()
     return mnPassengers;
 }
 //-------------------------------------------------------------------------------------------------------
-//will be replaced by actual physics
-void Vehicle::accelerate(int nAccelForce)
+void Vehicle::initializePhysics()
 {
-    //accelforce, in m/s, 1 - little acceleration, 5, normal acceleration, 10, flooring
-    //dirty base implementation, adding acceleration by time handling
-    mnSpeed = (nAccelForce * OgreFramework::getSingletonPtr()->getTimeSinceLastFrame()) + mnSpeed;
-    if (mnSpeed < 150)
-        mbIsHealthy = false;
+
+}
+//-------------------------------------------------------------------------------------------------------
+void Vehicle::initializeMaterial()
+{
+
 }
 //-------------------------------------------------------------------------------------------------------
 //will be replaced by actual physics
-void Vehicle::decelerate(int nDecelForce)
+void Vehicle::accelerate(const btScalar &force, const Ogre::Vector3 &direction)
+{
+    //accelforce, in m/s, 1 - little acceleration, 5, normal acceleration, 10, flooring
+    //dirty base implementation, adding acceleration by time handling
+    /*mnSpeed = (nAccelForce * OgreFramework::getSingletonPtr()->getTimeSinceLastFrame()) + mnSpeed;
+    if (mnSpeed < 150)
+        mbIsHealthy = false;*/
+}
+//-------------------------------------------------------------------------------------------------------
+//will be replaced by actual physics
+void Vehicle::decelerate(const btScalar &force)
 {
     //accelforce, in m/s, 1 - little decleration, 5, normal deceleration, 10, flooring breaks
     //dirty base implementation, adding deceleration by time handling
-    mnSpeed = (nDecelForce * OgreFramework::getSingletonPtr()->getTimeSinceLastFrame()) - mnSpeed;
+    /*mnSpeed = (nDecelForce * OgreFramework::getSingletonPtr()->getTimeSinceLastFrame()) - mnSpeed;
     if (mnSpeed < 0)
-        mbIsInReverse = true;
+        mbIsInReverse = true;*/
 
 }
 //-------------------------------------------------------------------------------------------------------
