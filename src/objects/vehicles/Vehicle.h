@@ -11,21 +11,31 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #define VEHICLE_H
 
 #include "stdafx.h"
+
 #include "framework\AdvancedOgreFramework.hpp"
 #include "objects\Object.hpp"
 #include "GameState.hpp"
 
+#include <btBulletCollisionCommon.h>
+#include <btBulletDynamicsCommon.h>
+#include "BtOgMotionState.h"
+
 class Vehicle : public Object
 {
 private:
-    /*  inherited members
+    /*  inherited members           <---- is there any reason to have these?
     Ogre::Vector3 mPosition;
     Ogre::Vector3 mDirection;
-    */
+    */  
     static long int nVehiclesCreated;
+    std::string mstrName;
 
     Ogre::SceneNode *mNode;
-    
+    Ogre::Entity *mEntity;
+
+    btCollisionShape *mbtCarShape;
+    btRigidBody *mbtCarBody;
+
     //state variables
     bool mbIsMoving;
     bool mbIsHealthy;       //healthy as in not totaled
@@ -33,6 +43,7 @@ private:
 
     bool isFollowingClosely;
 
+    int mnTargetSpeed;
     int mnSpeed;
 
     //in pounds
@@ -40,11 +51,14 @@ private:
     unsigned int mnPassengers;
 
     Vehicle& operator=(const Vehicle&);
+
+    virtual void accelerate(const btScalar &force, const Ogre::Vector3 &direction);
+    virtual void decelerate(const btScalar &force);
     
 public:
     Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position = Ogre::Vector3(0, 0, 0), 
                                         Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0));
-    ~Vehicle();
+    virtual ~Vehicle();
 
     int getSpeed();
     void setSpeed(int nSpeed);
@@ -62,8 +76,7 @@ public:
     virtual void initializePhysics();
     virtual void initializeMaterial();
 
-    virtual void accelerate(const btScalar &force, const Ogre::Vector3 &direction);
-    virtual void decelerate(const btScalar &force);
+    void update();
 };
 
 #endif

@@ -41,14 +41,14 @@ private:
     virtual void initializePhysics();
     virtual void initializeMaterial();
 
+    virtual void accelerate(const btScalar &force, const Ogre::Vector3 &direction);
+    virtual void decelerate(const btScalar &force);
+
 public:
     Ball();
     //according to copy elision, passing by value is most efficient here
     Ball(float size, float initacceleration, Ogre::Vector3 position, Ogre::Vector3 direction);
     virtual ~Ball();
-
-    virtual void accelerate(const btScalar &force, const Ogre::Vector3 &direction);
-    virtual void decelerate(const btScalar &force);
 };
 
 #endif

@@ -22,51 +22,44 @@ TODO
 
 #include <sstream>
 
-
-
 long int Vehicle::nVehiclesCreated = 0;
 
 //-------------------------------------------------------------------------------------------------------
 Vehicle::Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position, Ogre::Vector3 direction) 
-    : mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1),
+    : mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1), mnTargetSpeed(0),
       Object(position, direction)
 {
+    //give a unique name to each vehicle
     std::ostringstream oss;
     oss << nVehiclesCreated;
-    std::string name = "Vehicle_";
-    name += oss.str();
+    mstrName = "Vehicle_";
+    mstrName += oss.str();
 
-    mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(name, position); 
+    ++nVehiclesCreated;
+        
+    mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(mstrName, position);
+
+    initializeMaterial();
+    initializePhysics();
 }
 //-------------------------------------------------------------------------------------------------------
 Vehicle::~Vehicle()
 {
-
+    getGameState()->mSceneMgr->destroyEntity(mEntity);
+    getGameState()->mSceneMgr->destroySceneNode(mNode);
 }
 //-------------------------------------------------------------------------------------------------------
 int Vehicle::getSpeed()
 {
-    return mnSpeed;
+    return mnTargetSpeed;
 }
 //-------------------------------------------------------------------------------------------------------
-//will be depreciated
+//will be depreciated6
 void Vehicle::setSpeed(int nSpeed)
 {
-    mnSpeed = nSpeed;
-
-    if (mnSpeed > 0)
-    {    
-        mbIsMoving = 1;
-        mbIsInReverse = 0;
-    }
-    else if (mnSpeed == 0)
-    {
-        mbIsMoving = 0;
-    }
-    else
-    {
-        mbIsInReverse = 1;
-    }
+    //Usually, the target speed will be the speed limit
+    //The vehicle will attempt to speed up to the target speed when not obstructed
+    mnTargetSpeed = nSpeed;
 }
 //-------------------------------------------------------------------------------------------------------
 Ogre::Vector3 Vehicle::getPosition()
@@ -79,6 +72,7 @@ Ogre::Vector3 Vehicle::getDirection()
     //Converts quaternions into a direction vector for easier direction checking of AI driving on roads
     Ogre::Quaternion temp = mNode->getOrientation();
     Ogre::Vector3 dir(0, 0, 0);
+
     if (temp.z == 1.0f)
     {
         Ogre::Radian radangle =  2 * Ogre::Math::ACos(temp.w);
@@ -102,10 +96,7 @@ bool Vehicle::isHealthy()
 //-------------------------------------------------------------------------------------------------------
 bool Vehicle::isInReverse()
 {
-    if (mnSpeed < 0)
-        mbIsInReverse = 1;
-
-    return mbIsInReverse;
+    return (mnSpeed < 0) ? (mbIsInReverse = 1, true) : (mbIsInReverse = 0, false);
 }
 //-------------------------------------------------------------------------------------------------------
 unsigned int Vehicle::getCargo()
@@ -131,11 +122,8 @@ void Vehicle::initializeMaterial()
 //will be replaced by actual physics
 void Vehicle::accelerate(const btScalar &force, const Ogre::Vector3 &direction)
 {
-    //accelforce, in m/s, 1 - little acceleration, 5, normal acceleration, 10, flooring
-    //dirty base implementation, adding acceleration by time handling
-    /*mnSpeed = (nAccelForce * OgreFramework::getSingletonPtr()->getTimeSinceLastFrame()) + mnSpeed;
-    if (mnSpeed < 150)
-        mbIsHealthy = false;*/
+    //called internally to reach the target speed set by setSpeed();
+
 }
 //-------------------------------------------------------------------------------------------------------
 //will be replaced by actual physics
@@ -149,4 +137,8 @@ void Vehicle::decelerate(const btScalar &force)
 
 }
 //-------------------------------------------------------------------------------------------------------
+void Vehicle::update()
+{
 
+}
+//-------------------------------------------------------------------------------------------------------
