@@ -25,6 +25,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include "BtOgMotionState.h"
 
 #include "objects\ball\Ball.hpp"
+#include "objects\vehicles\Vehicle.h"
 
 #include <irrKlang.h>
 

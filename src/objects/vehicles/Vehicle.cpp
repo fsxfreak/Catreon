@@ -14,7 +14,8 @@ TODO
 -Initialize physics, sound, and graphics for the vehicle object
 -Get a valid spawn point somewhere and start driving
 -Actually drive around itself using physics
--Make a simple car already
+-Make a simple car already = done;
+-Make a .material parser that will fill out the material names for me
 ********************************************************/
 
 #include "stdafx.h"
@@ -116,7 +117,16 @@ void Vehicle::initializePhysics()
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::initializeMaterial()
 {
+    mEntity = getGameState()->mSceneMgr->createEntity(mstrName, "car_bmwe46.mesh");
 
+    if (!parseMaterial(mEntity, "car_bmwe46.material"))
+    {
+        OgreFramework::getSingletonPtr()->mLog->logMessage(
+            "Failed to parse material file: car_bmwe46.material");
+        return;
+    }
+    
+    mNode->attachObject(mEntity);
 }
 //-------------------------------------------------------------------------------------------------------
 //will be replaced by actual physics

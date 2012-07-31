@@ -156,7 +156,7 @@ void GameState::createScene()
     mScaleEntity = mSceneMgr->createEntity("CityBlock", "city.mesh");
     mScaleEntity->getSubEntity(0)->setMaterialName("fourlaneroadlamb");
     mScaleModel->attachObject(mScaleEntity);
-    mScaleModel->setPosition(-50, 1, 0);
+    mScaleModel->setPosition(0, 5, 0);
     mScaleEntity->setCastShadows(true);
 
     //ground plane for testing
@@ -243,7 +243,8 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
     }
 
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_F))
-    {   
+    {
+        Vehicle *vehicle = new Vehicle(150, 4, Ogre::Vector3(0, 10, 0));
         Ball *ball = new Ball(0.5, 5000.0, mCamera->getDerivedPosition() + (mCamera->getDerivedDirection() * Ogre::Vector3(20, 20, 20)), Ogre::Vector3(0, 0, 0));
         mBalls.push_back(ball);
     }

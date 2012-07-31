@@ -20,6 +20,8 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include <btBulletDynamicsCommon.h>
 #include "BtOgMotionState.h"
 
+#include "MaterialParser.hpp"
+
 class Vehicle : public Object
 {
 private:
@@ -32,6 +34,8 @@ private:
 
     Ogre::SceneNode *mNode;
     Ogre::Entity *mEntity;
+
+    Ogre::AnimationState *mAnimation;
 
     btCollisionShape *mbtCarShape;
     btRigidBody *mbtCarBody;
