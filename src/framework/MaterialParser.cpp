@@ -33,8 +33,8 @@ bool parseMaterial(const Ogre::Entity *entity, const std::string materialName)
             {
                 line.erase(0, 9);	//erase the word "material ", leaving only the material name
                 entity->getSubEntity(numIterations)->setMaterialName(line);
+                ++numIterations;
             }
-            ++numIterations;
         }
     }
     return 1;
