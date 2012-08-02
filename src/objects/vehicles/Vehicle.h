@@ -35,9 +35,7 @@ private:
     Ogre::SceneNode *mNode;
     Ogre::Entity *mEntity;
 
-    Ogre::AnimationState *mAnimation;
-
-    btCollisionShape *mbtCarShape;
+    btCollisionShape *mbtChassisShape;
     btRigidBody *mbtCarBody;
 
     //state variables
@@ -58,6 +56,8 @@ private:
 
     virtual void accelerate(const btScalar &force, const Ogre::Vector3 &direction);
     virtual void decelerate(const btScalar &force);
+
+    void createRigidBody(float mass, const btTransform &trans, btCollisionShape *collshape, btRigidBody *body);
     
 public:
     Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position = Ogre::Vector3(0, 0, 0), 
