@@ -15,7 +15,6 @@ TODO
 -Get a valid spawn point somewhere and start driving
 -Actually drive around itself using physics
 -Make a simple car already = done;
--Make a .material parser that will fill out the material names for me
 ********************************************************/
 
 #include "stdafx.h"
@@ -48,6 +47,9 @@ Vehicle::~Vehicle()
 {
     getGameState()->mSceneMgr->destroyEntity(mEntity);
     getGameState()->mSceneMgr->destroySceneNode(mNode);
+
+    delete mbtCarBody;
+    delete mbtChassisShape;
 }
 //-------------------------------------------------------------------------------------------------------
 int Vehicle::getSpeed()
@@ -71,18 +73,11 @@ Ogre::Vector3 Vehicle::getPosition()
 Ogre::Vector3 Vehicle::getDirection()
 {
     //Converts quaternions into a direction vector for easier direction checking of AI driving on roads
-    Ogre::Quaternion temp = mNode->getOrientation();
-    Ogre::Vector3 dir(0, 0, 0);
+    Ogre::Quaternion tempquat = mNode->_getDerivedOrientation();
 
-    if (temp.z == 1.0f)
-    {
-        Ogre::Radian radangle =  2 * Ogre::Math::ACos(temp.w);
-        dir.x = Ogre::Math::Cos(radangle);
-        dir.y = 0;
-        dir.z = Ogre::Math::Sin(radangle);
-    }
+    Ogre::Vector3 dirvec = tempquat * Ogre::Vector3(0, 0, -1);
 
-    return dir;
+    return dirvec;
 }
 //-------------------------------------------------------------------------------------------------------
 bool Vehicle::isMoving()
@@ -112,6 +107,23 @@ unsigned int Vehicle::getPassengers()
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::initializePhysics()
 {
+    Ogre::AxisAlignedBox axisboxsize = mEntity->getBoundingBox();
+    Ogre::Vector3 boxsize = axisboxsize.getSize();
+
+    //box as the main body
+    //the middle is a bit mis-aligned
+    mbtChassisShape = new btBoxShape(btVector3(boxsize.x / 2, boxsize.y / 2, boxsize.z / 2));
+    getGameState()->mCollisionShapes.push_back(mbtChassisShape);
+
+    btTransform chassisTransform;
+    chassisTransform.setIdentity();
+    chassisTransform.setOrigin(GameState::ogreVecToBullet(mNode->getPosition()));
+
+    createRigidBody(1500, chassisTransform, mbtChassisShape, mbtCarBody); 
+
+    mbtCarBody->setFriction(0.9);
+    mbtCarBody->setRestitution(1);
+    mbtCarBody->setDamping(0.5);
 
 }
 //-------------------------------------------------------------------------------------------------------
@@ -119,12 +131,12 @@ void Vehicle::initializeMaterial()
 {
     mEntity = getGameState()->mSceneMgr->createEntity(mstrName, "car_bmwe46.mesh");
 
-    if (!parseMaterial(mEntity, "car_bmwe46.material"))
+    /*if (!parseMaterial(mEntity, "car_bmwe46.material"))
     {
         OgreFramework::getSingletonPtr()->mLog->logMessage(
             "Failed to parse material file: car_bmwe46.material");
         return;
-    }
+    }*/
     
     mNode->attachObject(mEntity);
 }
@@ -145,6 +157,18 @@ void Vehicle::decelerate(const btScalar &force)
     if (mnSpeed < 0)
         mbIsInReverse = true;*/
 
+}
+//-------------------------------------------------------------------------------------------------------
+void Vehicle::createRigidBody(float mass, const btTransform &trans, btCollisionShape *collshape, btRigidBody *body)
+{
+    btVector3 localInertia(0, 0, 0);
+    collshape->calculateLocalInertia(mass, localInertia);
+
+    BtOgMotionState *motionState = new BtOgMotionState(trans, mNode);
+    btRigidBody::btRigidBodyConstructionInfo conInfo(mass, motionState, collshape, localInertia);
+    body = new btRigidBody(conInfo);
+
+    getGameState()->mDynamicsWorld->addRigidBody(body);
 }
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::update()
