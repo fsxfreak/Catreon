@@ -72,7 +72,7 @@ void GameState::enter()
     mSolver = new btSequentialImpulseConstraintSolver;
     mDynamicsWorld = new btDiscreteDynamicsWorld(mDispatcher, mBroadphase, mSolver, mCollisionConfiguration);
 
-    mDynamicsWorld->setGravity(btVector3(0, -9.81, 0));
+    mDynamicsWorld->setGravity(btVector3(0, -100, 0));
 
 
     sound = createIrrKlangDevice();
@@ -110,13 +110,9 @@ void GameState::exit()
 
     mSceneMgr->destroyCamera(mCamera);
     mSceneMgr->destroyQuery(mRaySceneQuery);
-
-    std::vector<Ball*>::iterator it = mBalls.begin();
-    for (it; it != mBalls.end(); ++it)
-    {
-        if (*it)
-            delete *it;
-    }
+    
+    mVehicles.clear();
+    mBalls.clear();
 
     if (mSceneMgr)
         OgreFramework::getSingletonPtr()->mRoot->destroySceneManager(mSceneMgr);
@@ -152,13 +148,12 @@ void GameState::createScene()
     point->setPosition(100, 20, -3);
 
     //scale model for reference
-    mScaleModel = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    /*mScaleModel = mSceneMgr->getRootSceneNode()->createChildSceneNode();
     mScaleEntity = mSceneMgr->createEntity("CityBlock", "city.mesh");
-    mScaleEntity->getSubEntity(0)->setMaterialName("fourlaneroadlamb");
     mScaleModel->attachObject(mScaleEntity);
-    mScaleModel->setPosition(0, 5, 0);
+    mScaleModel->setPosition(0, 1, 0);
     mScaleEntity->setCastShadows(true);
-
+    */
     //ground plane for testing
     planeGround.normal = Ogre::Vector3(0, 1, 0);
     planeGround.d = 0;
@@ -244,7 +239,12 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
 
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_F))
     {
-        Vehicle *vehicle = new Vehicle(150, 4, Ogre::Vector3(0, 10, 0));
+        Vehicle *vehicle = new Vehicle(150, 4, Ogre::Vector3(0, 5, 0));
+        mVehicles.push_back(vehicle);
+    }
+
+    if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_V))
+    {
         Ball *ball = new Ball(0.5, 5000.0, mCamera->getDerivedPosition() + (mCamera->getDerivedDirection() * Ogre::Vector3(20, 20, 20)), Ogre::Vector3(0, 0, 0));
         mBalls.push_back(ball);
     }
@@ -252,11 +252,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
     //clear all balls
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_NUMPAD0))
     {
-        std::vector<Ball*>::iterator it = mBalls.begin();
-        for (it; it != mBalls.end(); ++it)
-        {
-            delete *it;
-        }
+        mVehicles.clear();
         mBalls.clear();
         //iterator starts at one because the ground plane is at 0
         for (int body = mDynamicsWorld->getNumCollisionObjects() - 1; body >= 1; body--)

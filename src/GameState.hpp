@@ -37,8 +37,11 @@ enum QueryFlags
     CUBE_MASK = 1 << 1
 };
 
+//forward declares
 class Ball;
+class Vehicle;
 
+//EVERYTHING SHALL BE PUBLIC -throws enscapulation out the window-
 class GameState: public AppState
 {
 public:
@@ -133,6 +136,7 @@ public:
     std::vector<btCollisionShape*>           mCollisionShapes;
     std::vector<btRigidBody*>                mRigidBodies;
     std::vector<Ball*>                       mBalls;
+    std::vector<Vehicle*>                    mVehicles;
 
     //sound engine
     ISoundEngine                            *sound;
