@@ -11,14 +11,17 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include "MaterialParser.hpp"
 
+//looks to be actually useless code right now... =/ 
+//keping in case there is a need for this
+
 bool parseMaterial(const Ogre::Entity *entity, const std::string materialName)
 {
     std::fstream read(std::string("../media/") + materialName);
 
     if (!read.is_open())
     {
-        //OgreFramework::getSingletonPtr()->mLog->logMessage(
-            //std::string("Failed to read material file: ") + materialName + ".");
+        OgreFramework::getSingletonPtr()->mLog->logMessage(
+            std::string("Failed to read material file: ") + materialName + ".");
         return 0;
     }
     else
