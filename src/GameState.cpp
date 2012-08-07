@@ -51,7 +51,7 @@ void GameState::enter()
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.1f, 0.1f, 0.1f));
 
     mRaySceneQuery = mSceneMgr->createRayQuery(Ogre::Ray());
-    mRaySceneQuery->setQueryMask(OGRE_HEAD_MASK);
+    //mRaySceneQuery->setQueryMask(OGRE_HEAD_MASK);
 
     mCamera = mSceneMgr->createCamera("GameCamera");
     mCamera->setPosition(Ogre::Vector3(5, 60, 120));
@@ -111,7 +111,7 @@ void GameState::exit()
     mSceneMgr->destroyCamera(mCamera);
     mSceneMgr->destroyQuery(mRaySceneQuery);
     
-    mVehicles.clear();
+    mDrivers.clear();
     mBalls.clear();
 
     if (mSceneMgr)
@@ -237,10 +237,10 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         return true;
     }
 
-    if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_F))
+    if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_F))    //create Drivers and their vehicles
     {
-        Vehicle *vehicle = new Vehicle(150, 4, Ogre::Vector3(0, 5, 0));
-        mVehicles.push_back(vehicle);
+        Driver *driver = new Driver();
+        mDrivers.push_back(driver);
     }
 
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_V))
@@ -252,7 +252,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
     //clear all balls
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_NUMPAD0))
     {
-        mVehicles.clear();
+        mDrivers.clear();
         mBalls.clear();
         //iterator starts at one because the ground plane is at 0
         for (int body = mDynamicsWorld->getNumCollisionObjects() - 1; body >= 1; body--)
@@ -352,7 +352,6 @@ void GameState::onLeftPressed(const OIS::MouseEvent &mouseEvent)
     if (mCurrentObject)
     {
         mCurrentObject->showBoundingBox(false);
-        mCurrentEntity->getSubEntity(1)->setMaterial(mOgreHeadMaterial);
     }
 
     //quite the formatting
@@ -373,12 +372,10 @@ void GameState::onLeftPressed(const OIS::MouseEvent &mouseEvent)
     {
         if (itRayScene->movable)
         {
-            OgreFramework::getSingletonPtr()->mLog->logMessage("MovableName: " + itRayScene->movable->getName());
+            //OgreFramework::getSingletonPtr()->mLog->logMessage("MovableName: " + itRayScene->movable->getName());
             mCurrentObject = mSceneMgr->getEntity(itRayScene->movable->getName())->getParentSceneNode();
-            OgreFramework::getSingletonPtr()->mLog->logMessage("ObjName " + mCurrentObject->getName());
+            //OgreFramework::getSingletonPtr()->mLog->logMessage("ObjName " + mCurrentObject->getName());
             mCurrentObject->showBoundingBox(true);
-            mCurrentEntity = mSceneMgr->getEntity(itRayScene->movable->getName());
-            mCurrentEntity->getSubEntity(1)->setMaterial(mOgreHeadMaterialHigh);
             break;
         }
     }
@@ -477,6 +474,10 @@ void GameState::update(double timeSinceLastFrame)
     moveCamera();
     updatePhysics();
     updateSound();
+    for (int iii = 0; iii < mDrivers.size(); iii++)
+    {
+        mDrivers[iii]->update();
+    }
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::buildGUI()

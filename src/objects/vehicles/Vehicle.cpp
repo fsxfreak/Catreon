@@ -57,7 +57,6 @@ int Vehicle::getSpeed()
     return mnTargetSpeed;
 }
 //-------------------------------------------------------------------------------------------------------
-//will be depreciated6
 void Vehicle::setSpeed(int nSpeed)
 {
     //Usually, the target speed will be the speed limit
@@ -119,11 +118,10 @@ void Vehicle::initializePhysics()
     chassisTransform.setIdentity();
     chassisTransform.setOrigin(GameState::ogreVecToBullet(mNode->getPosition()));
 
-    createRigidBody(1500, chassisTransform, mbtChassisShape, mbtCarBody); 
+    createRigidBody(1500, chassisTransform); 
 
-    mbtCarBody->setFriction(0.9);
     mbtCarBody->setRestitution(1);
-    mbtCarBody->setDamping(0.5);
+    mbtCarBody->setDamping(0.5, 0.5);
 
 }
 //-------------------------------------------------------------------------------------------------------
@@ -159,20 +157,28 @@ void Vehicle::decelerate(const btScalar &force)
 
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::createRigidBody(float mass, const btTransform &trans, btCollisionShape *collshape, btRigidBody *body)
+void Vehicle::createRigidBody(float mass, const btTransform &trans)
 {
     btVector3 localInertia(0, 0, 0);
-    collshape->calculateLocalInertia(mass, localInertia);
+    mbtChassisShape->calculateLocalInertia(mass, localInertia);
 
     BtOgMotionState *motionState = new BtOgMotionState(trans, mNode);
-    btRigidBody::btRigidBodyConstructionInfo conInfo(mass, motionState, collshape, localInertia);
-    body = new btRigidBody(conInfo);
+    btRigidBody::btRigidBodyConstructionInfo conInfo(mass, motionState, mbtChassisShape, localInertia);
+    mbtCarBody = new btRigidBody(conInfo);
 
-    getGameState()->mDynamicsWorld->addRigidBody(body);
+    getGameState()->mDynamicsWorld->addRigidBody(mbtCarBody);
 }
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::update()
 {
-
+    mnSpeed = mbtCarBody->getLinearVelocity().length();
+    if (mnSpeed < mnTargetSpeed)
+    {
+        mbtCarBody->setLinearVelocity(mbtCarBody->getLinearVelocity() * 1.1);
+    }
+    else if (mnSpeed > mnTargetSpeed)
+    {
+        mbtCarBody->setLinearVelocity(mbtCarBody->getLinearVelocity() * 0.9);
+    }
 }
 //-------------------------------------------------------------------------------------------------------

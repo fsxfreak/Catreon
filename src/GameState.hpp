@@ -26,6 +26,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include "objects\ball\Ball.hpp"
 #include "objects\vehicles\Vehicle.h"
+#include "objects\vehicles\Driver.h"
 
 #include <irrKlang.h>
 
@@ -40,6 +41,7 @@ enum QueryFlags
 //forward declares
 class Ball;
 class Vehicle;
+class Driver;
 
 //EVERYTHING SHALL BE PUBLIC -throws enscapulation out the window-
 class GameState: public AppState
@@ -136,7 +138,7 @@ public:
     std::vector<btCollisionShape*>           mCollisionShapes;
     std::vector<btRigidBody*>                mRigidBodies;
     std::vector<Ball*>                       mBalls;
-    std::vector<Vehicle*>                    mVehicles;
+    std::vector<Driver*>                     mDrivers;
 
     //sound engine
     ISoundEngine                            *sound;

@@ -21,14 +21,17 @@ TODO
 //-------------------------------------------------------------------------------------------------------
 Driver::Driver(int nSkill, int nRiskTaker, 
                 int nCargo, int nPassengers, Ogre::Vector3 position) 
-                : mnSkill(nSkill), mnRiskTaker(nRiskTaker), mnNervousness(0)
+                : mstrGoal(" "), mnNervousness(0), bIsFollowingClose(0)
 {
     pVehicle = new Vehicle(nCargo, nPassengers, position);
+    mnSkill = rand() % 100 + 1;
+    mnRiskTaker = rand() % 100 + 1;
 }
 //-------------------------------------------------------------------------------------------------------
 //random, default constructor
-Driver::Driver() : mnNervousness(25)
+Driver::Driver() : mnNervousness(0), bIsFollowingClose(0)
 {
+    pVehicle = new Vehicle(150, 1);
     mnSkill = rand() % 100 + 1;
     mnRiskTaker = rand() % 100 + 1;
 }
@@ -55,7 +58,10 @@ std::string Driver::getDestination()
 //-------------------------------------------------------------------------------------------------------
 void Driver::updateDecision()
 {
-
+    if (mstrGoal == " ")
+    {
+        pVehicle->setSpeed(30); //in MPH, to be converted internally into m/s
+    }
 }
 //-------------------------------------------------------------------------------------------------------
 int Driver::getSkill()
@@ -76,4 +82,16 @@ int Driver::getRiskTaker()
 void Driver::setNervousness(int nNervous)
 {
     mnNervousness += nNervous;
+}
+//-------------------------------------------------------------------------------------------------------
+void Driver::update(std::string goal)
+{
+    if (goal != "NULL")
+    {
+        updateGoal(goal);
+    }
+    updateDecision();
+
+    pVehicle->update();
+
 }

@@ -13,6 +13,9 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include "stdafx.h"
 #include <string>
 #include "objects\vehicles\Vehicle.h"
+#include <GameState.hpp>
+
+class Vehicle;
 
 class Driver
 {
@@ -23,6 +26,8 @@ private:
     int mnSkill;
     int mnNervousness;
     int mnRiskTaker;
+
+    bool bIsFollowingClose;
 
     Vehicle *pVehicle;
 
@@ -36,6 +41,7 @@ public:
 
     void updateGoal(std::string strDest);
     void updateDecision();
+    void update(std::string goal = "NULL");
 
     int getSkill();
     int getNervousness();
