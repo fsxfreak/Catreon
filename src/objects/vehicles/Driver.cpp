@@ -21,7 +21,7 @@ TODO
 //-------------------------------------------------------------------------------------------------------
 Driver::Driver(int nSkill, int nRiskTaker, 
                 int nCargo, int nPassengers, Ogre::Vector3 position) 
-                : mstrGoal(" "), mnNervousness(0), bIsFollowingClose(0)
+                : mstrGoal(""), mnNervousness(0), bIsFollowingClose(0)
 {
     pVehicle = new Vehicle(nCargo, nPassengers, position);
     mnSkill = rand() % 100 + 1;
@@ -58,9 +58,9 @@ std::string Driver::getDestination()
 //-------------------------------------------------------------------------------------------------------
 void Driver::updateDecision()
 {
-    if (mstrGoal == " ")
+    if (mstrGoal == "")
     {
-        pVehicle->setSpeed(30); //in MPH, to be converted internally into m/s
+        pVehicle->setSpeed(90); //in MPH, to be converted internally into m/s
     }
 }
 //-------------------------------------------------------------------------------------------------------

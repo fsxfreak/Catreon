@@ -16,15 +16,14 @@ TODO
 #include "objects\ball\Ball.hpp"
 
 //-------------------------------------------------------------------------------------------------------
-Ball::Ball() : mnSize(1), Object(Ogre::Vector3(0, 0, 0), Ogre::Vector3(0, 0, 0))
+Ball::Ball() : mnSize(1)
 {
     initializeMaterial();
     accelerate(5000.0f * mnSize, getGameState()->mCamera->getDerivedDirection().normalisedCopy());
 }
 //-------------------------------------------------------------------------------------------------------
 Ball::Ball(float size, float initacceleration, Ogre::Vector3 position, Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0)) 
-    :   mnSize(size),
-        Object(position, direction)
+    :   mnSize(size)
 {
     initializeMaterial();
     accelerate(initacceleration * mnSize, getGameState()->mCamera->getDerivedDirection().normalisedCopy());
@@ -41,6 +40,7 @@ Ball::~Ball()
 //-------------------------------------------------------------------------------------------------------
 void Ball::accelerate(const btScalar &force, const Ogre::Vector3 &direction)
 {
+
     btVector3 forcedir = GameState::ogreVecToBullet(direction * force);
     mbtBallBody->applyCentralForce(forcedir);
 }

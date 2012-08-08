@@ -474,9 +474,10 @@ void GameState::update(double timeSinceLastFrame)
     moveCamera();
     updatePhysics();
     updateSound();
-    for (int iii = 0; iii < mDrivers.size(); iii++)
+    
+    for (std::vector<Driver*>::iterator it = mDrivers.begin(); it != mDrivers.end(); ++it)
     {
-        mDrivers[iii]->update();
+        (*it)->update();
     }
 }
 //-------------------------------------------------------------------------------------------------------

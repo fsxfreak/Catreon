@@ -35,7 +35,7 @@ private:
     Ogre::SceneNode *mNode;
     Ogre::Entity *mEntity;
 
-    btCollisionShape *mbtChassisShape;
+    static btCollisionShape *mbtChassisShape;
     btRigidBody *mbtCarBody;
 
     //state variables
@@ -45,8 +45,8 @@ private:
 
     bool isFollowingClosely;
 
-    int mnTargetSpeed;
-    int mnSpeed;
+    float mfTargetSpeed;
+    float mfSpeed;
 
     //in pounds
     unsigned int mnCargo;
@@ -54,18 +54,19 @@ private:
 
     Vehicle& operator=(const Vehicle&);
 
-    virtual void accelerate(const btScalar &force, const Ogre::Vector3 &direction);
-    virtual void decelerate(const btScalar &force);
+    Ogre::Vector3 mLastPosition;
+    virtual void accelerate();
+    virtual void decelerate();
 
     void createRigidBody(float mass, const btTransform &trans);
     
 public:
-    Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position = Ogre::Vector3(0, 0, 0), 
+    Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position = Ogre::Vector3(0, 4, 0), 
                                         Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0));
     virtual ~Vehicle();
 
     int getSpeed();
-    void setSpeed(int nSpeed);
+    void setSpeed(float fSpeed);
 
     Ogre::Vector3 getPosition();
     Ogre::Vector3 getDirection();

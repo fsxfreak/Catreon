@@ -19,15 +19,15 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include "GameState.hpp"
 
-class Ball : public Object
+class Ball
 {
 protected:
-    /* inherited protected members
+    //inherited protected members
 
     Ogre::Vector3 mPosition;
     Ogre::Vector3 mDirection;
 
-    */
+    
 private:
     //mbtBall could be static, but we want flexibility in terms of size
     btCollisionShape *mbtBallShape;
