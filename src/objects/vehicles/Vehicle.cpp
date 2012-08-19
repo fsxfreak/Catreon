@@ -14,6 +14,10 @@ TODO
 -Initialize physics, sound, and graphics for the vehicle object
 -Get a valid spawn point somewhere and start driving
 -Actually drive around itself using physics
+    -Use a compound shape - box with four wheel instead
+    -Raycast shape instead?
+    -add four wheel nodes as a child of the car
+    -should just use btRaycastVehicle
 -Make a simple car already = done;
 ********************************************************/
 
@@ -40,7 +44,7 @@ Vehicle::Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position, Ogre::Vect
 
     ++nVehiclesCreated;
         
-    mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(mstrName, position);
+    mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(mstrName, mPosition);
 
     initializeMaterial();
     initializePhysics();
@@ -130,15 +134,23 @@ void Vehicle::initializePhysics()
 void Vehicle::initializeMaterial()
 {
     mEntity = getGameState()->mSceneMgr->createEntity(mstrName, "car_bmwe46.mesh");
-
-    /*if (!parseMaterial(mEntity, "car_bmwe46.material"))
-    {
-        OgreFramework::getSingletonPtr()->mLog->logMessage(
-            "Failed to parse material file: car_bmwe46.material");
-        return;
-    }*/
-    
     mNode->attachObject(mEntity);
+
+    mFL_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
+    mFL_Node= mNode->createChildSceneNode(Ogre::Vector3(9.76, -4.37, 15.37));
+    mFL_Node->attachObject(mFL_Entity);
+    
+    mFR_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
+    mFR_Node = mNode->createChildSceneNode(Ogre::Vector3(-9.76, -4.37, 15.37));
+    mFR_Node->attachObject(mFR_Entity);
+
+    mBL_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
+    mBL_Node = mNode->createChildSceneNode(Ogre::Vector3(9.76, -4.37, -15.37));
+    mBL_Node->attachObject(mBL_Entity);
+    
+    mBR_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
+    mBR_Node = mNode->createChildSceneNode(Ogre::Vector3(-9.76, -4.37, -15.37));
+    mBR_Node->attachObject(mBR_Entity);
 }
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::accelerate()
@@ -171,14 +183,21 @@ void Vehicle::createRigidBody(float mass, const btTransform &trans)
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::update()
 {
+    if (mLastPosition.y - mNode->getPosition().y > 1)
+    {
+        //car is falling from the sky
+        return;
+    }
     //btVector3 speedvector = (GameState::ogreVecToBullet(mNode->getPosition()) - mLastPosition);
     //mfSpeed = speedvector.length();
     mfSpeed = mbtCarBody->getLinearVelocity().length();
 
-    Ogre::Real test = getDirection().dotProduct(mLastPosition.normalisedCopy());
-    if (test > 0)
+    //anything > 0 = forward, < 0 = backward
+    Ogre::Real directionTraveling = mNode->getPosition().dotProduct(mLastPosition);
+
+    if (directionTraveling > 0)
         mbIsInReverse = 0;
-    else if (test < 0)
+    else if (directionTraveling < 0)
         mbIsInReverse = 1;
 
     if (mfSpeed < mfTargetSpeed || mbIsInReverse)
@@ -189,5 +208,6 @@ void Vehicle::update()
     {
         decelerate();
     }
+    mLastPosition = mNode->getPosition();
 }
 //-------------------------------------------------------------------------------------------------------

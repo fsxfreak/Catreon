@@ -34,6 +34,18 @@ private:
 
     Ogre::SceneNode *mNode;
     Ogre::Entity *mEntity;
+    
+    //wheels
+    //FL = front left, BL = back left
+    Ogre::SceneNode *mFL_Node;
+    Ogre::Entity *mFL_Entity;
+    Ogre::SceneNode *mFR_Node;
+    Ogre::Entity *mFR_Entity;
+    Ogre::SceneNode *mBL_Node;
+    Ogre::Entity *mBL_Entity;
+    Ogre::SceneNode *mBR_Node;
+    Ogre::Entity *mBR_Entity;
+
 
     static btCollisionShape *mbtChassisShape;
     btRigidBody *mbtCarBody;
@@ -55,14 +67,15 @@ private:
     Vehicle& operator=(const Vehicle&);
 
     Ogre::Vector3 mLastPosition;
+
     virtual void accelerate();
     virtual void decelerate();
 
     void createRigidBody(float mass, const btTransform &trans);
     
 public:
-    Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position = Ogre::Vector3(0, 4, 0), 
-                                        Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0));
+    Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position = Ogre::Vector3(0, 8, 0), 
+                                         Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0));
     virtual ~Vehicle();
 
     int getSpeed();

@@ -456,6 +456,10 @@ void GameState::update(double timeSinceLastFrame)
             mDetailsPanel->setParamValue(4, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().x));
             mDetailsPanel->setParamValue(5, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().y));
             mDetailsPanel->setParamValue(6, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().z));
+            if (mCurrentObject)
+            {
+                mDetailsPanel->setParamValue(7, Ogre::StringConverter::toString(mCurrentObject->getPosition()));
+            }
             if (mbSettingsMode)
             {
                 mDetailsPanel->setParamValue(7, "Buffered Input");

@@ -60,7 +60,7 @@ void Driver::updateDecision()
 {
     if (mstrGoal == "")
     {
-        pVehicle->setSpeed(90); //in MPH, to be converted internally into m/s
+        pVehicle->setSpeed(30); //in MPH, to be converted internally into m/s
     }
 }
 //-------------------------------------------------------------------------------------------------------

@@ -114,6 +114,7 @@ public:
     OgreBites::ParamsPanel                  *mDetailsPanel;
     bool                                    mbQuit;
 
+    //camera speed scales and vectors
     Ogre::Vector3                           mTranslateVector;
     Ogre::Real                              mMoveSpeed;
     Ogre::Degree                            mRotateSpeed;
@@ -121,7 +122,7 @@ public:
     Ogre::Degree                            mRotateScale;
 
     Ogre::RaySceneQuery                     *mRaySceneQuery;
-    Ogre::SceneNode                         *mCurrentObject;
+    Ogre::SceneNode                         *mCurrentObject;    //currently selected object
     Ogre::Entity                            *mCurrentEntity;
     bool                                    mbLMouseDown;
     bool                                    mbRMouseDown;
