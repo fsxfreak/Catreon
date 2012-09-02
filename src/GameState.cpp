@@ -151,13 +151,6 @@ void GameState::createScene()
     point->setCastShadows(true);
     point->setPosition(100, 20, -3);
 
-    //scale model for reference
-    /*mScaleModel = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    mScaleEntity = mSceneMgr->createEntity("CityBlock", "city.mesh");
-    mScaleModel->attachObject(mScaleEntity);
-    mScaleModel->setPosition(0, 1, 0);
-    mScaleEntity->setCastShadows(true);
-    */
     //ground plane for testing
     planeGround.normal = Ogre::Vector3(0, 1, 0);
     planeGround.d = 0;
@@ -168,7 +161,9 @@ void GameState::createScene()
     nodeGround = mSceneMgr->getRootSceneNode()->createChildSceneNode();
     nodeGround->attachObject(entityGround);
     
-    btCollisionShape *plane = new btBoxShape(btVector3(btScalar(9000.), btScalar(1.), btScalar(9000.)));
+    btTriangleMesh *triangle = new btTriangleMesh();
+    triangle->addTriangle(btVector3(-5000, 0, -5000), btVector3(5000, 0, -5000), btVector3(0, 0, 5000));
+    btCollisionShape *plane = new btConvexTriangleMeshShape(triangle);
     mCollisionShapes.push_back(plane);
 
     btTransform planeTransform;
@@ -184,7 +179,7 @@ void GameState::createScene()
     btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState, plane, localInertia);
     groundRigidBody = new btRigidBody(groundRigidBodyCI);
 
-    groundRigidBody->setFriction(8000);
+    groundRigidBody->setFriction(100);
 
     mDynamicsWorld->addRigidBody(groundRigidBody);
     mRigidBodies.push_back(groundRigidBody);

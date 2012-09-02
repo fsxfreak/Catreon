@@ -50,6 +50,8 @@ private:
     Ogre::SceneNode *mBR_Node;
     Ogre::Entity *mBR_Entity;
 
+    std::vector<Ogre::SceneNode*> mWheelNodes;
+
     static btCollisionShape *mbtWheelShape;
     btRaycastVehicle::btVehicleTuning mTuning;
     btVehicleRaycaster* mVehicleRaycaster;

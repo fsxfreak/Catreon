@@ -56,10 +56,7 @@ Vehicle::~Vehicle()
 {
     getGameState()->mSceneMgr->destroyEntity(mEntity);
     getGameState()->mSceneMgr->destroySceneNode(mNode);
-	getGameState()->mSceneMgr->destroySceneNode(mFL_Node);
-	getGameState()->mSceneMgr->destroySceneNode(mFR_Node);
-	getGameState()->mSceneMgr->destroySceneNode(mBL_Node);
-	getGameState()->mSceneMgr->destroySceneNode(mBR_Node);
+    mWheelNodes.clear();
 	getGameState()->mSceneMgr->destroyEntity(mFL_Entity);
 	getGameState()->mSceneMgr->destroyEntity(mFR_Entity);
 	getGameState()->mSceneMgr->destroyEntity(mBL_Entity);
@@ -134,9 +131,15 @@ void Vehicle::initializePhysics()
     chassisTransform.setIdentity();
     chassisTransform.setOrigin(GameState::ogreVecToBullet(mNode->getPosition()));
 
-    mbtCar = createRigidBody(1200, chassisTransform, mbtCar, mbtChassisShape);
+    mbtCar = createRigidBody(250, chassisTransform, mbtCar, mbtChassisShape);
     mbtCar->setActivationState(DISABLE_DEACTIVATION);
 
+    mTuning.m_frictionSlip = 100;
+    mTuning.m_maxSuspensionForce = 20;
+    mTuning.m_maxSuspensionTravelCm = 10;
+    mTuning.m_suspensionCompression = 50;
+    mTuning.m_suspensionDamping = 0.1;
+    mTuning.m_suspensionStiffness = 1;
     mVehicleRaycaster = new btDefaultVehicleRaycaster(getGameState()->mDynamicsWorld);
     mVehicle = new btRaycastVehicle(mTuning, mbtCar, mVehicleRaycaster);
     mVehicle->setCoordinateSystem(0, 1, 2);
@@ -153,13 +156,9 @@ void Vehicle::initializePhysics()
     mVehicle->addWheel(btVector3(9.76, -4.37, -15.37), wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, mTuning, false);
     mVehicle->addWheel(btVector3(-9.76, -4.37, -15.37), wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, mTuning, false);
 
+    mVehicle->getWheelInfo(2).m_rollInfluence = 0;
+
     getGameState()->mDynamicsWorld->addVehicle(mVehicle);
-
-    
-    //mbtCar->setFriction(0);
-    //mbtCar->setRestitution(1);
-    //mbtCar->setDamping(0.1, 0.8);
-
 }
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::initializeMaterial()
@@ -170,18 +169,22 @@ void Vehicle::initializeMaterial()
     mFL_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
     mFL_Node= mNode->createChildSceneNode(Ogre::Vector3(9.76, -4.37, 15.37));
     mFL_Node->attachObject(mFL_Entity);
+    mWheelNodes.push_back(mFL_Node);
     
     mFR_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
     mFR_Node = mNode->createChildSceneNode(Ogre::Vector3(-9.76, -4.37, 15.37));
     mFR_Node->attachObject(mFR_Entity);
+    mWheelNodes.push_back(mFR_Node);
 
     mBL_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
     mBL_Node = mNode->createChildSceneNode(Ogre::Vector3(9.76, -4.37, -15.37));
     mBL_Node->attachObject(mBL_Entity);
+    mWheelNodes.push_back(mBL_Node);
     
     mBR_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
     mBR_Node = mNode->createChildSceneNode(Ogre::Vector3(-9.76, -4.37, -15.37));
     mBR_Node->attachObject(mBR_Entity);
+    mWheelNodes.push_back(mBR_Node);
 }
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::accelerate()
@@ -190,9 +193,9 @@ void Vehicle::accelerate()
     btVector3 forcedir = GameState::ogreVecToBullet(getDirection()).normalized();
     forcedir *= force;
     mbtCar->applyCentralForce(-forcedir);*/
-    for (int wheel = 0; wheel <= 3; ++wheel)
+    for (int wheel = 0; wheel <= 1; ++wheel)
     {
-        mVehicle->applyEngineForce(200, wheel);
+        mVehicle->applyEngineForce(9451, wheel);
     }
 }
 //-------------------------------------------------------------------------------------------------------
@@ -202,6 +205,10 @@ void Vehicle::decelerate()
     btVector3 forcedir = GameState::ogreVecToBullet(getDirection()).normalized();
     forcedir *= force;
     mbtCar->applyCentralForce(forcedir);*/
+    for (int wheel = 0; wheel <= 3; ++wheel)
+    {
+        mVehicle->setBrake(100, wheel);
+    }
 }
 //-------------------------------------------------------------------------------------------------------
 btRigidBody* Vehicle::createRigidBody(float mass, const btTransform &trans, btRigidBody *rigidBody, btCollisionShape *chassisShape)
@@ -225,8 +232,19 @@ void Vehicle::update()
         return;
     }
 
-    accelerate();
     mVehicle->updateVehicle(1);
+    mVehicle->setSteeringValue(0, 2);
+    mVehicle->setSteeringValue(0, 3);
+    mVehicle->getWheelInfo(2).m_rollInfluence = 0;
+    for (int iii = 0; iii < 4; ++iii)
+    {
+        btTransform wheeltrans = mVehicle->getWheelTransformWS(iii);
+        mWheelNodes[iii]->setOrientation(wheeltrans.getRotation().w(), 
+                                         wheeltrans.getRotation().x(),
+                                         wheeltrans.getRotation().y(),
+                                         wheeltrans.getRotation().z());
+    }
+    accelerate();
     //btVector3 speedvector = (GameState::ogreVecToBullet(mNode->getPosition()) - mLastPosition);
     //mfSpeed = speedvector.length();
     /*mfSpeed = mbtCar->getLinearVelocity().length();
