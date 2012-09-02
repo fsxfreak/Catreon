@@ -1,7 +1,5 @@
 //All credit to LiMuBei and his team of Ogre3D forums
-
-#include "Support/Common.hpp"
-
+#include "stdafx.h"
 #include "DynamicLineDrawer.hpp"
 
 enum {

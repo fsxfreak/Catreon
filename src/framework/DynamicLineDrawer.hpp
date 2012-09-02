@@ -3,7 +3,9 @@
 #ifndef DUALITY_DYNAMIC_LINE_DRAWER
 #define DUALITY_DYNAMIC_LINE_DRAWER
 
-#include <OGRE/Ogre.h>
+#include "stdafx.h"
+
+#include <OGRE\Ogre.h>
 
 /** Class that manages hardware buffers for btDebugDraw.
  *  Most of it taken from: http://www.ogre3d.org/wiki/index.php/DynamicGrowingBuffers
