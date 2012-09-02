@@ -32,9 +32,13 @@ private:
     static long int nVehiclesCreated;
     std::string mstrName;
 
+    //main body
     Ogre::SceneNode *mNode;
     Ogre::Entity *mEntity;
-    
+
+    static btCollisionShape *mbtChassisShape;
+    btRigidBody *mbtCar;
+
     //wheels
     //FL = front left, BL = back left
     Ogre::SceneNode *mFL_Node;
@@ -46,9 +50,8 @@ private:
     Ogre::SceneNode *mBR_Node;
     Ogre::Entity *mBR_Entity;
 
+    static btCollisionShape *mbtWheelShape;
 
-    static btCollisionShape *mbtChassisShape;
-    btRigidBody *mbtCarBody;
 
     //state variables
     bool mbIsMoving;
