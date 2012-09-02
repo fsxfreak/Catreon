@@ -31,8 +31,9 @@ using namespace irrklang;
 GameState* GameState::mGameSingleton = nullptr;
 
 GameState::GameState() :    mMoveSpeed(0.1f), mRotateSpeed(0.3f), mbLMouseDown(false), mbRMouseDown(false), 
-                            mbQuit(false), mbSettingsMode(false), mDetailsPanel(0), 
-                            mTimer(new Ogre::Timer)
+                            mbQuit(false), mbSettingsMode(false), mbBackslashDown(false), mDetailsPanel(0), 
+                            mTimer(new Ogre::Timer),
+                            sound(0)
 {
     mGameSingleton = this;  //is that even right? - doesn't matter, works
 }
@@ -74,6 +75,8 @@ void GameState::enter()
 
     mDynamicsWorld->setGravity(btVector3(0, -100, 0));
 
+    Ogre::MaterialManager::getSingleton().load("DebugLines.material", "General");
+    mDebugDrawer = new CDebugDraw(mSceneMgr, mDynamicsWorld);
 
     sound = createIrrKlangDevice();
     if (!sound)
@@ -132,7 +135,8 @@ void GameState::exit()
     delete mDispatcher;
     delete mBroadphase;
 
-    sound->drop();
+    if (sound)
+        sound->drop();
 }
 //-------------------------------------------------------------------------------------------------------
 //inherited from Appstate, fill the scene
@@ -235,6 +239,11 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
     {
         mbSettingsMode = !mbSettingsMode;
         return true;
+    }
+
+    if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_BACKSLASH))
+    {
+        mbBackslashDown = !mbBackslashDown;
     }
 
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_F))    //create Drivers and their vehicles
@@ -514,6 +523,11 @@ void GameState::buildGUI()
 //-------------------------------------------------------------------------------------------------------
 void GameState::updatePhysics()
 {
+    if (mbBackslashDown)
+    {
+        mDebugDrawer->Update();
+        mDynamicsWorld->debugDrawWorld();
+    }
     int milliseconds = getMillisecondsFromLastCall();
     mDynamicsWorld->stepSimulation(static_cast<double>(milliseconds) / 1000, 30);
 }

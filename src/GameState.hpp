@@ -23,6 +23,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
 #include "BtOgMotionState.h"
+#include <framework\DebugDraw.hpp>
 
 #include "objects\ball\Ball.hpp"
 #include "objects\vehicles\Vehicle.h"
@@ -127,6 +128,7 @@ public:
     bool                                    mbLMouseDown;
     bool                                    mbRMouseDown;
     bool                                    mbSettingsMode;
+    bool                                    mbBackslashDown;
 
     //physics engine
 
@@ -140,6 +142,8 @@ public:
     std::vector<btRigidBody*>                mRigidBodies;
     std::vector<Ball*>                       mBalls;
     std::vector<Driver*>                     mDrivers;
+
+    CDebugDraw                              *mDebugDrawer;
 
     //sound engine
     ISoundEngine                            *sound;
