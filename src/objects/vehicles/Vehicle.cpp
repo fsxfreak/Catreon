@@ -35,7 +35,7 @@ btCollisionShape *Vehicle::mbtWheelShape = new btCylinderShapeX(btVector3(1.02, 
 //yay magic numbers
 //-------------------------------------------------------------------------------------------------------
 Vehicle::Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position, Ogre::Vector3 direction) 
-    : mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1), mfTargetSpeed(0), mLastPosition(position),
+    : mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1), mfTargetSpeed(0), mLastPosition(position), mbtCar(nullptr),
       Object(position, direction)
 {
     //give a unique name to each vehicle
@@ -68,7 +68,7 @@ Vehicle::~Vehicle()
 
     delete mbtCar;
     if (mbtChassisShape) delete mbtChassisShape;
-	if (mbtWheelShape) delete mbtWheelShape;
+    if (mbtWheelShape) delete mbtWheelShape;
 }
 //-------------------------------------------------------------------------------------------------------
 int Vehicle::getSpeed()
@@ -122,24 +122,43 @@ unsigned int Vehicle::getPassengers()
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::initializePhysics()
 {
-    //Ogre::AxisAlignedBox axisboxsize = mEntity->getBoundingBox();
-    //Ogre::Vector3 boxsize = axisboxsize.getSize();
-    //17.84998, 14.970741, 48.143997
-    //box as the main body
-    //the middle is a bit mis-aligned
-    //mbtChassisShape = new btBoxShape(btVector3(boxsize.x / 2, boxsize.y / 2, boxsize.z / 2));
     if (nVehiclesCreated <= 1)
+	{
         getGameState()->mCollisionShapes.push_back(mbtChassisShape);
-
+        getGameState()->mCollisionShapes.push_back(mbtWheelShape);
+	}
+    
+    //main body
+//  mbtChassisShape = new btBoxShape(btVector3(8.92499, 7.48537, 24.072));
     btTransform chassisTransform;
     chassisTransform.setIdentity();
     chassisTransform.setOrigin(GameState::ogreVecToBullet(mNode->getPosition()));
 
-    createRigidBody(1000, chassisTransform); 
+    mbtCar = createRigidBody(1200, chassisTransform, mbtCar, mbtChassisShape);
+    mbtCar->setActivationState(DISABLE_DEACTIVATION);
 
-    mbtCar->setFriction(0);
-    mbtCar->setRestitution(1);
-    mbtCar->setDamping(0.1, 0.8);
+    mVehicleRaycaster = new btDefaultVehicleRaycaster(getGameState()->mDynamicsWorld);
+    mVehicle = new btRaycastVehicle(mTuning, mbtCar, mVehicleRaycaster);
+    mVehicle->setCoordinateSystem(0, 1, 2);
+
+    float connectionHeight = 1.2f;
+    float wheelWidth = mFL_Entity->getBoundingBox().getSize().x;
+    float wheelRadius = mFL_Entity->getBoundingBox().getSize().y / 2;
+    btVector3 wheelDirection(0, -1, 0);
+    btVector3 wheelAxle(-1, 0, 0);
+    btScalar suspensionRestLength(0.6);
+
+    mVehicle->addWheel(btVector3(9.76, -4.37, 15.37), wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, mTuning, true);
+    mVehicle->addWheel(btVector3(-9.76, -4.37, 15.37), wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, mTuning, true);
+    mVehicle->addWheel(btVector3(9.76, -4.37, -15.37), wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, mTuning, false);
+    mVehicle->addWheel(btVector3(-9.76, -4.37, -15.37), wheelDirection, wheelAxle, suspensionRestLength, wheelRadius, mTuning, false);
+
+    getGameState()->mDynamicsWorld->addVehicle(mVehicle);
+
+    
+    //mbtCar->setFriction(0);
+    //mbtCar->setRestitution(1);
+    //mbtCar->setDamping(0.1, 0.8);
 
 }
 //-------------------------------------------------------------------------------------------------------
@@ -163,36 +182,39 @@ void Vehicle::initializeMaterial()
     mBR_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
     mBR_Node = mNode->createChildSceneNode(Ogre::Vector3(-9.76, -4.37, -15.37));
     mBR_Node->attachObject(mBR_Entity);
-
-	Ogre::Vector3 derp = mFL_Entity->getBoundingBox().getSize();
 }
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::accelerate()
 {
-    btScalar force = abs(mfTargetSpeed - mfSpeed) * 500;
+    /*btScalar force = abs(mfTargetSpeed - mfSpeed) * 500;
     btVector3 forcedir = GameState::ogreVecToBullet(getDirection()).normalized();
     forcedir *= force;
-    mbtCar->applyCentralForce(-forcedir);
+    mbtCar->applyCentralForce(-forcedir);*/
+    for (int wheel = 0; wheel <= 3; ++wheel)
+    {
+        mVehicle->applyEngineForce(200, wheel);
+    }
 }
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::decelerate()
 {
-    btScalar force = abs(mfTargetSpeed - mfSpeed) * 500;
+    /*btScalar force = abs(mfTargetSpeed - mfSpeed) * 500;
     btVector3 forcedir = GameState::ogreVecToBullet(getDirection()).normalized();
     forcedir *= force;
-    mbtCar->applyCentralForce(forcedir);
+    mbtCar->applyCentralForce(forcedir);*/
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::createRigidBody(float mass, const btTransform &trans)
+btRigidBody* Vehicle::createRigidBody(float mass, const btTransform &trans, btRigidBody *rigidBody, btCollisionShape *chassisShape)
 {
     btVector3 localInertia(0, 0, 0);
-    mbtChassisShape->calculateLocalInertia(mass, localInertia);
+    chassisShape->calculateLocalInertia(mass, localInertia);
 
     BtOgMotionState *motionState = new BtOgMotionState(trans, mNode);
     btRigidBody::btRigidBodyConstructionInfo conInfo(mass, motionState, mbtChassisShape, localInertia);
-    mbtCar = new btRigidBody(conInfo);
+    rigidBody = new btRigidBody(conInfo);
 
-    getGameState()->mDynamicsWorld->addRigidBody(mbtCar);
+    getGameState()->mDynamicsWorld->addRigidBody(rigidBody);
+    return rigidBody;
 }
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::update()
@@ -202,9 +224,12 @@ void Vehicle::update()
         //car is falling from the sky
         return;
     }
+
+    accelerate();
+    mVehicle->updateVehicle(1);
     //btVector3 speedvector = (GameState::ogreVecToBullet(mNode->getPosition()) - mLastPosition);
     //mfSpeed = speedvector.length();
-    mfSpeed = mbtCar->getLinearVelocity().length();
+    /*mfSpeed = mbtCar->getLinearVelocity().length();
 
     //anything > 0 = forward, < 0 = backward
     Ogre::Real directionTraveling = mNode->getPosition().dotProduct(mLastPosition);
@@ -221,7 +246,7 @@ void Vehicle::update()
     else if (mfSpeed > mfTargetSpeed && !mbIsInReverse)
     {
         decelerate();
-    }
+    }*/
     mLastPosition = mNode->getPosition();
 }
 //-------------------------------------------------------------------------------------------------------

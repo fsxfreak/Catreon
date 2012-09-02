@@ -51,7 +51,9 @@ private:
     Ogre::Entity *mBR_Entity;
 
     static btCollisionShape *mbtWheelShape;
-
+    btRaycastVehicle::btVehicleTuning mTuning;
+    btVehicleRaycaster* mVehicleRaycaster;
+    btRaycastVehicle* mVehicle;
 
     //state variables
     bool mbIsMoving;
@@ -74,7 +76,7 @@ private:
     virtual void accelerate();
     virtual void decelerate();
 
-    void createRigidBody(float mass, const btTransform &trans);
+    btRigidBody* createRigidBody(float mass, const btTransform &trans, btRigidBody *rigidBody, btCollisionShape *chassisShape);
     
 public:
     Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position = Ogre::Vector3(0, 8, 0), 
