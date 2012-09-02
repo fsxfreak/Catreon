@@ -3,8 +3,10 @@
 #ifndef DEBUG_DRAW_HPP
 #define DEBUG_DRAW_HPP
 
+#include "stdafx.h"
+
 #include <btBulletDynamicsCommon.h>
-#include <OGRE/Ogre.h>
+#include <OGRE\Ogre.h>
 
 #include "DynamicLineDrawer.hpp"
 

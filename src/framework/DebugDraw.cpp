@@ -1,7 +1,5 @@
 //All credit to LiMuBei and his team of Ogre3D forums
-
-#include "Support/Common.hpp"
-
+#include "stdafx.h"
 #include "DebugDraw.hpp"
 #ifndef M_PI
 #define M_PI    3.14159265358979323846f
@@ -34,8 +32,8 @@ CDebugDraw::CDebugDraw( Ogre::SceneManager* Scene, btDynamicsWorld* World )
 	}
 	DebugDrawerNode->attachObject( DebugLineDrawer );
 
-	DebugLineDrawer->setMaterial("DebugLines");
-
+	DebugLineDrawer->setMaterial("DebugLines.material");
+    setDebugMode(btIDebugDraw::DBG_DrawWireframe);
 	World->setDebugDrawer( this );
 }
 
