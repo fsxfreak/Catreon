@@ -69,8 +69,10 @@ void GameState::enter()
 
     mCollisionConfiguration = new btDefaultCollisionConfiguration();
     mDispatcher = new btCollisionDispatcher(mCollisionConfiguration);
-    mBroadphase = new btDbvtBroadphase();
-    mSolver = new btSequentialImpulseConstraintSolver;
+    btVector3 worldMin(-1000, -1000, -1000);
+    btVector3 worldMax(1000, 1000, 1000);
+    mBroadphase = new btAxisSweep3(worldMin, worldMax);
+    mSolver = new btSequentialImpulseConstraintSolver();
     mDynamicsWorld = new btDiscreteDynamicsWorld(mDispatcher, mBroadphase, mSolver, mCollisionConfiguration);
 
     mDynamicsWorld->setGravity(btVector3(0, -100, 0));
@@ -160,28 +162,67 @@ void GameState::createScene()
     entityGround->setMaterialName("Examples/BumpyMetal");
     nodeGround = mSceneMgr->getRootSceneNode()->createChildSceneNode();
     nodeGround->attachObject(entityGround);
+    nodeGround->translate(0, -10, 0);
+    /*const float TRIANGLE_SIZE = 20.0f;
+    //triangle mesh ground
+    int vertStride = sizeof(btVector3);
+    int indexStride = 3 * sizeof(int);
+    const int NUM_VERTS_X = 200;
+    const int NUM_VERTS_Y = 200;
+    const int totalVerts = NUM_VERTS_X * NUM_VERTS_Y;
+    const int totalTriangles = 2 * (NUM_VERTS_X - 1) * (NUM_VERTS_Y - 1);
     
-    btTriangleMesh *triangle = new btTriangleMesh();
-    triangle->addTriangle(btVector3(-5000, 0, -5000), btVector3(5000, 0, -5000), btVector3(0, 0, 5000));
-    btCollisionShape *plane = new btConvexTriangleMeshShape(triangle);
-    mCollisionShapes.push_back(plane);
+    mVertices = new btVector3[totalVerts];
+    int *gIndices = new int[totalTriangles * 3];
 
-    btTransform planeTransform;
-    planeTransform.setIdentity();
-    planeTransform.setOrigin(btVector3(0, -2, 0));
+    for (int iii = 0; iii < NUM_VERTS_X; iii++)
+    {
+        for (int jjj = 0; jjj < NUM_VERTS_Y; jjj++)
+        {
+            float w1 = 0.2f;
+            float height = 0.0f;    //flat land
 
-    btScalar mass(0);
-    btVector3 localInertia(0, 0, 0);
-    plane->calculateLocalInertia(mass, localInertia);
+            mVertices[iii + jjj * NUM_VERTS_X].setValue
+                ( (iii - NUM_VERTS_X * 0.5f) * TRIANGLE_SIZE
+                , height
+                , (jjj - NUM_VERTS_Y * 0.5f) * TRIANGLE_SIZE);
+        }
+    }
 
-    //initialize the plane as a rigid body
-    BtOgMotionState* groundMotionState = new BtOgMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0)), nodeGround);
-    btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState, plane, localInertia);
-    groundRigidBody = new btRigidBody(groundRigidBodyCI);
+    int index = 0;
+    for (int iii = 0; iii < NUM_VERTS_X - 1; iii++)
+    {
+        for (int jjj = 0; jjj < NUM_VERTS_Y - 1; jjj++)
+        {
+            gIndices[index++] = jjj * NUM_VERTS_X + iii;
+            gIndices[index++] = jjj * NUM_VERTS_X + iii + 1;
+            gIndices[index++] = (jjj + 1) * NUM_VERTS_X + iii + 1;
+
+            gIndices[index++] = jjj * NUM_VERTS_X + iii;
+            gIndices[index++] = (jjj + 1) * NUM_VERTS_X + iii + 1;
+            gIndices[index++] = (jjj + 1) * NUM_VERTS_X + iii;
+        }
+    }
+
+    mIndexVertexArray = new btTriangleIndexVertexArray(totalTriangles, gIndices, indexStride, totalVerts, (btScalar*) &mVertices[0].x(), vertStride);
+    bool useQuantizedAabbCompression = true;
+    groundShape = new btBvhTriangleMeshShape(mIndexVertexArray, useQuantizedAabbCompression);*/
+
+    btTransform tr;
+    tr.setIdentity();
+
+    tr.setOrigin(btVector3(0, -4.5, 0));
+    btCollisionShape *groundShape = new btBoxShape(btVector3(1000, 0, 1000));
+    mCollisionShapes.push_back(groundShape);
+
+    BtOgMotionState *motionState = new BtOgMotionState(tr, nodeGround);
+    btRigidBody::btRigidBodyConstructionInfo conInfo(0, motionState, groundShape, btVector3(0, 0, 0));
+    groundRigidBody = new btRigidBody(conInfo);
+
+    mDynamicsWorld->addRigidBody(groundRigidBody);
 
     groundRigidBody->setFriction(100);
 
-    mDynamicsWorld->addRigidBody(groundRigidBody);
     mRigidBodies.push_back(groundRigidBody);
 }
 //-------------------------------------------------------------------------------------------------------

@@ -13,7 +13,6 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include "stdafx.h"
 
 #include "framework\AdvancedOgreFramework.hpp"
-#include "objects\Object.hpp"
 #include "GameState.hpp"
 
 #include <btBulletCollisionCommon.h>
@@ -22,13 +21,9 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include "MaterialParser.hpp"
 
-class Vehicle : public Object
+class Vehicle
 {
 private:
-    /*  inherited members           <---- is there any reason to have these?
-    Ogre::Vector3 mPosition;
-    Ogre::Vector3 mDirection;
-    */  
     static long int nVehiclesCreated;
     std::string mstrName;
 
@@ -37,6 +32,7 @@ private:
     Ogre::Entity *mEntity;
 
     static btCollisionShape *mbtChassisShape;
+    btCompoundShape *car;
     btRigidBody *mbtCar;
 
     //wheels
@@ -52,7 +48,7 @@ private:
 
     std::vector<Ogre::SceneNode*> mWheelNodes;
 
-    static btCollisionShape *mbtWheelShape;
+    //static btCollisionShape *mbtWheelShape;
     btRaycastVehicle::btVehicleTuning mTuning;
     btVehicleRaycaster* mVehicleRaycaster;
     btRaycastVehicle* mVehicle;
@@ -81,8 +77,8 @@ private:
     btRigidBody* createRigidBody(float mass, const btTransform &trans, btRigidBody *rigidBody, btCollisionShape *chassisShape);
     
 public:
-    Vehicle(int nCargo, int nPassengers, Ogre::Vector3 position = Ogre::Vector3(0, 8, 0), 
-                                         Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0));
+    Vehicle(int nCargo, int nPassengers, Ogre::Vector3 initposition = Ogre::Vector3(0, 40, 0), 
+                                         Ogre::Vector3 initdirection = Ogre::Vector3(0, 0, 0));
     virtual ~Vehicle();
 
     int getSpeed();

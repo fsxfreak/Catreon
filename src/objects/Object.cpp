@@ -17,20 +17,15 @@ TODO
 #include "stdafx.h"
 #include "objects\Object.hpp"
 //-------------------------------------------------------------------------------------------------------
-Object::Object() :  mPosition(0, 0, 0), mDirection(0, 0, 0)
+Object::Object(Ogre::Vector3 position = Ogre::Vector3(0, 15, 0), Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0))
+    : mPosition(position), mDirection(direction)
 {
-    //mObjectNode = GameState::mSceneMgr->getRootSceneNode()->createChildSceneNode(mPosition, Ogre::Quaternion(0, 0, 0, 0));
-    //maybe something like this implemented in base classes
+    //mObjectNode = GameState::mSceneMgr->getRootSceneNode()->createChildSceneNode(mPosition, mDirection);
 }
 //-------------------------------------------------------------------------------------------------------
 Object::~Object()
 {
-}
-//-------------------------------------------------------------------------------------------------------
-Object::Object(Ogre::Vector3 position, Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0))
-    : mPosition(position), mDirection(direction)
-{
-    //mObjectNode = GameState::mSceneMgr->getRootSceneNode()->createChildSceneNode(mPosition, mDirection);
+
 }
 //-------------------------------------------------------------------------------------------------------
 void Object::accelerate()

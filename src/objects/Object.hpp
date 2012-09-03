@@ -24,7 +24,6 @@ protected:
     Ogre::Vector3 mPosition;
     Ogre::Vector3 mDirection;
 
-    Object();
     Object(Ogre::Vector3 position, Ogre::Vector3 direction);
 
     virtual ~Object();

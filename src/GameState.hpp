@@ -138,10 +138,13 @@ public:
     btSequentialImpulseConstraintSolver     *mSolver;
     btDiscreteDynamicsWorld                 *mDynamicsWorld;
 
-    std::vector<btCollisionShape*>           mCollisionShapes;
-    std::vector<btRigidBody*>                mRigidBodies;
-    std::vector<Ball*>                       mBalls;
-    std::vector<Driver*>                     mDrivers;
+    std::vector<btCollisionShape*>          mCollisionShapes;
+    std::vector<btRigidBody*>               mRigidBodies;
+    std::vector<Ball*>                      mBalls;
+    std::vector<Driver*>                    mDrivers;
+
+    btVector3                               *mVertices;
+    btTriangleIndexVertexArray              *mIndexVertexArray;
 
     CDebugDraw                              *mDebugDrawer;
 
