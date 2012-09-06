@@ -220,9 +220,9 @@ void Vehicle::accelerate()
     btVector3 forcedir = GameState::ogreVecToBullet(getDirection()).normalized();
     forcedir *= force;
     mbtCar->applyCentralForce(-forcedir);*/
-    for (int wheel = 0; wheel <= 1; wheel++)
+    for (int wheel = 0; wheel <= 3; wheel++)
     {
-        mVehicle->applyEngineForce(50000, wheel);
+        mVehicle->applyEngineForce(2000, wheel);
     }
 }
 //-------------------------------------------------------------------------------------------------------
@@ -261,7 +261,7 @@ void Vehicle::update(int milliseconds)
 
     for (int iii = 0; iii < 4; iii++)
     {
-        mVehicle->updateWheelTransform(iii, true);
+        mVehicle->updateWheelTransform(iii, false);
         btTransform wheeltrans = mVehicle->getWheelTransformWS(iii);
         mWheelNodes[iii]->_setDerivedPosition(GameState::bulletVecToOgre(wheeltrans.getOrigin()));
         mWheelNodes[iii]->setOrientation(wheeltrans.getRotation().w(), 
