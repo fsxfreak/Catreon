@@ -21,14 +21,10 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 class Ball
 {
-protected:
-    //inherited protected members
+private:
 
     Ogre::Vector3 mPosition;
     Ogre::Vector3 mDirection;
-
-    
-private:
     //mbtBall could be static, but we want flexibility in terms of size
     btCollisionShape *mbtBallShape;
     btRigidBody *mbtBallBody;

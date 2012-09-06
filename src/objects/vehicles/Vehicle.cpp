@@ -28,7 +28,7 @@ TODO
 
 long int Vehicle::nVehiclesCreated = 0;
 
-btCollisionShape *Vehicle::mbtChassisShape = new btBoxShape(btVector3(8, 7, 23));
+btCollisionShape *Vehicle::mbtChassisShape = new btBoxShape(btVector3(6, 5, 18));
 //box as the main body
 //the middle is a bit mis-aligned
 //btCollisionShape *Vehicle::mbtWheelShape = new btCylinderShapeX(btVector3(1.02, 4.07, 3.88));
@@ -44,8 +44,11 @@ Vehicle::Vehicle(int nCargo, int nPassengers, Ogre::Vector3 initposition, Ogre::
     mstrName += oss.str();
 
     ++nVehiclesCreated;
-   
-    initposition = Ogre::Vector3(0, 30, 0);
+    
+    int x = (rand() % 720) - 360;
+    int z = (rand() % 720) - 360;
+
+    initposition = Ogre::Vector3(x, 30, z);
     mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(mstrName, initposition);
 
     initializeMaterial();
@@ -127,19 +130,19 @@ void Vehicle::initializePhysics()
     
     //main body
 //  mbtChassisShape = new btBoxShape(btVector3(8.92499, 7.48537, 24.072));
+    btVector3 carPosition = GameState::ogreVecToBullet(mNode->getPosition());
     btTransform chassisTransform;
     chassisTransform.setIdentity();
-    //chassisTransform.setOrigin(GameState::ogreVecToBullet(mNode->getPosition()));
-    chassisTransform.setOrigin(btVector3(0, 0, 0));
 
-    mbtCar = createRigidBody(800, chassisTransform, mbtCar, mbtChassisShape);
+    //to adjust the center of mass
+    btCompoundShape *compound = new btCompoundShape();
+    getGameState()->mCollisionShapes.push_back(compound);
+    compound->addChildShape(chassisTransform, mbtChassisShape);
+
+    chassisTransform.setOrigin(carPosition);
+    mbtCar = createRigidBody(300, chassisTransform, mbtCar, compound);
+
     mbtCar->setActivationState(DISABLE_DEACTIVATION);
-
-    mTuning.m_maxSuspensionTravelCm = 500.0f;
-    mTuning.m_suspensionCompression = 4.4f;
-    mTuning.m_suspensionDamping = 2.3f;
-    mTuning.m_frictionSlip = 1000.0f;
-    mTuning.m_suspensionStiffness = 200.0f;
 
     mVehicleRaycaster = new btDefaultVehicleRaycaster(getGameState()->mDynamicsWorld);
     mVehicle = new btRaycastVehicle(mTuning, mbtCar, mVehicleRaycaster);
@@ -149,12 +152,12 @@ void Vehicle::initializePhysics()
     
     mVehicle->setCoordinateSystem(0, 1, 2);
 
-    float connectionHeight = 0.2f;
+    float connectionHeight = -0.2f;
     float widthwheel = mFL_Entity->getBoundingBox().getSize().x;
     float radiuswheel = mFL_Entity->getBoundingBox().getSize().y / 2;
     btVector3 wheelDirection(0, -1, 0);
     btVector3 wheelAxle(-1, 0, 0);
-    btScalar suspensionRestLength(0.6);
+    btScalar suspensionRestLength(0.2);
 
     mVehicle->addWheel(btVector3(9.76, -6, 15.37), wheelDirection, wheelAxle, suspensionRestLength, radiuswheel, mTuning, true);
     mVehicle->addWheel(btVector3(-9.76, -6, 15.37), wheelDirection, wheelAxle, suspensionRestLength, radiuswheel, mTuning, true);
@@ -164,13 +167,23 @@ void Vehicle::initializePhysics()
     for (int iii = 0; iii < mVehicle->getNumWheels(); iii++)
     {
         btWheelInfo& wheelinfo = mVehicle->getWheelInfo(iii);
-        wheelinfo.m_suspensionStiffness = 20.0f;
-        wheelinfo.m_wheelsDampingRelaxation = 2.3f;
-        wheelinfo.m_wheelsDampingCompression = 1.0f;
-        wheelinfo.m_maxSuspensionTravelCm = 500.0f;
-        wheelinfo.m_maxSuspensionForce = 500.0f;
-        wheelinfo.m_frictionSlip = 2.3f;
-        wheelinfo.m_rollInfluence = 0;
+        if (iii <= 1)
+        {
+            wheelinfo.m_bIsFrontWheel = true;
+        }
+        wheelinfo.m_suspensionStiffness = 75.f;
+        //from 0.0 - 1.0 (not bouncy)
+        float bounciness = 0.4;
+        float damping = bounciness * 2.0 * btSqrt(wheelinfo.m_suspensionStiffness);
+        wheelinfo.m_wheelsDampingRelaxation = damping;
+        bounciness = 0.1;
+        damping = bounciness * 2.0 * btSqrt(wheelinfo.m_suspensionStiffness);
+        wheelinfo.m_wheelsDampingCompression = damping;
+        wheelinfo.m_maxSuspensionTravelCm = 500.f;
+        wheelinfo.m_maxSuspensionForce = 5000000.f;
+        wheelinfo.m_frictionSlip = 0.8f;
+        wheelinfo.m_rollInfluence = 0.1;
+        wheelinfo.getSuspensionRestLength();
     }
 
 }
@@ -207,9 +220,9 @@ void Vehicle::accelerate()
     btVector3 forcedir = GameState::ogreVecToBullet(getDirection()).normalized();
     forcedir *= force;
     mbtCar->applyCentralForce(-forcedir);*/
-    for (int wheel = 0; wheel <= 3; ++wheel)
+    for (int wheel = 0; wheel <= 1; wheel++)
     {
-        mVehicle->applyEngineForce(1000, wheel);
+        mVehicle->applyEngineForce(50000, wheel);
     }
 }
 //-------------------------------------------------------------------------------------------------------
@@ -219,9 +232,9 @@ void Vehicle::decelerate()
     btVector3 forcedir = GameState::ogreVecToBullet(getDirection()).normalized();
     forcedir *= force;
     mbtCar->applyCentralForce(forcedir);*/
-    for (int wheel = 0; wheel <= 3; ++wheel)
+    for (int wheel = 0; wheel <= 3; wheel++)
     {
-        mVehicle->setBrake(100000000, wheel);
+        mVehicle->setBrake(100000000000, wheel);
     }
 }
 //-------------------------------------------------------------------------------------------------------
@@ -235,27 +248,26 @@ btRigidBody* Vehicle::createRigidBody(float mass, const btTransform &trans, btRi
     conInfo.m_friction = 0.6;
     conInfo.m_restitution = 0.6;
     conInfo.m_linearDamping = 0.2;
-    conInfo.m_angularDamping = 0.2;
+    conInfo.m_angularDamping = 0.9;
     rigidBody = new btRigidBody(conInfo);
 
     return rigidBody;
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::update()
+void Vehicle::update(int milliseconds)
 {
     accelerate();
-    mVehicle->updateVehicle(1);
+    mVehicle->updateVehicle(milliseconds / 1000);
 
     for (int iii = 0; iii < 4; iii++)
     {
         mVehicle->updateWheelTransform(iii, true);
         btTransform wheeltrans = mVehicle->getWheelTransformWS(iii);
+        mWheelNodes[iii]->_setDerivedPosition(GameState::bulletVecToOgre(wheeltrans.getOrigin()));
         mWheelNodes[iii]->setOrientation(wheeltrans.getRotation().w(), 
                                          wheeltrans.getRotation().x(),
                                          wheeltrans.getRotation().y(),
                                          wheeltrans.getRotation().z());
-        mVehicle->setPitchControl(20);
-        mWheelNodes[iii]->setPosition(GameState::bulletVecToOgre(wheeltrans.getOrigin()));
     }
 
     mfSpeed = mVehicle->getCurrentSpeedKmHour();

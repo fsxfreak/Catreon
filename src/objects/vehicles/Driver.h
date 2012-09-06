@@ -41,7 +41,7 @@ public:
 
     void updateGoal(std::string strDest);
     void updateDecision();
-    void update(std::string goal = "NULL");
+    void update(int milliseconds, std::string goal = "NULL");
 
     int getSkill();
     int getNervousness();

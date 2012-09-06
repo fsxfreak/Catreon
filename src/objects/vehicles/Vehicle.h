@@ -97,7 +97,7 @@ public:
     virtual void initializePhysics();
     virtual void initializeMaterial();
 
-    void update();
+    void update(int milliseconds);
 };
 
 #endif

@@ -84,7 +84,7 @@ void Driver::setNervousness(int nNervous)
     mnNervousness += nNervous;
 }
 //-------------------------------------------------------------------------------------------------------
-void Driver::update(std::string goal)
+void Driver::update(int milliseconds, std::string goal)
 {
     if (goal != "NULL")
     {
@@ -92,6 +92,6 @@ void Driver::update(std::string goal)
     }
     updateDecision();
 
-    pVehicle->update();
+    pVehicle->update(milliseconds);
 
 }

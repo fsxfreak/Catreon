@@ -19,7 +19,7 @@ TODO
 Ball::Ball() : mnSize(1)
 {
     initializeMaterial();
-    accelerate(5000.0f * mnSize, getGameState()->mCamera->getDerivedDirection().normalisedCopy());
+    accelerate(50.0f * mnSize, getGameState()->mCamera->getDerivedDirection().normalisedCopy());
 }
 //-------------------------------------------------------------------------------------------------------
 Ball::Ball(float size, float initacceleration, Ogre::Vector3 position, Ogre::Vector3 direction = Ogre::Vector3(0, 0, 0)) 
@@ -59,7 +59,7 @@ void Ball::initializePhysics()
     btTransform ballTransform;
     ballTransform.setIdentity();
 
-    btScalar ballMass(1);   //any positive value = dynamic body
+    btScalar ballMass(30);   //any positive value = dynamic body
     btVector3 ballInertia(0, 0, 0);
     mbtBallShape->calculateLocalInertia(ballMass, ballInertia);
 
@@ -69,7 +69,7 @@ void Ball::initializePhysics()
     btRigidBody::btRigidBodyConstructionInfo ballInfo(ballMass, ballState, mbtBallShape, ballInertia);
     mbtBallBody = new btRigidBody(ballInfo);
 
-    mbtBallBody->setFriction(900);      //some arbitrary friction number that doesn't seem to work
+    mbtBallBody->setFriction(100);      //some arbitrary friction number that doesn't seem to work
     mbtBallBody->setRestitution(50);    //bounciness
     mbtBallBody->setDamping(0.1, 0.1);  //rate at which ball loses speed (0.0 - 1.0)
 
@@ -79,8 +79,8 @@ void Ball::initializePhysics()
 //-------------------------------------------------------------------------------------------------------
 void Ball::initializeMaterial()
 {
-    mEntity = getGameState()->mSceneMgr->createEntity(Ogre::SceneManager::PT_SPHERE);
-    mEntity->setMaterialName("Examples/BumpyMetal");
+    mEntity = getGameState()->mSceneMgr->createEntity(Ogre::SceneManager::PT_CUBE);
+    mEntity->setMaterialName("Examples/Rockwall");
     mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(mPosition, Ogre::Quaternion(0, 0, 0, 0));
     float ballsize = mnSize / 50.0f + 0.02;    //have to translate scale of PT_SPHERE
     mNode->setScale(ballsize, ballsize, ballsize);

@@ -55,7 +55,7 @@ void GameState::enter()
     //mRaySceneQuery->setQueryMask(OGRE_HEAD_MASK);
 
     mCamera = mSceneMgr->createCamera("GameCamera");
-    mCamera->setPosition(Ogre::Vector3(5, 60, 120));
+    mCamera->setPosition(Ogre::Vector3(0, 200, -300));
     mCamera->lookAt(Ogre::Vector3(0, 0, 0));
     mCamera->setNearClipDistance(1);
     mCamera->setFarClipDistance(1000);
@@ -162,8 +162,9 @@ void GameState::createScene()
     entityGround->setMaterialName("Examples/BumpyMetal");
     nodeGround = mSceneMgr->getRootSceneNode()->createChildSceneNode();
     nodeGround->attachObject(entityGround);
-    nodeGround->translate(0, -10, 0);
-    /*const float TRIANGLE_SIZE = 20.0f;
+
+    /*btCollisionShape *groundShape;
+    const float TRIANGLE_SIZE = 20.0f;
     //triangle mesh ground
     int vertStride = sizeof(btVector3);
     int indexStride = 3 * sizeof(int);
@@ -211,7 +212,7 @@ void GameState::createScene()
     btTransform tr;
     tr.setIdentity();
 
-    tr.setOrigin(btVector3(0, -4.5, 0));
+    tr.setOrigin(btVector3(0, 0, 0));
     btCollisionShape *groundShape = new btBoxShape(btVector3(1000, 0, 1000));
     mCollisionShapes.push_back(groundShape);
 
@@ -221,7 +222,7 @@ void GameState::createScene()
 
     mDynamicsWorld->addRigidBody(groundRigidBody);
 
-    groundRigidBody->setFriction(100);
+    groundRigidBody->setFriction(1000);
 
     mRigidBodies.push_back(groundRigidBody);
 }
@@ -290,7 +291,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
 
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_V))
     {
-        Ball *ball = new Ball(0.5, 5000.0, mCamera->getDerivedPosition() + (mCamera->getDerivedDirection() * Ogre::Vector3(20, 20, 20)), Ogre::Vector3(0, 0, 0));
+        Ball *ball = new Ball(50, 5000.0, mCamera->getDerivedPosition() + (mCamera->getDerivedDirection() * Ogre::Vector3(20, 20, 20)), Ogre::Vector3(0, 0, 0));
         mBalls.push_back(ball);
     }
 
@@ -526,7 +527,7 @@ void GameState::update(double timeSinceLastFrame)
     
     for (std::vector<Driver*>::iterator it = mDrivers.begin(); it != mDrivers.end(); ++it)
     {
-        (*it)->update();
+        (*it)->update(getMillisecondsFromLastCall());
     }
 }
 //-------------------------------------------------------------------------------------------------------
