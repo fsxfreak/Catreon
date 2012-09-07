@@ -28,7 +28,7 @@ TODO
 
 long int Vehicle::nVehiclesCreated = 0;
 
-btCollisionShape *Vehicle::mbtChassisShape = new btBoxShape(btVector3(6, 5, 18));
+btCollisionShape *Vehicle::mbtChassisShape = new btBoxShape(btVector3(8, 7, 23));
 //box as the main body
 //the middle is a bit mis-aligned
 //btCollisionShape *Vehicle::mbtWheelShape = new btCylinderShapeX(btVector3(1.02, 4.07, 3.88));
@@ -193,23 +193,28 @@ void Vehicle::initializeMaterial()
     mEntity = getGameState()->mSceneMgr->createEntity(mstrName, "car_bmwe46.mesh");
     mNode->attachObject(mEntity);
 
+    //child nodes do not work with current implementation, inherited rotation is compounded with bullet rotation
     mFL_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
-    mFL_Node= mNode->createChildSceneNode(Ogre::Vector3(9.76, -6, 15.37));
+    //mFL_Node = mNode->createChildSceneNode(Ogre::Vector3(9.76, -6, 15.37));
+    mFL_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(9.76, -6, 15.37)); 
     mFL_Node->attachObject(mFL_Entity);
     mWheelNodes.push_back(mFL_Node);
     
     mFR_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
-    mFR_Node = mNode->createChildSceneNode(Ogre::Vector3(-9.76, -6, 15.37));
+    //mFR_Node = mNode->createChildSceneNode(Ogre::Vector3(-9.76, -6, 15.37));
+    mFR_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(-9.76, -6, 15.37)); 
     mFR_Node->attachObject(mFR_Entity);
     mWheelNodes.push_back(mFR_Node);
 
     mBL_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
-    mBL_Node = mNode->createChildSceneNode(Ogre::Vector3(9.76, -6, -15.37));
+    //mBL_Node = mNode->createChildSceneNode(Ogre::Vector3(9.76, -6, -15.37));
+    mBL_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(9.76, -6, -15.37)); 
     mBL_Node->attachObject(mBL_Entity);
     mWheelNodes.push_back(mBL_Node);
     
     mBR_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
-    mBR_Node = mNode->createChildSceneNode(Ogre::Vector3(-9.76, -6, -15.37));
+    //mBR_Node = mNode->createChildSceneNode(Ogre::Vector3(-9.76, -6, -15.37));
+    mBR_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(-9.76, -6, -15.37)); 
     mBR_Node->attachObject(mBR_Entity);
     mWheelNodes.push_back(mBR_Node);
 }
@@ -258,10 +263,10 @@ void Vehicle::update(int milliseconds)
 {
     accelerate();
     mVehicle->updateVehicle(milliseconds / 1000);
+    mVehicle->setSteeringValue(0.4, 0);
 
     for (int iii = 0; iii < 4; iii++)
     {
-        mVehicle->updateWheelTransform(iii, false);
         btTransform wheeltrans = mVehicle->getWheelTransformWS(iii);
         mWheelNodes[iii]->_setDerivedPosition(GameState::bulletVecToOgre(wheeltrans.getOrigin()));
         mWheelNodes[iii]->setOrientation(wheeltrans.getRotation().w(), 
