@@ -55,7 +55,6 @@ private:
     //state variables
     bool mbIsMoving;
     bool mbIsHealthy;       //healthy as in not totaled
-    bool mbIsInReverse;
 
     bool isFollowingClosely;
 
@@ -68,13 +67,8 @@ private:
 
     Vehicle& operator=(const Vehicle&);
 
-    Ogre::Vector3 mLastPosition;
-
     virtual void accelerate();
-    virtual void decelerate();
-
-    btRigidBody* createRigidBody(float mass, const btTransform &trans, btRigidBody *rigidBody, btCollisionShape *chassisShape);
-    
+    virtual void brake();
 public:
     Vehicle(int cargo, int passengers, Ogre::Vector3 initposition = Ogre::Vector3(0, 40, 0), 
                                          Ogre::Vector3 initdirection = Ogre::Vector3(0, 0, 0));
@@ -88,7 +82,6 @@ public:
 
     bool isMoving();
     bool isHealthy();
-    bool isInReverse();
 
     virtual void initializePhysics(int cargo, int passengers);
     virtual void initializeMaterial();

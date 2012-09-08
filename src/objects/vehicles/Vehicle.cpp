@@ -31,7 +31,7 @@ btCollisionShape *Vehicle::mbtChassisShape = new btBoxShape(btVector3(8, 7, 23))
 //yay magic numbers
 //-------------------------------------------------------------------------------------------------------
 Vehicle::Vehicle(int cargo, int passengers, Ogre::Vector3 initposition, Ogre::Vector3 initdirection) 
-    : mbIsMoving(0), mbIsHealthy(1), mfTargetSpeed(0), mLastPosition(initposition), mbtCar(nullptr)
+    : mbIsMoving(0), mbIsHealthy(1), mfTargetSpeed(0), mbtCar(nullptr)
 {
     //give a unique name to each vehicle
     std::ostringstream oss;
@@ -126,11 +126,6 @@ bool Vehicle::isHealthy()
     return mbIsHealthy;
 }
 //-------------------------------------------------------------------------------------------------------
-bool Vehicle::isInReverse()
-{
-    return (mfSpeed < 0) ? (mbIsInReverse = 1, true) : (mbIsInReverse = 0, false);
-}
-//-------------------------------------------------------------------------------------------------------
 void Vehicle::initializePhysics(int cargo, int passengers)
 {
     if (nVehiclesCreated <= 1)
@@ -152,7 +147,12 @@ void Vehicle::initializePhysics(int cargo, int passengers)
 
     chassisTransform.setOrigin(carPosition);
     int mass = 300 + cargo + (passengers * 50);
-    mbtCar = createRigidBody(mass, chassisTransform, mbtCar, compound);
+    btVector3 localInertia(0, 0, 0);
+    mbtChassisShape->calculateLocalInertia(mass, localInertia);
+
+    BtOgMotionState *motionState = new BtOgMotionState(chassisTransform, mNode);
+    btRigidBody::btRigidBodyConstructionInfo conInfo(mass, motionState, mbtChassisShape, localInertia);
+    mbtCar = new btRigidBody(conInfo);
 
     mbtCar->setActivationState(DISABLE_DEACTIVATION);
 
@@ -164,7 +164,6 @@ void Vehicle::initializePhysics(int cargo, int passengers)
     
     mVehicle->setCoordinateSystem(0, 1, 2);
 
-    float connectionHeight = -0.2f;
     float widthwheel = mFL_Entity->getBoundingBox().getSize().x;
     float radiuswheel = mFL_Entity->getBoundingBox().getSize().y / 2;
     btVector3 wheelDirection(0, -1, 0);
@@ -179,10 +178,6 @@ void Vehicle::initializePhysics(int cargo, int passengers)
     for (int iii = 0; iii < mVehicle->getNumWheels(); iii++)
     {
         btWheelInfo& wheelinfo = mVehicle->getWheelInfo(iii);
-        if (iii <= 1)
-        {
-            wheelinfo.m_bIsFrontWheel = true;
-        }
         wheelinfo.m_suspensionStiffness = 75.f;
         //from 0.0 - 1.0 (not bouncy)
         float bounciness = 0.4f;
@@ -207,25 +202,21 @@ void Vehicle::initializeMaterial()
 
     //child nodes do not work with current implementation, inherited rotation is compounded with bullet rotation
     mFL_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
-    //mFL_Node = mNode->createChildSceneNode(Ogre::Vector3(9.76, -6, 15.37));
     mFL_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(9.76f, -6, 15.37f)); 
     mFL_Node->attachObject(mFL_Entity);
     mWheelNodes.push_back(mFL_Node);
     
     mFR_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
-    //mFR_Node = mNode->createChildSceneNode(Ogre::Vector3(-9.76, -6, 15.37));
     mFR_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(-9.76f, -6, 15.37f)); 
     mFR_Node->attachObject(mFR_Entity);
     mWheelNodes.push_back(mFR_Node);
 
     mBL_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
-    //mBL_Node = mNode->createChildSceneNode(Ogre::Vector3(9.76, -6, -15.37));
     mBL_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(9.76f, -6, -15.37f)); 
     mBL_Node->attachObject(mBL_Entity);
     mWheelNodes.push_back(mBL_Node);
     
     mBR_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
-    //mBR_Node = mNode->createChildSceneNode(Ogre::Vector3(-9.76, -6, -15.37));
     mBR_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(-9.76f, -6, -15.37f)); 
     mBR_Node->attachObject(mBR_Entity);
     mWheelNodes.push_back(mBR_Node);
@@ -233,50 +224,24 @@ void Vehicle::initializeMaterial()
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::accelerate()
 {
-    /*btScalar force = abs(mfTargetSpeed - mfSpeed) * 500;
-    btVector3 forcedir = GameState::ogreVecToBullet(getDirection()).normalized();
-    forcedir *= force;
-    mbtCar->applyCentralForce(-forcedir);*/
     for (int wheel = 0; wheel <= 3; wheel++)
     {
         mVehicle->applyEngineForce(3000, wheel);
     }
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::decelerate()
+void Vehicle::brake()
 {
-    /*btScalar force = abs(mfTargetSpeed - mfSpeed) * 500;
-    btVector3 forcedir = GameState::ogreVecToBullet(getDirection()).normalized();
-    forcedir *= force;
-    mbtCar->applyCentralForce(forcedir);*/
     for (int wheel = 0; wheel <= 3; wheel++)
     {
         mVehicle->setBrake(1000, wheel);
     }
 }
 //-------------------------------------------------------------------------------------------------------
-btRigidBody* Vehicle::createRigidBody(float mass, const btTransform &trans, btRigidBody *rigidBody, btCollisionShape *chassisShape)
-{
-    btVector3 localInertia(0, 0, 0);
-    chassisShape->calculateLocalInertia(mass, localInertia);
-
-    BtOgMotionState *motionState = new BtOgMotionState(trans, mNode);
-    btRigidBody::btRigidBodyConstructionInfo conInfo(mass, motionState, chassisShape, localInertia);
-    conInfo.m_friction = 0.6f;
-    conInfo.m_restitution = 0.6f;
-    conInfo.m_linearDamping = 0.2f;
-    conInfo.m_angularDamping = 0.9f;
-    rigidBody = new btRigidBody(conInfo);
-
-    return rigidBody;
-}
-//-------------------------------------------------------------------------------------------------------
 void Vehicle::update(int milliseconds)
 {
-    accelerate();
-    mVehicle->setSteeringValue(0.5f, 0);
-    mVehicle->setSteeringValue(0.5f, 1);
-    mVehicle->updateVehicle(milliseconds / 1000);
+    mfSpeed = mVehicle->getCurrentSpeedKmHour();
+
     for (int iii = 0; iii < 4; iii++)
     {
         btTransform wheeltrans = mVehicle->getWheelTransformWS(iii);
@@ -287,21 +252,14 @@ void Vehicle::update(int milliseconds)
                                          wheeltrans.getRotation().z());
     }
 
-    mfSpeed = mVehicle->getCurrentSpeedKmHour();
-
-    if (mfSpeed > 0)
-        mbIsInReverse = 0;
-    else if (mfSpeed < 0)
-        mbIsInReverse = 1;
-
-    if (mfSpeed < mfTargetSpeed || mbIsInReverse)
+    if (mfSpeed < mfTargetSpeed)
     {
         accelerate();
     }
-    else if (mfSpeed > mfTargetSpeed && !mbIsInReverse)
+    else if (mfSpeed > mfTargetSpeed)
     {
-        decelerate();
+        brake();
     }
-    mLastPosition = mNode->getPosition();
+    mVehicle->updateVehicle(milliseconds / 1000);
 }
 //-------------------------------------------------------------------------------------------------------
