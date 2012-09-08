@@ -31,6 +31,9 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include <irrKlang.h>
 
+#include <CEGUI.h>
+#include <CEGUIOgreRenderer.h>
+
 using namespace irrklang;
 
 enum QueryFlags
@@ -150,6 +153,8 @@ public:
 
     //sound engine
     ISoundEngine                            *sound;
+
+    //GUI
 };
 
 //just a little of what I like to call function typedef

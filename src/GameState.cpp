@@ -21,7 +21,6 @@ TODO
 -Move scene creation to an xml for use with RapidXML dotscene loader
 ********************************************************/
 
-
 #include "stdafx.h"
 
 #include "GameState.hpp"
@@ -157,7 +156,7 @@ void GameState::createScene()
     planeGround.normal = Ogre::Vector3(0, 1, 0);
     planeGround.d = 0;
     Ogre::MeshManager::getSingleton().createPlane("GroundPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-    planeGround, 200000, 200000, 20, 20, true, 1, 9000, 9000, Ogre::Vector3::UNIT_Z);
+    planeGround, 1500, 1500, 20, 20, true, 1, 100, 100, Ogre::Vector3::UNIT_Z);
     entityGround = mSceneMgr->createEntity("Ground", "GroundPlane");
     entityGround->setMaterialName("Examples/BumpyMetal");
     nodeGround = mSceneMgr->getRootSceneNode()->createChildSceneNode();
@@ -566,7 +565,11 @@ void GameState::updatePhysics()
         mDynamicsWorld->debugDrawWorld();
     }
     int milliseconds = getMillisecondsFromLastCall();
-    mDynamicsWorld->stepSimulation(static_cast<double>(milliseconds) / 1000, 30);
+#ifdef _DEBUG
+    mDynamicsWorld->stepSimulation(static_cast<double>(milliseconds) / 1000, 10);
+#else
+    mDynamicsWorld->stepSimulation(static_cast<double>(milliseconds) / 1000, 1000);
+#endif
 }
 //-------------------------------------------------------------------------------------------------------
 btVector3 GameState::ogreVecToBullet(const Ogre::Vector3 &ogrevector)

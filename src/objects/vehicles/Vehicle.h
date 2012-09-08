@@ -79,7 +79,7 @@ private:
 public:
     Vehicle(int nCargo, int nPassengers, Ogre::Vector3 initposition = Ogre::Vector3(0, 40, 0), 
                                          Ogre::Vector3 initdirection = Ogre::Vector3(0, 0, 0));
-    virtual ~Vehicle();
+    ~Vehicle();
 
     int getSpeed();
     void setSpeed(float fSpeed);

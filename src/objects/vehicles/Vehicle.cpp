@@ -9,15 +9,13 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 /********************************************************
 TODO
--Implement acceleration/deceleration
+-Implement acceleration/deceleration = done;
 -Create derived classes of this class, Car, Truck
+    -meh, make class more inheritable
 -Initialize physics, sound, and graphics for the vehicle object
+    -only need sound left
 -Get a valid spawn point somewhere and start driving
--Actually drive around itself using physics
-    -Use a compound shape - box with four wheel instead
-    -Raycast shape instead?
-    -add four wheel nodes as a child of the car
-    -should just use btRaycastVehicle6
+-Actually drive around itself using physics = done;
 -Make a simple car already = done;
 ********************************************************/
 
@@ -27,7 +25,6 @@ TODO
 #include <sstream>
 
 long int Vehicle::nVehiclesCreated = 0;
-
 btCollisionShape *Vehicle::mbtChassisShape = new btBoxShape(btVector3(8, 7, 23));
 //box as the main body
 //the middle is a bit mis-aligned
@@ -59,7 +56,11 @@ Vehicle::~Vehicle()
 {
     getGameState()->mSceneMgr->destroyEntity(mEntity);
     getGameState()->mSceneMgr->destroySceneNode(mNode);
-    mWheelNodes.clear();
+    std::vector<Ogre::SceneNode*>::iterator it = mWheelNodes.begin();
+    for (it; it != mWheelNodes.end(); ++it)
+    {
+        getGameState()->mSceneMgr->destroySceneNode(*it);
+    }
 	getGameState()->mSceneMgr->destroyEntity(mFL_Entity);
 	getGameState()->mSceneMgr->destroyEntity(mFR_Entity);
 	getGameState()->mSceneMgr->destroyEntity(mBL_Entity);
@@ -80,7 +81,7 @@ void Vehicle::setSpeed(float fSpeed)
 {
     //Usually, the target speed will be the speed limit
     //The vehicle will attempt to speed up to the target speed when not obstructed
-    fSpeed *= 0.447 * 10;     //convert mph into m/s (multiply by 10 for scaling)
+    fSpeed *= 0.447f * 10;     //convert mph into m/s (multiply by 10 for scaling)
     mfTargetSpeed = fSpeed;
 }
 //-------------------------------------------------------------------------------------------------------
@@ -157,12 +158,12 @@ void Vehicle::initializePhysics()
     float radiuswheel = mFL_Entity->getBoundingBox().getSize().y / 2;
     btVector3 wheelDirection(0, -1, 0);
     btVector3 wheelAxle(-1, 0, 0);
-    btScalar suspensionRestLength(0.2);
+    btScalar suspensionRestLength(0.2f);
 
-    mVehicle->addWheel(btVector3(9.76, -6, 15.37), wheelDirection, wheelAxle, suspensionRestLength, radiuswheel, mTuning, true);
-    mVehicle->addWheel(btVector3(-9.76, -6, 15.37), wheelDirection, wheelAxle, suspensionRestLength, radiuswheel, mTuning, true);
-    mVehicle->addWheel(btVector3(9.76, -6, -15.37), wheelDirection, wheelAxle, suspensionRestLength, radiuswheel, mTuning, false);
-    mVehicle->addWheel(btVector3(-9.76, -6, -15.37), wheelDirection, wheelAxle, suspensionRestLength, radiuswheel, mTuning, false);
+    mVehicle->addWheel(btVector3(9.76f, -6, 15.37f), wheelDirection, wheelAxle, suspensionRestLength, radiuswheel, mTuning, true);
+    mVehicle->addWheel(btVector3(-9.76f, -6, 15.37f), wheelDirection, wheelAxle, suspensionRestLength, radiuswheel, mTuning, true);
+    mVehicle->addWheel(btVector3(9.76f, -6, -15.37f), wheelDirection, wheelAxle, suspensionRestLength, radiuswheel, mTuning, false);
+    mVehicle->addWheel(btVector3(-9.76f, -6, -15.37f), wheelDirection, wheelAxle, suspensionRestLength, radiuswheel, mTuning, false);
 
     for (int iii = 0; iii < mVehicle->getNumWheels(); iii++)
     {
@@ -173,16 +174,16 @@ void Vehicle::initializePhysics()
         }
         wheelinfo.m_suspensionStiffness = 75.f;
         //from 0.0 - 1.0 (not bouncy)
-        float bounciness = 0.4;
-        float damping = bounciness * 2.0 * btSqrt(wheelinfo.m_suspensionStiffness);
+        float bounciness = 0.4f;
+        float damping = bounciness * 2.0f * btSqrt(wheelinfo.m_suspensionStiffness);
         wheelinfo.m_wheelsDampingRelaxation = damping;
-        bounciness = 0.1;
-        damping = bounciness * 2.0 * btSqrt(wheelinfo.m_suspensionStiffness);
+        bounciness = 0.1f;
+        damping = bounciness * 2.0f * btSqrt(wheelinfo.m_suspensionStiffness);
         wheelinfo.m_wheelsDampingCompression = damping;
         wheelinfo.m_maxSuspensionTravelCm = 500.f;
         wheelinfo.m_maxSuspensionForce = 5000000.f;
         wheelinfo.m_frictionSlip = 0.8f;
-        wheelinfo.m_rollInfluence = 0.1;
+        wheelinfo.m_rollInfluence = 0.1f;
         wheelinfo.getSuspensionRestLength();
     }
 
@@ -196,25 +197,25 @@ void Vehicle::initializeMaterial()
     //child nodes do not work with current implementation, inherited rotation is compounded with bullet rotation
     mFL_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
     //mFL_Node = mNode->createChildSceneNode(Ogre::Vector3(9.76, -6, 15.37));
-    mFL_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(9.76, -6, 15.37)); 
+    mFL_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(9.76f, -6, 15.37f)); 
     mFL_Node->attachObject(mFL_Entity);
     mWheelNodes.push_back(mFL_Node);
     
     mFR_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
     //mFR_Node = mNode->createChildSceneNode(Ogre::Vector3(-9.76, -6, 15.37));
-    mFR_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(-9.76, -6, 15.37)); 
+    mFR_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(-9.76f, -6, 15.37f)); 
     mFR_Node->attachObject(mFR_Entity);
     mWheelNodes.push_back(mFR_Node);
 
     mBL_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
     //mBL_Node = mNode->createChildSceneNode(Ogre::Vector3(9.76, -6, -15.37));
-    mBL_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(9.76, -6, -15.37)); 
+    mBL_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(9.76f, -6, -15.37f)); 
     mBL_Node->attachObject(mBL_Entity);
     mWheelNodes.push_back(mBL_Node);
     
     mBR_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
     //mBR_Node = mNode->createChildSceneNode(Ogre::Vector3(-9.76, -6, -15.37));
-    mBR_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(-9.76, -6, -15.37)); 
+    mBR_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(-9.76f, -6, -15.37f)); 
     mBR_Node->attachObject(mBR_Entity);
     mWheelNodes.push_back(mBR_Node);
 }
@@ -227,7 +228,7 @@ void Vehicle::accelerate()
     mbtCar->applyCentralForce(-forcedir);*/
     for (int wheel = 0; wheel <= 3; wheel++)
     {
-        mVehicle->applyEngineForce(2000, wheel);
+        mVehicle->applyEngineForce(3000, wheel);
     }
 }
 //-------------------------------------------------------------------------------------------------------
@@ -239,7 +240,7 @@ void Vehicle::decelerate()
     mbtCar->applyCentralForce(forcedir);*/
     for (int wheel = 0; wheel <= 3; wheel++)
     {
-        mVehicle->setBrake(100000000000, wheel);
+        mVehicle->setBrake(1000, wheel);
     }
 }
 //-------------------------------------------------------------------------------------------------------
@@ -250,10 +251,10 @@ btRigidBody* Vehicle::createRigidBody(float mass, const btTransform &trans, btRi
 
     BtOgMotionState *motionState = new BtOgMotionState(trans, mNode);
     btRigidBody::btRigidBodyConstructionInfo conInfo(mass, motionState, chassisShape, localInertia);
-    conInfo.m_friction = 0.6;
-    conInfo.m_restitution = 0.6;
-    conInfo.m_linearDamping = 0.2;
-    conInfo.m_angularDamping = 0.9;
+    conInfo.m_friction = 0.6f;
+    conInfo.m_restitution = 0.6f;
+    conInfo.m_linearDamping = 0.2f;
+    conInfo.m_angularDamping = 0.9f;
     rigidBody = new btRigidBody(conInfo);
 
     return rigidBody;
@@ -262,9 +263,9 @@ btRigidBody* Vehicle::createRigidBody(float mass, const btTransform &trans, btRi
 void Vehicle::update(int milliseconds)
 {
     accelerate();
+    mVehicle->setSteeringValue(0.5f, 0);
+    mVehicle->setSteeringValue(0.5f, 1);
     mVehicle->updateVehicle(milliseconds / 1000);
-    mVehicle->setSteeringValue(0.4, 0);
-
     for (int iii = 0; iii < 4; iii++)
     {
         btTransform wheeltrans = mVehicle->getWheelTransformWS(iii);
