@@ -23,7 +23,7 @@ Driver::Driver(int nSkill, int nRiskTaker,
                 int nCargo, int nPassengers, Ogre::Vector3 position) 
                 : mstrGoal(""), mnNervousness(0), bIsFollowingClose(0)
 {
-    pVehicle = new Vehicle(nCargo, nPassengers, position);
+    pVehicle = std::unique_ptr<Vehicle>(new Vehicle(nCargo, nPassengers, position));
     mnSkill = rand() % 100 + 1;
     mnRiskTaker = rand() % 100 + 1;
 }
@@ -31,19 +31,14 @@ Driver::Driver(int nSkill, int nRiskTaker,
 //random, default constructor
 Driver::Driver() : mnNervousness(0), bIsFollowingClose(0)
 {
-    pVehicle = new Vehicle(150, 1);
+    pVehicle = std::unique_ptr<Vehicle>(new Vehicle(150, 1));
     mnSkill = rand() % 100 + 1;
     mnRiskTaker = rand() % 100 + 1;
 }
 //-------------------------------------------------------------------------------------------------------
 Driver::~Driver()
 {
-    delete pVehicle;
-}
-//-------------------------------------------------------------------------------------------------------
-void Driver::setCar(Vehicle *vehicle)
-{
-    pVehicle = vehicle;
+    //delete pVehicle;  deleted automatically
 }
 //-------------------------------------------------------------------------------------------------------
 void Driver::updateGoal(std::string strGoal)

@@ -29,15 +29,13 @@ private:
 
     bool bIsFollowingClose;
 
-    Vehicle *pVehicle;
+    std::unique_ptr<Vehicle> pVehicle;
 
     Driver& operator=(const Driver& cDriver);
 public:
     Driver(int nSkill, int nRiskTaker, int nCargo, int nPassengers, Ogre::Vector3 position);
     Driver();
     ~Driver();
-
-    void setCar(Vehicle *vehicle);
 
     void updateGoal(std::string strDest);
     void updateDecision();
