@@ -32,7 +32,6 @@ private:
     Ogre::Entity *mEntity;
 
     static btCollisionShape *mbtChassisShape;
-    btCompoundShape *car;
     btRigidBody *mbtCar;
 
     //wheels
@@ -64,8 +63,8 @@ private:
     float mfSpeed;
 
     //in pounds
-    unsigned int mnCargo;
-    unsigned int mnPassengers;
+    //unsigned int mnCargo;
+    //unsigned int mnPassengers;
 
     Vehicle& operator=(const Vehicle&);
 
@@ -77,7 +76,7 @@ private:
     btRigidBody* createRigidBody(float mass, const btTransform &trans, btRigidBody *rigidBody, btCollisionShape *chassisShape);
     
 public:
-    Vehicle(int nCargo, int nPassengers, Ogre::Vector3 initposition = Ogre::Vector3(0, 40, 0), 
+    Vehicle(int cargo, int passengers, Ogre::Vector3 initposition = Ogre::Vector3(0, 40, 0), 
                                          Ogre::Vector3 initdirection = Ogre::Vector3(0, 0, 0));
     ~Vehicle();
 
@@ -91,10 +90,7 @@ public:
     bool isHealthy();
     bool isInReverse();
 
-    unsigned int getCargo();
-    unsigned int getPassengers();
-
-    virtual void initializePhysics();
+    virtual void initializePhysics(int cargo, int passengers);
     virtual void initializeMaterial();
 
     void update(int milliseconds);

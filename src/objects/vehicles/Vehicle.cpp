@@ -21,7 +21,6 @@ TODO
 
 #include "stdafx.h"
 #include "objects\vehicles\Vehicle.h"
-
 #include <sstream>
 
 long int Vehicle::nVehiclesCreated = 0;
@@ -31,8 +30,8 @@ btCollisionShape *Vehicle::mbtChassisShape = new btBoxShape(btVector3(8, 7, 23))
 //btCollisionShape *Vehicle::mbtWheelShape = new btCylinderShapeX(btVector3(1.02, 4.07, 3.88));
 //yay magic numbers
 //-------------------------------------------------------------------------------------------------------
-Vehicle::Vehicle(int nCargo, int nPassengers, Ogre::Vector3 initposition, Ogre::Vector3 initdirection) 
-    : mbIsMoving(0), mbIsHealthy(1), mnCargo(200), mnPassengers(1), mfTargetSpeed(0), mLastPosition(initposition), mbtCar(nullptr)
+Vehicle::Vehicle(int cargo, int passengers, Ogre::Vector3 initposition, Ogre::Vector3 initdirection) 
+    : mbIsMoving(0), mbIsHealthy(1), mfTargetSpeed(0), mLastPosition(initposition), mbtCar(nullptr)
 {
     //give a unique name to each vehicle
     std::ostringstream oss;
@@ -49,7 +48,7 @@ Vehicle::Vehicle(int nCargo, int nPassengers, Ogre::Vector3 initposition, Ogre::
     mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(mstrName, initposition);
 
     initializeMaterial();
-    initializePhysics();
+    initializePhysics(cargo, passengers);
 }
 //-------------------------------------------------------------------------------------------------------
 Vehicle::~Vehicle()
@@ -66,9 +65,30 @@ Vehicle::~Vehicle()
 	getGameState()->mSceneMgr->destroyEntity(mBL_Entity);
 	getGameState()->mSceneMgr->destroyEntity(mBR_Entity);
 	//i'm sure there is a way better way to do this;
-
-    delete mbtCar;
-    if (mbtChassisShape) delete mbtChassisShape;
+    
+    for (int iii = getGameState()->mDynamicsWorld->getNumCollisionObjects() - 1; iii >= 0; iii--)
+    {
+        btCollisionObject *obj = getGameState()->mDynamicsWorld->getCollisionObjectArray()[iii];
+        btRigidBody *body = btRigidBody::upcast(obj);
+        if (obj == mbtCar && body && body->getMotionState())
+        {
+            getGameState()->mDynamicsWorld->getPairCache()->cleanProxyFromPairs(body->getBroadphaseHandle()
+               , getGameState()->mDynamicsWorld->getDispatcher());
+            while (body->getNumConstraintRefs())
+            {
+                btTypedConstraint *constraint = body->getConstraintRef(0);
+                getGameState()->mDynamicsWorld->removeConstraint(constraint);
+                delete constraint;
+            }
+            delete body->getMotionState();
+            getGameState()->mDynamicsWorld->removeRigidBody(body);
+        }
+    }
+    delete mVehicleRaycaster;
+    getGameState()->mDynamicsWorld->removeAction(mVehicle);
+    delete mVehicle;
+    
+    //if (mbtChassisShape) delete mbtChassisShape;
     //if (mbtWheelShape) delete mbtWheelShape;
 }
 //-------------------------------------------------------------------------------------------------------
@@ -111,17 +131,7 @@ bool Vehicle::isInReverse()
     return (mfSpeed < 0) ? (mbIsInReverse = 1, true) : (mbIsInReverse = 0, false);
 }
 //-------------------------------------------------------------------------------------------------------
-unsigned int Vehicle::getCargo()
-{
-    return mnCargo;
-}
-//-------------------------------------------------------------------------------------------------------
-unsigned int Vehicle::getPassengers()
-{
-    return mnPassengers;
-}
-//-------------------------------------------------------------------------------------------------------
-void Vehicle::initializePhysics()
+void Vehicle::initializePhysics(int cargo, int passengers)
 {
     if (nVehiclesCreated <= 1)
 	{
@@ -141,7 +151,8 @@ void Vehicle::initializePhysics()
     compound->addChildShape(chassisTransform, mbtChassisShape);
 
     chassisTransform.setOrigin(carPosition);
-    mbtCar = createRigidBody(300, chassisTransform, mbtCar, compound);
+    int mass = 300 + cargo + (passengers * 50);
+    mbtCar = createRigidBody(mass, chassisTransform, mbtCar, compound);
 
     mbtCar->setActivationState(DISABLE_DEACTIVATION);
 
