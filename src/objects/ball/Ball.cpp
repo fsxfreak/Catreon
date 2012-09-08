@@ -71,7 +71,7 @@ void Ball::initializePhysics()
 
     mbtBallBody->setFriction(100);      //some arbitrary friction number that doesn't seem to work
     mbtBallBody->setRestitution(50);    //bounciness
-    mbtBallBody->setDamping(0.1, 0.1);  //rate at which ball loses speed (0.0 - 1.0)
+    mbtBallBody->setDamping(0.1f, 0.1f);  //rate at which ball loses speed (0.0 - 1.0)
 
     getGameState()->mDynamicsWorld->addRigidBody(mbtBallBody);
     getGameState()->mRigidBodies.push_back(mbtBallBody);
