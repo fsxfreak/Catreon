@@ -46,6 +46,7 @@ enum QueryFlags
 class Ball;
 class Vehicle;
 class Driver;
+class BtOgMotionState;
 
 //EVERYTHING SHALL BE PUBLIC -throws enscapulation out the window-
 class GameState: public AppState

@@ -14,6 +14,7 @@ TODO
 
 #include "stdafx.h"
 #include "BtOgMotionState.h"
+#include "GameState.hpp"
 
 BtOgMotionState::BtOgMotionState(const btTransform &initialposition, Ogre::SceneNode *node)
 {
@@ -23,7 +24,8 @@ BtOgMotionState::BtOgMotionState(const btTransform &initialposition, Ogre::Scene
 //-------------------------------------------------------------------------------------------------------
 BtOgMotionState::~BtOgMotionState()
 {
-
+    //if (mObject)  //taken care of by vehicle destructor
+        //getGameState()->mSceneMgr->destroySceneNode(mObject);
 }
 //-------------------------------------------------------------------------------------------------------
 void BtOgMotionState::setNode(Ogre::SceneNode *node)

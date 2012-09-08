@@ -20,6 +20,7 @@ TODO
 #include "btBulletDynamicsCommon.h"
 #include "framework\AdvancedOgreFramework.hpp"
 
+
 class BtOgMotionState : public btMotionState
 {
 public:

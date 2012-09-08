@@ -115,6 +115,11 @@ void GameState::exit()
     mSceneMgr->destroyCamera(mCamera);
     mSceneMgr->destroyQuery(mRaySceneQuery);
     
+    std::vector<Driver*>::iterator it = mDrivers.begin();
+    for (it; it != mDrivers.end(); ++it)
+    {
+        delete *it;
+    }
     mDrivers.clear();
     mBalls.clear();
 
@@ -290,22 +295,27 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
 
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_V))
     {
-        Ball *ball = new Ball(50, 5000.0, mCamera->getDerivedPosition() + (mCamera->getDerivedDirection() * Ogre::Vector3(20, 20, 20)), Ogre::Vector3(0, 0, 0));
-        mBalls.push_back(ball);
+//      Ball *ball = new Ball(50, 5000.0, mCamera->getDerivedPosition() + (mCamera->getDerivedDirection() * Ogre::Vector3(20, 20, 20)), Ogre::Vector3(0, 0, 0));
+//      mBalls.push_back(ball);
     }
 
     //clear all balls
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_NUMPAD0))
     {
+        std::vector<Driver*>::iterator it = mDrivers.begin();
+        for (it; it != mDrivers.end(); ++it)
+        {
+            delete *it;
+        }
         mDrivers.clear();
-        mBalls.clear();
+//      mBalls.clear();
         //iterator starts at one because the ground plane is at 0
-        for (int body = mDynamicsWorld->getNumCollisionObjects() - 1; body >= 1; body--)
+/*      for (int body = mDynamicsWorld->getNumCollisionObjects() - 1; body >= 1; body--)
         {
             btCollisionObject *object = mDynamicsWorld->getCollisionObjectArray()[body];
             mDynamicsWorld->removeCollisionObject(object);
         }
-        mRigidBodies.clear();
+*/
     }
 
     //if not in settings mode (tab), or in settings mode and key isnt O, pass the keyevent to OgreFramework
