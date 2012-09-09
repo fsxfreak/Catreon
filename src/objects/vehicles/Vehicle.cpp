@@ -199,6 +199,7 @@ void Vehicle::initializeMaterial()
 {
     mEntity = getGameState()->mSceneMgr->createEntity(mstrName, "car_bmwe46.mesh");
     mNode->attachObject(mEntity);
+    mEntity->setCastShadows(true);
 
     //child nodes do not work with current implementation, inherited rotation is compounded with bullet rotation
     mFL_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");

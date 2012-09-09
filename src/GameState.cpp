@@ -29,7 +29,8 @@ using namespace irrklang;
 
 GameState* GameState::mGameSingleton = nullptr;
 
-GameState::GameState() :    mMoveSpeed(0.1f), mRotateSpeed(0.3f), mbLMouseDown(false), mbRMouseDown(false), 
+GameState::GameState() :    mMoveSpeed(0.01f), mMaxMoveSpeed(0.5f), mTranslateVector(0, 0, 0),
+                            mbLMouseDown(false), mbRMouseDown(false), 
                             mbQuit(false), mbSettingsMode(false), mbBackslashDown(false), mDetailsPanel(0), 
                             mTimer(new Ogre::Timer),
                             sound(0)
@@ -150,11 +151,10 @@ void GameState::createScene()
 {
     Ogre::Light *directional = mSceneMgr->createLight("directionallight");
     directional->setType(Ogre::Light::LT_DIRECTIONAL);
-    directional->setDirection(0, -1, 0);
+    directional->setDirection(0, -0.85f, -0.3f);
 
     Ogre::Light *point = mSceneMgr->createLight("pointlight");
     point->setType(Ogre::Light::LT_POINT);
-    point->setCastShadows(true);
     point->setPosition(100, 20, -3);
 
     //ground plane for testing
@@ -226,7 +226,7 @@ void GameState::createScene()
 
     mDynamicsWorld->addRigidBody(groundRigidBody);
 
-    groundRigidBody->setFriction(1000);
+    groundRigidBody->setFriction(200);
 
     mRigidBodies.push_back(groundRigidBody);
 }
@@ -276,7 +276,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         }
     }
 
-    if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_TAB))
+    if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_CAPITAL))
     {
         mbSettingsMode = !mbSettingsMode;
         return true;
@@ -310,12 +310,6 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         mDrivers.clear();
 //      mBalls.clear();
         //iterator starts at one because the ground plane is at 0
-/*      for (int body = mDynamicsWorld->getNumCollisionObjects() - 1; body >= 1; body--)
-        {
-            btCollisionObject *object = mDynamicsWorld->getCollisionObjectArray()[body];
-            mDynamicsWorld->removeCollisionObject(object);
-        }
-*/
     }
 
     //if not in settings mode (tab), or in settings mode and key isnt O, pass the keyevent to OgreFramework
@@ -347,8 +341,7 @@ bool GameState::mouseMoved(const OIS::MouseEvent &mouseEvent)
         Ogre::Degree oldpitch = mCamera->getOrientation().getPitch();
         Ogre::Degree newpitch = (Ogre::Degree(mouseEvent.state.Y.rel * -0.18f)) + oldpitch;
 
-        if (newpitch < Ogre::Degree(88.0f) 
-            && newpitch > Ogre::Degree(-88.0f))
+        if (newpitch < Ogre::Degree(88.0f) && newpitch > Ogre::Degree(-88.0f))
         {
             mCamera->pitch(Ogre::Degree(mouseEvent.state.Y.rel * -0.18f));
         }
@@ -459,33 +452,72 @@ void GameState::moveCamera()
     {
         mCamera->moveRelative(mTranslateVector);
     }
-    mCamera->moveRelative(mTranslateVector / 10);
+    mCamera->moveRelative(mTranslateVector / 5);
 }
 //-------------------------------------------------------------------------------------------------------
-void GameState::getInput()
+void GameState::getInput(float timesince)
 {
+    bool keyPressed = false; //so we can speed up the move speed, if not, set move speed to zero
+    mMoveScale = mMoveSpeed * timesince;
     //false = unbuffered input
     if (mbSettingsMode == false)
     {
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_A))
+        {
             mTranslateVector.x = -mMoveScale;
+            keyPressed = true;
+        }
+        else
+            mTranslateVector.x *= 0.95f;
+
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_D))
+        {
             mTranslateVector.x = mMoveScale;
+            keyPressed = true;
+        }
+        else 
+            mTranslateVector.x * 0.95f;
+
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_W))
+        {
             mTranslateVector.z = -mMoveScale;
+            keyPressed = true;
+        }
+        else
+            mTranslateVector.z *= 0.95f;
+
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_S))
+        {
             mTranslateVector.z = mMoveScale;
+            keyPressed = true;
+        }
+        else
+            mTranslateVector.z *= 0.95f;
+
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_Q))
+        {
             mTranslateVector.y = -mMoveScale;
+            keyPressed = true;
+        }
+        else
+            mTranslateVector.y *= 0.95f;
+
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_E))
+        {
             mTranslateVector.y = mMoveScale;
-        if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_Z))
-            mCamera->roll(Ogre::Angle(-mMoveScale));
-        if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_X))
-            mCamera->roll(Ogre::Angle(mMoveScale));
-        //reset roll
-        if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_C))
-            mCamera->roll(-(mCamera->getRealOrientation().getRoll()));
+            keyPressed = true;
+        }
+        else
+            mTranslateVector.y *= 0.95f;
+
+        if (keyPressed)
+        {
+            float tempspeed = mMoveSpeed * (10.f * (mMaxMoveSpeed - mMoveSpeed));
+            if (tempspeed < mMaxMoveSpeed)
+            {
+                mMoveSpeed = tempspeed;
+            }
+        }
     }
 }
 //-------------------------------------------------------------------------------------------------------
@@ -511,6 +543,7 @@ void GameState::update(double timeSinceLastFrame)
             mDetailsPanel->setParamValue(4, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().x));
             mDetailsPanel->setParamValue(5, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().y));
             mDetailsPanel->setParamValue(6, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().z));
+            mDetailsPanel->setParamValue(7, Ogre::StringConverter::toString(mMoveSpeed));
             if (mCurrentObject)
             {
                 mDetailsPanel->setParamValue(7, Ogre::StringConverter::toString(mCurrentObject->getPosition()));
@@ -524,19 +557,18 @@ void GameState::update(double timeSinceLastFrame)
         }
     }
 
-    mMoveScale = mMoveSpeed * timeSinceLastFrame;
-    mRotateScale = mRotateSpeed * timeSinceLastFrame;
+    
 
-    mTranslateVector = Ogre::Vector3::ZERO;
+    //mTranslateVector = Ogre::Vector3::ZERO;   //works against my camera smoothing
 
-    getInput();
+    getInput(timeSinceLastFrame);
     moveCamera();
     updatePhysics();
     updateSound();
     
     for (std::vector<Driver*>::iterator it = mDrivers.begin(); it != mDrivers.end(); ++it)
     {
-        (*it)->update(getMillisecondsFromLastCall());
+        (*it)->update(timeSinceLastFrame);
     }
 }
 //-------------------------------------------------------------------------------------------------------

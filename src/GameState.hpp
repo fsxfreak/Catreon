@@ -63,7 +63,7 @@ public:
     void resume();
 
     void moveCamera();
-    void getInput();
+    void getInput(float timesince);
     void buildGUI();
 
     bool keyPressed(const OIS::KeyEvent &keyEvent);
@@ -122,9 +122,8 @@ public:
     //camera speed scales and vectors
     Ogre::Vector3                           mTranslateVector;
     Ogre::Real                              mMoveSpeed;
-    Ogre::Degree                            mRotateSpeed;
     float                                   mMoveScale;
-    Ogre::Degree                            mRotateScale;
+    float                                   mMaxMoveSpeed;
 
     Ogre::RaySceneQuery                     *mRaySceneQuery;
     Ogre::SceneNode                         *mCurrentObject;    //currently selected object
