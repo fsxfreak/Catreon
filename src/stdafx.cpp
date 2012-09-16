@@ -13,10 +13,13 @@
 #include "objects\vehicles\Vehicle.h"
 #include "objects\vehicles\Driver.h"
 #include "objects\Object.hpp"
+#include "objects\vehicles\VehicleHelper.h"
+#include "objects\ball\Ball.hpp"
 
 #include "framework\DemoApp.hpp"
 
 #include "BtOgMotionState.h"
+#include <framework\DebugDraw.hpp>
 
 #include "framework\AdvancedOgreFramework.hpp"
 #include "framework\AppState.hpp"

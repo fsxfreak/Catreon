@@ -251,7 +251,6 @@ void GameState::createScene()
     BtOgMotionState *derpstate = new BtOgMotionState(tr, nodeBox);
     btRigidBody::btRigidBodyConstructionInfo consinfo(0, derpstate, boxShape);
     btRigidBody *boxbody = new btRigidBody(consinfo);
-    boxbody->setDamping(0.12345f, 0.12345f);
     mDynamicsWorld->addRigidBody(boxbody);
     mRigidBodies.push_back(boxbody);
 }
