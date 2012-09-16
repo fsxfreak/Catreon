@@ -65,6 +65,10 @@ bool MenuState::keyPressed(const OIS::KeyEvent &keyEvent)
         mbQuit = true;
         return true;
     }
+    if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_RETURN))
+    {
+        changeAppState(findByName("GameState"));
+    }
 
     OgreFramework::getSingletonPtr()->keyPressed(keyEvent);
     return true;
