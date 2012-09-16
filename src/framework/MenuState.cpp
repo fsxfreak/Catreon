@@ -108,6 +108,7 @@ void MenuState::update(double timeSinceLastFrame)
 {
     mFrameEvent.timeSinceLastFrame = timeSinceLastFrame;
     //OgreFramework::getSingletonPtr()->mTrayMgr->frameRenderingQueued(mFrameEvent);
+    CEGUI::System::getSingleton().injectTimePulse(timeSinceLastFrame);
 
     if (mbQuit == true)
     {
@@ -117,7 +118,7 @@ void MenuState::update(double timeSinceLastFrame)
 }
 //-------------------------------------------------------------------------------------------------------
 //triggered whenever a UI button is clicked
-void MenuState::buttonHit(OgreBites::Button *button)
+/*void MenuState::buttonHit(OgreBites::Button *button)
 {
     if (button->getName() == "ExitBtn")
         mbQuit = true;
@@ -125,4 +126,4 @@ void MenuState::buttonHit(OgreBites::Button *button)
     {
         changeAppState(findByName("GameState"));
     }
-}
+}*/

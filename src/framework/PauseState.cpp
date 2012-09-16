@@ -105,17 +105,19 @@ void PauseState::update(double timeSinceLastFrame)
 {
     mFrameEvent.timeSinceLastFrame = timeSinceLastFrame;
     //OgreFramework::getSingletonPtr()->mTrayMgr->frameRenderingQueued(mFrameEvent);
+    CEGUI::System::getSingleton().injectTimePulse(timeSinceLastFrame);
 
     if (mbQuit == true)
     {
         popAppState();
         return;
     }
+
 }
 //-------------------------------------------------------------------------------------------------------
-void PauseState::buttonHit(OgreBites::Button *button)
+/*void PauseState::buttonHit(OgreBites::Button *button)
 {
-    /*if (button->getName() == "ExitBtn")
+    if (button->getName() == "ExitBtn")
     {
         OgreFramework::getSingletonPtr()->mTrayMgr->showYesNoDialog("Exit Catreon", "Are you sure you want to quit?");
         mbQuestionActive = true;
@@ -128,8 +130,8 @@ void PauseState::buttonHit(OgreBites::Button *button)
     else if (button->getName() == "BackToMenuBtn")
     {
         popAllAndPushAppState(findByName("MenuState"));
-    }*/
-}
+    }
+}*/
 //-------------------------------------------------------------------------------------------------------
 void PauseState::yesNoDialogClosed(const Ogre::DisplayString &question, bool yesHit)
 {

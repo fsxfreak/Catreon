@@ -5,11 +5,29 @@
 
 #include "AdvancedOgreFramework.hpp"
 
-
+CEGUI::MouseButton OgreFramework::convertButton(OIS::MouseButtonID buttonID)
+{
+    switch (buttonID)
+    {
+    case OIS::MB_Left:
+        return CEGUI::LeftButton;
+        break;
+    case OIS::MB_Right:
+        return CEGUI::RightButton;
+        break;
+    case OIS::MB_Middle:
+        return CEGUI::MiddleButton;
+        break;
+    default:
+        return CEGUI::LeftButton;
+    }
+}
 template <>OgreFramework* Ogre::Singleton<OgreFramework>::ms_Singleton = 0;
 //-------------------------------------------------------------------------------------------------------
 OgreFramework::OgreFramework() :    mRoot(0), mRenderWindow(0), mViewport(0), mLog(0), mTimer(0), 
-                                    mInputMgr(0), mKb(0), mMouse(0), /*mTrayMgr(0),*/ mTimeSinceLastFrame(0)                                  
+                                    mInputMgr(0), mKb(0), mMouse(0), /*mTrayMgr(0),*/ 
+                                    mGUIRenderer(&CEGUI::OgreRenderer::bootstrapSystem()),
+                                    mTimeSinceLastFrame(0)                                  
 {
 
 }
@@ -99,6 +117,11 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
     //mTrayMgr = new OgreBites::SdkTrayManager("AOFTrayMgr", mRenderWindow, mMouse, 0);
+    CEGUI::Imageset::setDefaultResourceGroup("Imagesets");
+    CEGUI::Font::setDefaultResourceGroup("Fonts");
+    CEGUI::Scheme::setDefaultResourceGroup("Schemes");
+    CEGUI::WidgetLookManager::setDefaultResourceGroup("LookNFeel");
+    CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
 
     mTimer = new Ogre::Timer();
     mTimer->reset();
@@ -136,27 +159,40 @@ bool OgreFramework::keyPressed(const OIS::KeyEvent &keyEvent)
             mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
         }
     }*/
-    return true;
+    CEGUI::System &sys = CEGUI::System::getSingleton();
+    sys.injectKeyDown(keyEvent.key);
+    sys.injectChar(keyEvent.text);
 
+    return true;
 }
 //-------------------------------------------------------------------------------------------------------
 bool OgreFramework::keyReleased(const OIS::KeyEvent &keyEvent)
 {
+    CEGUI::System::getSingleton().injectKeyUp(keyEvent.key);
     return true;
 }
 //-------------------------------------------------------------------------------------------------------
 bool OgreFramework::mouseMoved(const OIS::MouseEvent &mouseEvent)
 {
+    CEGUI::System &sys = CEGUI::System::getSingleton();
+    sys.injectMouseMove(mouseEvent.state.X.rel, mouseEvent.state.Y.rel);
+
+    //scroll wheel
+    if (mouseEvent.state.Z.rel)
+        sys.injectMouseWheelChange(mouseEvent.state.Z.rel / 120.f); //120 is the magic number it seems
+
     return true;
 }
 //-------------------------------------------------------------------------------------------------------
 bool OgreFramework::mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
 {
+    CEGUI::System::getSingleton().injectMouseButtonDown(convertButton(id));
     return true;
 }
 //-------------------------------------------------------------------------------------------------------
 bool OgreFramework::mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
 {
+    CEGUI::System::getSingleton().injectMouseButtonUp(convertButton(id));
     return true;
 }
 //-------------------------------------------------------------------------------------------------------

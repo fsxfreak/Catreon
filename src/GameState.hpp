@@ -74,7 +74,7 @@ public:
     bool mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
 
     void onLeftPressed(const OIS::MouseEvent &mouseEvent);
-    void itemSelected(OgreBites::SelectMenu *menu);
+    //void itemSelected(OgreBites::SelectMenu *menu);
 
     void update(double timeSinceLastFrame);
     int getMillisecondsFromLastCall();
@@ -116,11 +116,8 @@ public:
     Ogre::Vector3                           spherePosition;
     std::deque<Ogre::SceneNode*>            mSphereNodes;
                             
-    OgreBites::ParamsPanel                  *mDetailsPanel;
+    //OgreBites::ParamsPanel                *mDetailsPanel;
     bool                                    mbQuit;
-
-    //CEGUI
-    CEGUI::OgreRenderer                     *mGUIRenderer;
 
     //camera speed scales and vectors
     Ogre::Vector3                           mTranslateVector;

@@ -31,9 +31,8 @@ GameState* GameState::mGameSingleton = nullptr;
 
 GameState::GameState() :    mMoveSpeed(0.01f), mMaxMoveSpeed(0.5f), mTranslateVector(0, 0, 0),
                             mbLMouseDown(false), mbRMouseDown(false), 
-                            mbQuit(false), mbSettingsMode(false), mbBackslashDown(false), mDetailsPanel(0), 
+                            mbQuit(false), mbSettingsMode(false), mbBackslashDown(false),
                             mTimer(new Ogre::Timer),
-                            mGUIRenderer(&CEGUI::OgreRenderer::bootstrapSystem()),
                             sound(0)
 {
     mGameSingleton = this;  //is that even right? - doesn't matter, works
@@ -554,6 +553,7 @@ void GameState::update(double timeSinceLastFrame)
 {
     mFrameEvent.timeSinceLastFrame = timeSinceLastFrame;
     //OgreFramework::getSingletonPtr()->mTrayMgr->frameRenderingQueued(mFrameEvent);
+    CEGUI::System::getSingleton().injectTimePulse(timeSinceLastFrame);
 
     if (mbQuit == true)
     {
@@ -626,18 +626,6 @@ void GameState::buildGUI()
     chatModes.push_back("Wireframe mode");
     chatModes.push_back("Point mode");
     OgreFramework::getSingletonPtr()->mTrayMgr->createLongSelectMenu(OgreBites::TL_TOPRIGHT, "ChatModeSelMenu", "ChatMode", 200, 3, chatModes);*/
-    CEGUI::Imageset::setDefaultResourceGroup("Imagesets");
-    CEGUI::Font::setDefaultResourceGroup("Fonts");
-    CEGUI::Scheme::setDefaultResourceGroup("Schemes");
-    CEGUI::WidgetLookManager::setDefaultResourceGroup("LookNFeel");
-    CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
-
-    CEGUI::SchemeManager::getSingleton().create("TaharezLook.scheme");
-    CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseArrow");
-
-
-
-
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::updatePhysics()

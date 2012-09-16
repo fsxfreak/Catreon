@@ -24,13 +24,17 @@
 #include <OISKeyboard.h>
 #include <OISMouse.h>
  
-#include <SdkTrays.h>
+//#include <SdkTrays.h>
+#include <CEGUIOgreRenderer.h>
+#include <CEGUI.h>
 
 class OgreFramework : public Ogre::Singleton<OgreFramework>, OIS::KeyListener, OIS::MouseListener
 {
 public:
     OgreFramework();
     ~OgreFramework();
+
+    static CEGUI::MouseButton convertButton(OIS::MouseButtonID buttonID);
 
     bool initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListener = 0, OIS::MouseListener *pMouseListener = 0);
     void updateOgre(double timeSinceLastFrame);
@@ -55,6 +59,7 @@ public:
     OIS::Mouse                  *mMouse;
 
     //OgreBites::SdkTrayManager   *mTrayMgr;
+    CEGUI::OgreRenderer                     *mGUIRenderer;
 
     Ogre::String                mPluginsCfg;
     
