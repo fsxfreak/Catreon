@@ -41,11 +41,10 @@ Vehicle::Vehicle(int cargo, int passengers, Ogre::Vector3 initposition, Ogre::Ve
 
     //++nVehiclesCreated;   //iterate in initializeMaterial() instead
     
-    //int x = (rand() % 720) - 360;
-    //int z = (rand() % 720) - 360;
+    int x = (rand() % 720) - 360;
+    int z = (rand() % 720) - 360;
 
-    //initposition = Ogre::Vector3(x, 30, z);
-    initposition = Ogre::Vector3(0, 30, 0);
+    initposition = Ogre::Vector3(x, 30, z);
     mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(mstrName, initposition);
 
     initializeMaterial();
@@ -114,7 +113,8 @@ Ogre::Vector3 Vehicle::getPosition()
 Ogre::Vector3 Vehicle::getDirection()
 {
     //Converts quaternions into a direction vector for easier direction checking of AI driving on roads
-    return mNode->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z;
+    //return mNode->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z;
+    return mNode->getOrientation() * Ogre::Vector3::UNIT_Z;
 }
 //-------------------------------------------------------------------------------------------------------
 bool Vehicle::isMoving()
@@ -282,27 +282,23 @@ void Vehicle::update(int milliseconds)
             brake();
         }
     }
-
-
     mVehicle->updateVehicle(milliseconds / 1000);
 }
 //-------------------------------------------------------------------------------------------------------
 bool Vehicle::checkForVehicleAhead()
 {
-    Ogre::Vector3 pos = mNode->getPosition();
-    btVector3 rayOrigin = GameState::ogreVecToBullet(mNode->_getDerivedPosition() + (getDirection() * Ogre::Vector3(0, 0, 10)));
-    btVector3 rayFront = GameState::ogreVecToBullet(getDirection());
-    rayFront.setY(0);
+    //get ray starting position in front of the car
+    btVector3 rayOrigin = GameState::ogreVecToBullet(mNode->_getDerivedPosition() + (getDirection() * 24));
+    btVector3 rayFront = GameState::ogreVecToBullet(getDirection() * 300) + rayOrigin; //300 = range of driver's sight
     btCollisionWorld::ClosestRayResultCallback rayQuery(rayOrigin, rayFront);
     getGameState()->mDynamicsWorld->rayTest(rayOrigin, rayFront, rayQuery);
+    getGameState()->mDebugDrawer->drawRay(rayOrigin, rayFront);
 
     if (rayQuery.hasHit())
     {
         btCollisionObject *obj = rayQuery.m_collisionObject;
         btRigidBody *body = btRigidBody::upcast(obj);
         BtOgMotionState *state = (BtOgMotionState*)body->getMotionState();
-        Ogre::String name = state->getName();
-        Ogre::SceneNode *derp = getGameState()->mSceneMgr->getSceneNode("boxnode");
         if (body == getGameState()->mRigidBodies[1])
         {
             brake(1000.f);
