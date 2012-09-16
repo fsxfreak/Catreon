@@ -1,4 +1,4 @@
-//All credit to LiMuBei and his team of Ogre3D forums
+//Most credit to LiMuBei and his team of Ogre3D forums
 
 #ifndef DEBUG_DRAW_HPP
 #define DEBUG_DRAW_HPP
@@ -24,6 +24,7 @@ public:
 		Should be called once every frame.
 	*/
 	void		Update();
+    void drawRay(const btVector3& origin, const btVector3& front);
 
 protected:
 	void setDebugMode( int DebugMode );

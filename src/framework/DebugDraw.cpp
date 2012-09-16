@@ -1,4 +1,4 @@
-//All credit to LiMuBei and his team of Ogre3D forums
+//Most credit to LiMuBei and his team of Ogre3D forums
 #include "stdafx.h"
 #include "DebugDraw.hpp"
 #ifndef M_PI
@@ -119,6 +119,10 @@ void CDebugDraw::drawLine( const btVector3& from, const btVector3& to,
 	DebugLineDrawer->AddPoint( Ogre::Vector3(to.getX(), to.getY(), to.getZ()), Ogre::ColourValue(color.getX(), color.getY(), color.getZ()) );
 }
 
+void CDebugDraw::drawRay(const btVector3& origin, const btVector3& front)
+{
+    drawLine(origin, front, btVector3(0, 0, 255));
+}
 
 void CDebugDraw::drawTriangle( const btVector3& v0, const btVector3& v1, const btVector3& v2,
 					   const btVector3& color, btScalar alpha )
