@@ -28,13 +28,13 @@ void MenuState::enter()
 
     OgreFramework::getSingletonPtr()->mViewport->setCamera(mCamera);
 
-    OgreFramework::getSingletonPtr()->mTrayMgr->destroyAllWidgets();
+    /*OgreFramework::getSingletonPtr()->mTrayMgr->destroyAllWidgets();
     OgreFramework::getSingletonPtr()->mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
     OgreFramework::getSingletonPtr()->mTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
     OgreFramework::getSingletonPtr()->mTrayMgr->showCursor();
     OgreFramework::getSingletonPtr()->mTrayMgr->createButton(OgreBites::TL_CENTER, "EnterBtn", "Enter Catreon", 250);
     OgreFramework::getSingletonPtr()->mTrayMgr->createButton(OgreBites::TL_CENTER, "ExitBtn", "Exit Catreon", 250);
-    OgreFramework::getSingletonPtr()->mTrayMgr->createLabel(OgreBites::TL_TOP, "MenuLbl", "Menu", 250);
+    OgreFramework::getSingletonPtr()->mTrayMgr->createLabel(OgreBites::TL_TOP, "MenuLbl", "Menu", 250);*/
 
     createScene();
 }
@@ -53,9 +53,9 @@ void MenuState::exit()
     if (mSceneMgr)
         OgreFramework::getSingletonPtr()->mRoot->destroySceneManager(mSceneMgr);
 
-    OgreFramework::getSingletonPtr()->mTrayMgr->clearAllTrays();
+    /*OgreFramework::getSingletonPtr()->mTrayMgr->clearAllTrays();
     OgreFramework::getSingletonPtr()->mTrayMgr->destroyAllWidgets();
-    OgreFramework::getSingletonPtr()->mTrayMgr->setListener(0);
+    OgreFramework::getSingletonPtr()->mTrayMgr->setListener(0);*/
 }
 //-------------------------------------------------------------------------------------------------------
 bool MenuState::keyPressed(const OIS::KeyEvent &keyEvent)
@@ -82,24 +82,24 @@ bool MenuState::keyReleased(const OIS::KeyEvent &keyEvent)
 //-------------------------------------------------------------------------------------------------------
 bool MenuState::mouseMoved(const OIS::MouseEvent &mouseEvent)
 {
-    if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseMove(mouseEvent))
-        return true;
+    /*if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseMove(mouseEvent))
+        return true;*/
 
     return true;
 }
 //-------------------------------------------------------------------------------------------------------
 bool MenuState::mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
 {
-    if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseDown(mouseEvent, id))
-        return true;
+    /*if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseDown(mouseEvent, id))
+        return true;*/
 
     return true;
 }
 //-------------------------------------------------------------------------------------------------------
 bool MenuState::mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
 {
-    if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseUp(mouseEvent, id))
-        return true;
+    /*if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseUp(mouseEvent, id))
+        return true;*/
 
     return true;
 }
@@ -107,7 +107,7 @@ bool MenuState::mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButto
 void MenuState::update(double timeSinceLastFrame)
 {
     mFrameEvent.timeSinceLastFrame = timeSinceLastFrame;
-    OgreFramework::getSingletonPtr()->mTrayMgr->frameRenderingQueued(mFrameEvent);
+    //OgreFramework::getSingletonPtr()->mTrayMgr->frameRenderingQueued(mFrameEvent);
 
     if (mbQuit == true)
     {

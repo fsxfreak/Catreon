@@ -9,7 +9,7 @@
 template <>OgreFramework* Ogre::Singleton<OgreFramework>::ms_Singleton = 0;
 //-------------------------------------------------------------------------------------------------------
 OgreFramework::OgreFramework() :    mRoot(0), mRenderWindow(0), mViewport(0), mLog(0), mTimer(0), 
-                                    mInputMgr(0), mKb(0), mMouse(0), mTrayMgr(0), mTimeSinceLastFrame(0)                                  
+                                    mInputMgr(0), mKb(0), mMouse(0), /*mTrayMgr(0),*/ mTimeSinceLastFrame(0)                                  
 {
 
 }
@@ -17,8 +17,8 @@ OgreFramework::OgreFramework() :    mRoot(0), mRenderWindow(0), mViewport(0), mL
 OgreFramework::~OgreFramework()
 {
     OgreFramework::getSingletonPtr()->mLog->logMessage("Shutdown OGRE...");
-    if (mTrayMgr)
-        delete mTrayMgr;
+    //if (mTrayMgr)
+    //    delete mTrayMgr;
     if (mInputMgr)
         OIS::InputManager::destroyInputSystem(mInputMgr);
     if (mRoot)
@@ -98,7 +98,7 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
-    mTrayMgr = new OgreBites::SdkTrayManager("AOFTrayMgr", mRenderWindow, mMouse, 0);
+    //mTrayMgr = new OgreBites::SdkTrayManager("AOFTrayMgr", mRenderWindow, mMouse, 0);
 
     mTimer = new Ogre::Timer();
     mTimer->reset();
@@ -123,7 +123,7 @@ bool OgreFramework::keyPressed(const OIS::KeyEvent &keyEvent)
         return true;
     }
     //Toggle logo
-    if (mKb->isKeyDown(OIS::KC_O))
+    /*if (mKb->isKeyDown(OIS::KC_O))
     {
         if (mTrayMgr->isLogoVisible())
         {
@@ -135,7 +135,7 @@ bool OgreFramework::keyPressed(const OIS::KeyEvent &keyEvent)
             mTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
             mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
         }
-    }
+    }*/
     return true;
 
 }

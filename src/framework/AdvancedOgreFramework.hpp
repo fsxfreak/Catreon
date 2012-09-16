@@ -54,7 +54,7 @@ public:
     OIS::Keyboard               *mKb;
     OIS::Mouse                  *mMouse;
 
-    OgreBites::SdkTrayManager   *mTrayMgr;
+    //OgreBites::SdkTrayManager   *mTrayMgr;
 
     Ogre::String                mPluginsCfg;
     

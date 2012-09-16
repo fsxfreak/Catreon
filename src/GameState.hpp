@@ -119,6 +119,9 @@ public:
     OgreBites::ParamsPanel                  *mDetailsPanel;
     bool                                    mbQuit;
 
+    //CEGUI
+    CEGUI::OgreRenderer                     *mGUIRenderer;
+
     //camera speed scales and vectors
     Ogre::Vector3                           mTranslateVector;
     Ogre::Real                              mMoveSpeed;

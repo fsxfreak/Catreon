@@ -33,6 +33,7 @@ GameState::GameState() :    mMoveSpeed(0.01f), mMaxMoveSpeed(0.5f), mTranslateVe
                             mbLMouseDown(false), mbRMouseDown(false), 
                             mbQuit(false), mbSettingsMode(false), mbBackslashDown(false), mDetailsPanel(0), 
                             mTimer(new Ogre::Timer),
+                            mGUIRenderer(&CEGUI::OgreRenderer::bootstrapSystem()),
                             sound(0)
 {
     mGameSingleton = this;  //is that even right? - doesn't matter, works
@@ -242,10 +243,10 @@ void GameState::createScene()
     nodeBox = mSceneMgr->getRootSceneNode()->createChildSceneNode("boxnode");
     nodeBox->attachObject(entityBox);
     nodeBox->yaw(Ogre::Angle(90));
-    nodeBox->setPosition(0, 0, 100);
+    nodeBox->setPosition(0, 0, 500);
 
     tr.setIdentity();
-    tr.setOrigin(btVector3(0, 0, 100));
+    tr.setOrigin(btVector3(0, 0, 500));
     btCollisionShape *boxShape = new btBoxShape(btVector3(1000, 50, 10));
     mCollisionShapes.push_back(boxShape);
     BtOgMotionState *derpstate = new BtOgMotionState(tr, nodeBox);
@@ -257,7 +258,7 @@ void GameState::createScene()
 //-------------------------------------------------------------------------------------------------------
 bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
 {
-    if (mbSettingsMode == true)
+    /*if (mbSettingsMode == true)
     {
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_S))
         {
@@ -276,7 +277,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
                 pMenu->selectItem(pMenu->getSelectionIndex() - 1);
             }
         }
-    }
+    }*/
 
     //pause the state
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_ESCAPE))
@@ -286,7 +287,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
     }
 
     //toggle information
-    if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_I))
+    /*if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_I))
     {
         if (mDetailsPanel->getTrayLocation() == OgreBites::TL_NONE)
         {
@@ -298,7 +299,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
             OgreFramework::getSingletonPtr()->mTrayMgr->removeWidgetFromTray(mDetailsPanel);
             mDetailsPanel->hide();
         }
-    }
+    }*/
 
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_CAPITAL))
     {
@@ -353,10 +354,10 @@ bool GameState::keyReleased(const OIS::KeyEvent &keyEvent)
 //-------------------------------------------------------------------------------------------------------
 bool GameState::mouseMoved(const OIS::MouseEvent &mouseEvent)
 {
-    if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseMove(mouseEvent))
+    /*if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseMove(mouseEvent))
     {
         return true;
-    }
+    }*/
     //if right mouse down, camera look is activated
     if (mbRMouseDown)
     {
@@ -381,10 +382,10 @@ bool GameState::mouseMoved(const OIS::MouseEvent &mouseEvent)
 //-------------------------------------------------------------------------------------------------------
 bool GameState::mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
 {
-    if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseDown(mouseEvent, id))
+    /*if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseDown(mouseEvent, id))
     {
         return true;
-    }
+    }*/
 
     if (id == OIS::MB_Left)
     {
@@ -401,10 +402,10 @@ bool GameState::mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButton
 //-------------------------------------------------------------------------------------------------------
 bool GameState::mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
 {
-    if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseUp(mouseEvent, id))
+    /*if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseUp(mouseEvent, id))
     {
         return true;
-    }
+    }*/
 
     if (id == OIS::MB_Left)
     {
@@ -552,7 +553,7 @@ void GameState::getInput(float timesince)
 void GameState::update(double timeSinceLastFrame)
 {
     mFrameEvent.timeSinceLastFrame = timeSinceLastFrame;
-    OgreFramework::getSingletonPtr()->mTrayMgr->frameRenderingQueued(mFrameEvent);
+    //OgreFramework::getSingletonPtr()->mTrayMgr->frameRenderingQueued(mFrameEvent);
 
     if (mbQuit == true)
     {
@@ -560,7 +561,7 @@ void GameState::update(double timeSinceLastFrame)
         return;
     }
 
-    if (!OgreFramework::getSingletonPtr()->mTrayMgr->isDialogVisible())
+    /*if (!OgreFramework::getSingletonPtr()->mTrayMgr->isDialogVisible())
     {
         if (mDetailsPanel->isVisible())
         {
@@ -583,7 +584,7 @@ void GameState::update(double timeSinceLastFrame)
             else
                 mDetailsPanel->setParamValue(7, "Un-buffered Input");
         }
-    }
+    }*/
 
     
 
@@ -602,7 +603,7 @@ void GameState::update(double timeSinceLastFrame)
 //-------------------------------------------------------------------------------------------------------
 void GameState::buildGUI()
 {
-    OgreFramework::getSingletonPtr()->mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
+    /*OgreFramework::getSingletonPtr()->mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
     OgreFramework::getSingletonPtr()->mTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
     OgreFramework::getSingletonPtr()->mTrayMgr->createLabel(OgreBites::TL_TOP, "GameLbl", "Game mode", 250);
     OgreFramework::getSingletonPtr()->mTrayMgr->showCursor();
@@ -624,7 +625,19 @@ void GameState::buildGUI()
     chatModes.push_back("Solid mode");
     chatModes.push_back("Wireframe mode");
     chatModes.push_back("Point mode");
-    OgreFramework::getSingletonPtr()->mTrayMgr->createLongSelectMenu(OgreBites::TL_TOPRIGHT, "ChatModeSelMenu", "ChatMode", 200, 3, chatModes);
+    OgreFramework::getSingletonPtr()->mTrayMgr->createLongSelectMenu(OgreBites::TL_TOPRIGHT, "ChatModeSelMenu", "ChatMode", 200, 3, chatModes);*/
+    CEGUI::Imageset::setDefaultResourceGroup("Imagesets");
+    CEGUI::Font::setDefaultResourceGroup("Fonts");
+    CEGUI::Scheme::setDefaultResourceGroup("Schemes");
+    CEGUI::WidgetLookManager::setDefaultResourceGroup("LookNFeel");
+    CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
+
+    CEGUI::SchemeManager::getSingleton().create("TaharezLook.scheme");
+    CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseArrow");
+
+
+
+
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::updatePhysics()

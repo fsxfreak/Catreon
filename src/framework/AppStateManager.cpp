@@ -184,7 +184,7 @@ void AppStateManager::init(AppState* state)
 {
     OgreFramework::getSingletonPtr()->mKb->setEventCallback(state);
     OgreFramework::getSingletonPtr()->mMouse->setEventCallback(state);
-    OgreFramework::getSingletonPtr()->mTrayMgr->setListener(state);
+    //OgreFramework::getSingletonPtr()->mTrayMgr->setListener(state);
 
     OgreFramework::getSingletonPtr()->mRenderWindow->resetStatistics();
 }
