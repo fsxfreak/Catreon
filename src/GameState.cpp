@@ -229,6 +229,30 @@ void GameState::createScene()
     groundRigidBody->setFriction(200);
 
     mRigidBodies.push_back(groundRigidBody);
+
+
+    //test wall
+    Ogre::Plane box;
+    box.normal = Ogre::Vector3(1, 0, 0);
+    Ogre::SceneNode *nodeBox;
+    Ogre::Entity *entityBox;
+    Ogre::MeshManager::getSingleton().createPlane("oox", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, box, 1000, 100);
+    entityBox = mSceneMgr->createEntity("box", "oox");
+    entityBox->setMaterialName("Examples/BumpyMetal");
+    nodeBox = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    nodeBox->attachObject(entityBox);
+    nodeBox->pitch(Ogre::Angle(90));
+
+    tr.setIdentity();
+    tr.setOrigin(btVector3(0, 0, 100));
+    btCollisionShape *boxShape = new btBoxShape(btVector3(1000, 50, 10));
+    mCollisionShapes.push_back(boxShape);
+    BtOgMotionState *derpstate = new BtOgMotionState(tr, nodeBox);
+    btRigidBody::btRigidBodyConstructionInfo consinfo(0, derpstate, boxShape);
+    btRigidBody *boxbody = new btRigidBody(consinfo);
+    boxbody->setDamping(0.12345f, 0.12345f);
+    mDynamicsWorld->addRigidBody(boxbody);
+    mRigidBodies.push_back(boxbody);
 }
 //-------------------------------------------------------------------------------------------------------
 bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
@@ -397,6 +421,9 @@ bool GameState::mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButto
 //object selection
 void GameState::onLeftPressed(const OIS::MouseEvent &mouseEvent)
 {
+    if (mbBackslashDown)
+        return;
+
     if (mCurrentObject)
     {
         mCurrentObject->showBoundingBox(false);
@@ -450,15 +477,16 @@ void GameState::moveCamera()
     //if lshift down, move 10x faster
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_LSHIFT))
     {
-        mCamera->moveRelative(mTranslateVector);
+        mCamera->moveRelative(mTranslateVector * 5);
     }
-    mCamera->moveRelative(mTranslateVector / 5);
+    mCamera->moveRelative(mTranslateVector);
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::getInput(float timesince)
 {
     bool keyPressed = false; //so we can speed up the move speed, if not, set move speed to zero
     mMoveScale = mMoveSpeed * timesince;
+    float damping = 0.95f;
     //false = unbuffered input
     if (mbSettingsMode == false)
     {
@@ -468,7 +496,7 @@ void GameState::getInput(float timesince)
             keyPressed = true;
         }
         else
-            mTranslateVector.x *= 0.95f;
+            mTranslateVector.x *= damping;
 
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_D))
         {
@@ -476,7 +504,7 @@ void GameState::getInput(float timesince)
             keyPressed = true;
         }
         else 
-            mTranslateVector.x * 0.95f;
+            mTranslateVector.x *= damping;
 
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_W))
         {
@@ -484,7 +512,7 @@ void GameState::getInput(float timesince)
             keyPressed = true;
         }
         else
-            mTranslateVector.z *= 0.95f;
+            mTranslateVector.z *= damping;
 
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_S))
         {
@@ -492,7 +520,7 @@ void GameState::getInput(float timesince)
             keyPressed = true;
         }
         else
-            mTranslateVector.z *= 0.95f;
+            mTranslateVector.z *= damping;
 
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_Q))
         {
@@ -500,7 +528,7 @@ void GameState::getInput(float timesince)
             keyPressed = true;
         }
         else
-            mTranslateVector.y *= 0.95f;
+            mTranslateVector.y *= damping;
 
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_E))
         {
@@ -508,7 +536,7 @@ void GameState::getInput(float timesince)
             keyPressed = true;
         }
         else
-            mTranslateVector.y *= 0.95f;
+            mTranslateVector.y *= damping;
 
         if (keyPressed)
         {
