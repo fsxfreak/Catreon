@@ -13,9 +13,10 @@ TODO
 ********************************************************/
 
 #include "stdafx.h"
-#include "BtOgMotionState.h"
+#include <BtOgMotionState.h>
 #include "GameState.hpp"
 
+//-------------------------------------------------------------------------------------------------------
 BtOgMotionState::BtOgMotionState(const btTransform &initialposition, Ogre::SceneNode *node)
 {
     mObject = node;
@@ -24,8 +25,6 @@ BtOgMotionState::BtOgMotionState(const btTransform &initialposition, Ogre::Scene
 //-------------------------------------------------------------------------------------------------------
 BtOgMotionState::~BtOgMotionState()
 {
-    //if (mObject)  //taken care of by vehicle destructor
-        //getGameState()->mSceneMgr->destroySceneNode(mObject);
 }
 //-------------------------------------------------------------------------------------------------------
 void BtOgMotionState::setNode(Ogre::SceneNode *node)
@@ -47,3 +46,9 @@ void BtOgMotionState::setWorldTransform(const btTransform &worldTransform)
     btVector3 position = worldTransform.getOrigin();
     mObject->setPosition(position.x(), position.y(), position.z());
 }
+//-------------------------------------------------------------------------------------------------------
+Ogre::String BtOgMotionState::getName()
+{
+    return mObject->getName();
+}
+//-------------------------------------------------------------------------------------------------------

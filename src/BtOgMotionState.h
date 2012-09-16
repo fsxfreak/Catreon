@@ -16,8 +16,8 @@ TODO
 ********************************************************/
 
 #include "stdafx.h"
-#include "btBulletCollisionCommon.h"
-#include "btBulletDynamicsCommon.h"
+#include <btBulletCollisionCommon.h>
+#include <btBulletDynamicsCommon.h>
 #include "framework\AdvancedOgreFramework.hpp"
 
 
@@ -27,6 +27,7 @@ public:
     BtOgMotionState(const btTransform &initialPosition, Ogre::SceneNode *node);
     virtual ~BtOgMotionState();
 
+    Ogre::String getName();
     inline void setNode(Ogre::SceneNode *node);
 
     virtual void getWorldTransform(btTransform &worldTransform) const;
