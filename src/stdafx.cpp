@@ -16,6 +16,8 @@
 
 #include "framework\DemoApp.hpp"
 
+#include "BtOgMotionState.h"
+
 #include "framework\AdvancedOgreFramework.hpp"
 #include "framework\AppState.hpp"
 #include "framework\AppStateManager.hpp"

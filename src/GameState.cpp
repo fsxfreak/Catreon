@@ -162,9 +162,9 @@ void GameState::createScene()
     planeGround.d = 0;
     Ogre::MeshManager::getSingleton().createPlane("GroundPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
     planeGround, 1500, 1500, 20, 20, true, 1, 100, 100, Ogre::Vector3::UNIT_Z);
-    entityGround = mSceneMgr->createEntity("Ground", "GroundPlane");
+    entityGround = mSceneMgr->createEntity("gnd", "GroundPlane");
     entityGround->setMaterialName("Examples/BumpyMetal");
-    nodeGround = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    nodeGround = mSceneMgr->getRootSceneNode()->createChildSceneNode("groundnode");
     nodeGround->attachObject(entityGround);
 
     /*btCollisionShape *groundShape;
@@ -239,9 +239,10 @@ void GameState::createScene()
     Ogre::MeshManager::getSingleton().createPlane("oox", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, box, 1000, 100);
     entityBox = mSceneMgr->createEntity("box", "oox");
     entityBox->setMaterialName("Examples/BumpyMetal");
-    nodeBox = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    nodeBox = mSceneMgr->getRootSceneNode()->createChildSceneNode("boxnode");
     nodeBox->attachObject(entityBox);
-    nodeBox->pitch(Ogre::Angle(90));
+    nodeBox->yaw(Ogre::Angle(90));
+    nodeBox->setPosition(0, 0, 100);
 
     tr.setIdentity();
     tr.setOrigin(btVector3(0, 0, 100));

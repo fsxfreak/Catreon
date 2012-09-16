@@ -39,12 +39,13 @@ Vehicle::Vehicle(int cargo, int passengers, Ogre::Vector3 initposition, Ogre::Ve
     mstrName = "Vehicle_";
     mstrName += oss.str();
 
-    ++nVehiclesCreated;
+    //++nVehiclesCreated;   //iterate in initializeMaterial() instead
     
-    int x = (rand() % 720) - 360;
-    int z = (rand() % 720) - 360;
+    //int x = (rand() % 720) - 360;
+    //int z = (rand() % 720) - 360;
 
-    initposition = Ogre::Vector3(x, 30, z);
+    //initposition = Ogre::Vector3(x, 30, z);
+    initposition = Ogre::Vector3(0, 30, 0);
     mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(mstrName, initposition);
 
     initializeMaterial();
@@ -113,7 +114,7 @@ Ogre::Vector3 Vehicle::getPosition()
 Ogre::Vector3 Vehicle::getDirection()
 {
     //Converts quaternions into a direction vector for easier direction checking of AI driving on roads
-    return mNode->getOrientation() * -Ogre::Vector3::UNIT_Z;
+    return mNode->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z;
 }
 //-------------------------------------------------------------------------------------------------------
 bool Vehicle::isMoving()
@@ -201,41 +202,57 @@ void Vehicle::initializeMaterial()
     mNode->attachObject(mEntity);
     mEntity->setCastShadows(true);
 
+    std::ostringstream oss;
+    oss << nVehiclesCreated;
+    std::string name = "wheelFL_";
+    name += oss.str();
+
     //child nodes do not work with current implementation, inherited rotation is compounded with bullet rotation
     mFL_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
-    mFL_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(9.76f, -6, 15.37f)); 
+    mFL_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(name, Ogre::Vector3(9.76f, -6, 15.37f)); 
     mFL_Node->attachObject(mFL_Entity);
     mWheelNodes.push_back(mFL_Node);
     
+    name = "wheelFR_";
+    name += oss.str();
+
     mFR_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
-    mFR_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(-9.76f, -6, 15.37f)); 
+    mFR_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(name, Ogre::Vector3(-9.76f, -6, 15.37f)); 
     mFR_Node->attachObject(mFR_Entity);
     mWheelNodes.push_back(mFR_Node);
 
+    name = "wheelBL_";
+    name += oss.str();
+
     mBL_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
-    mBL_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(9.76f, -6, -15.37f)); 
+    mBL_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(name, Ogre::Vector3(9.76f, -6, -15.37f)); 
     mBL_Node->attachObject(mBL_Entity);
     mWheelNodes.push_back(mBL_Node);
+
+    name = "wheelBR_";
+    name += oss.str();
     
     mBR_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
-    mBR_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(Ogre::Vector3(-9.76f, -6, -15.37f)); 
+    mBR_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(name, Ogre::Vector3(-9.76f, -6, -15.37f)); 
     mBR_Node->attachObject(mBR_Entity);
     mWheelNodes.push_back(mBR_Node);
+
+    ++nVehiclesCreated;
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::accelerate()
+void Vehicle::accelerate(float power)
 {
     for (int wheel = 0; wheel <= 3; wheel++)
     {
-        mVehicle->applyEngineForce(3000, wheel);
+        mVehicle->applyEngineForce(100, wheel);
     }
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::brake()
+void Vehicle::brake(float power)
 {
     for (int wheel = 0; wheel <= 3; wheel++)
     {
-        mVehicle->setBrake(1000, wheel);
+        mVehicle->setBrake(power, wheel);
     }
 }
 //-------------------------------------------------------------------------------------------------------
@@ -252,15 +269,53 @@ void Vehicle::update(int milliseconds)
                                          wheeltrans.getRotation().y(),
                                          wheeltrans.getRotation().z());
     }
+    if (!checkForVehicleAhead()) //true if vehicle ahead, false if not
+    {
+        if (mfSpeed < mfTargetSpeed)
+        {
+            float power = (mfTargetSpeed - mfSpeed) * 25.f * (milliseconds / 1000);
+            accelerate(power);
+        }
+        else if (mfSpeed > mfTargetSpeed)
+        {
+            float power = (mfSpeed - mfTargetSpeed) * 25.f * (milliseconds / 1000);
+            brake();
+        }
+    }
 
-    if (mfSpeed < mfTargetSpeed)
-    {
-        accelerate();
-    }
-    else if (mfSpeed > mfTargetSpeed)
-    {
-        brake();
-    }
+
     mVehicle->updateVehicle(milliseconds / 1000);
+}
+//-------------------------------------------------------------------------------------------------------
+bool Vehicle::checkForVehicleAhead()
+{
+    Ogre::Vector3 pos = mNode->getPosition();
+    btVector3 rayOrigin = GameState::ogreVecToBullet(mNode->_getDerivedPosition() + (getDirection() * Ogre::Vector3(0, 0, 10)));
+    btVector3 rayFront = GameState::ogreVecToBullet(getDirection());
+    rayFront.setY(0);
+    btCollisionWorld::ClosestRayResultCallback rayQuery(rayOrigin, rayFront);
+    getGameState()->mDynamicsWorld->rayTest(rayOrigin, rayFront, rayQuery);
+
+    if (rayQuery.hasHit())
+    {
+        btCollisionObject *obj = rayQuery.m_collisionObject;
+        btRigidBody *body = btRigidBody::upcast(obj);
+        BtOgMotionState *state = (BtOgMotionState*)body->getMotionState();
+        Ogre::String name = state->getName();
+        Ogre::SceneNode *derp = getGameState()->mSceneMgr->getSceneNode("boxnode");
+        if (body == getGameState()->mRigidBodies[1])
+        {
+            brake(1000.f);
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        return 0;
+    }
 }
 //-------------------------------------------------------------------------------------------------------

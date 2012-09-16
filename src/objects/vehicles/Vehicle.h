@@ -17,9 +17,11 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
-#include "BtOgMotionState.h"
+#include <BtOgMotionState.h>
 
 #include "MaterialParser.hpp"
+
+class BtOgMotionState;
 
 class Vehicle
 {
@@ -67,8 +69,8 @@ private:
 
     Vehicle& operator=(const Vehicle&);
 
-    virtual void accelerate();
-    virtual void brake();
+    virtual void accelerate(float power = 200.f);
+    virtual void brake(float power = 200.f);
 public:
     Vehicle(int cargo, int passengers, Ogre::Vector3 initposition = Ogre::Vector3(0, 40, 0), 
                                          Ogre::Vector3 initdirection = Ogre::Vector3(0, 0, 0));
@@ -87,6 +89,7 @@ public:
     virtual void initializeMaterial();
 
     void update(int milliseconds);
+    bool checkForVehicleAhead();
 };
 
 #endif
