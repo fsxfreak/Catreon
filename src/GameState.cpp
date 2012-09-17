@@ -357,6 +357,7 @@ bool GameState::mouseMoved(const OIS::MouseEvent &mouseEvent)
     {
         return true;
     }*/
+    OgreFramework::getSingletonPtr()->mouseMoved(mouseEvent);
     //if right mouse down, camera look is activated
     if (mbRMouseDown)
     {
@@ -385,6 +386,7 @@ bool GameState::mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButton
     {
         return true;
     }*/
+    OgreFramework::getSingletonPtr()->mousePressed(mouseEvent, id);
 
     if (id == OIS::MB_Left)
     {
@@ -405,6 +407,7 @@ bool GameState::mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButto
     {
         return true;
     }*/
+    OgreFramework::getSingletonPtr()->mouseReleased(mouseEvent, id);
 
     if (id == OIS::MB_Left)
     {
@@ -456,7 +459,7 @@ void GameState::onLeftPressed(const OIS::MouseEvent &mouseEvent)
     }
 }
 //-------------------------------------------------------------------------------------------------------
-void GameState::itemSelected(OgreBites::SelectMenu *menu)
+/*void GameState::itemSelected(OgreBites::SelectMenu *menu)
 {
     switch (menu->getSelectionIndex())
     {
@@ -470,7 +473,7 @@ void GameState::itemSelected(OgreBites::SelectMenu *menu)
         mCamera->setPolygonMode(Ogre::PM_POINTS);
         break;
     }
-}
+}*/
 //-------------------------------------------------------------------------------------------------------
 void GameState::moveCamera()
 {

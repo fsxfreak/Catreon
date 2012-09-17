@@ -59,7 +59,7 @@ void PauseState::exit()
 //-------------------------------------------------------------------------------------------------------
 bool PauseState::keyPressed(const OIS::KeyEvent &keyEvent)
 {
-    if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_ESCAPE) && !mbQuestionActive)
+    if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_ESCAPE))
     {
         mbQuit = true;
         return true;

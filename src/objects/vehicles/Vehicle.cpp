@@ -92,7 +92,7 @@ Vehicle::~Vehicle()
     //if (mbtWheelShape) delete mbtWheelShape;
 }
 //-------------------------------------------------------------------------------------------------------
-int Vehicle::getSpeed()
+float Vehicle::getSpeed()
 {
     return mfSpeed;
 }
@@ -132,7 +132,6 @@ void Vehicle::initializePhysics(int cargo, int passengers)
     if (nVehiclesCreated <= 1)
 	{
         getGameState()->mCollisionShapes.push_back(mbtChassisShape);
-        //getGameState()->mCollisionShapes.push_back(mbtWheelShape);
 	}
     
     //main body
@@ -189,9 +188,8 @@ void Vehicle::initializePhysics(int cargo, int passengers)
         wheelinfo.m_wheelsDampingCompression = damping;
         wheelinfo.m_maxSuspensionTravelCm = 500.f;
         wheelinfo.m_maxSuspensionForce = 5000000.f;
-        wheelinfo.m_frictionSlip = 0.8f;
+        wheelinfo.m_frictionSlip = 1000.f;
         wheelinfo.m_rollInfluence = 0.1f;
-        wheelinfo.getSuspensionRestLength();
     }
 
 }
@@ -244,7 +242,7 @@ void Vehicle::accelerate(float power)
 {
     for (int wheel = 0; wheel <= 3; wheel++)
     {
-        mVehicle->applyEngineForce(100, wheel);
+        mVehicle->applyEngineForce(power, wheel);
     }
 }
 //-------------------------------------------------------------------------------------------------------
@@ -256,7 +254,7 @@ void Vehicle::brake(float power)
     }
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::update(int milliseconds)
+void Vehicle::update(float milliseconds)
 {
     mfSpeed = mVehicle->getCurrentSpeedKmHour();
 
@@ -273,16 +271,16 @@ void Vehicle::update(int milliseconds)
     {
         if (mfSpeed < mfTargetSpeed)
         {
-            float power = (mfTargetSpeed - mfSpeed) * 25.f * (milliseconds / 1000);
+            float power = (mfTargetSpeed - mfSpeed) * 100.f * (milliseconds / 1000.f);
             accelerate(power);
         }
         else if (mfSpeed > mfTargetSpeed)
         {
-            float power = (mfSpeed - mfTargetSpeed) * 25.f * (milliseconds / 1000);
-            brake();
+            float power = (mfSpeed - mfTargetSpeed) * 100.f * (milliseconds / 1000.f);
+            brake(power);
         }
     }
-    mVehicle->updateVehicle(milliseconds / 1000);
+    mVehicle->updateVehicle((int)milliseconds / 1000);
 }
 //-------------------------------------------------------------------------------------------------------
 bool Vehicle::checkForVehicleAhead()
@@ -296,7 +294,7 @@ bool Vehicle::checkForVehicleAhead()
 
     if (rayQuery.hasHit())
     {
-        btCollisionObject *obj = rayQuery.m_collisionObject;
+        /*btCollisionObject *obj = rayQuery.m_collisionObject;
         btRigidBody *body = btRigidBody::upcast(obj);
         BtOgMotionState *state = (BtOgMotionState*)body->getMotionState();
         if (body == getGameState()->mRigidBodies[1])
@@ -307,7 +305,9 @@ bool Vehicle::checkForVehicleAhead()
         else
         {
             return 0;
-        }
+        }*/
+        brake(1000.f);
+        return 1;
     }
     else
     {

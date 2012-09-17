@@ -14,7 +14,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 //looks to be actually useless code right now... =/ 
 //keping in case there is a need for this
 
-bool parseMaterial(const Ogre::Entity *entity, const std::string materialName)
+/*bool parseMaterial(const Ogre::Entity *entity, const std::string materialName)
 {
     std::fstream read(std::string("../media/") + materialName);
 
@@ -41,4 +41,4 @@ bool parseMaterial(const Ogre::Entity *entity, const std::string materialName)
         }
     }
     return 1;
-}
+}*/

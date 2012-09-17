@@ -36,13 +36,26 @@ void MenuState::enter()
     OgreFramework::getSingletonPtr()->mTrayMgr->createButton(OgreBites::TL_CENTER, "ExitBtn", "Exit Catreon", 250);
     OgreFramework::getSingletonPtr()->mTrayMgr->createLabel(OgreBites::TL_TOP, "MenuLbl", "Menu", 250);*/
 
+
     createScene();
 }
 //-------------------------------------------------------------------------------------------------------
-//menu scene
+//menu scene, actually the GUI
 void MenuState::createScene()
 {
+    CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseArrow");
+    CEGUI::WindowManager &windowManager = CEGUI::WindowManager::getSingleton();
+    CEGUI::Window *menuRoot = windowManager.loadWindowLayout("menuLayout.layout");
+    CEGUI::System::getSingleton().setGUISheet(menuRoot);
+    /*CEGUI::Window *menuRoot = windowManager.createWindow("DefaultWindow", "root");
+    CEGUI::System::getSingleton().setGUISheet(menuRoot);
 
+    CEGUI::FrameWindow *fWnd = static_cast<CEGUI::FrameWindow*>(windowManager.createWindow(
+        "TaharezLook/FrameWindow", "testWindow"));
+    menuRoot->addChildWindow(fWnd);
+    fWnd->setPosition(CEGUI::UVector2(CEGUI::UDim(0.25f, 0), CEGUI::UDim(0.25f, 0)));
+    fWnd->setSize(CEGUI::UVector2(CEGUI::UDim(0.5, 0), CEGUI::UDim(0.25, 0)));
+    fWnd->setText("Catreon");*/
 }
 //-------------------------------------------------------------------------------------------------------
 void MenuState::exit()
@@ -82,8 +95,7 @@ bool MenuState::keyReleased(const OIS::KeyEvent &keyEvent)
 //-------------------------------------------------------------------------------------------------------
 bool MenuState::mouseMoved(const OIS::MouseEvent &mouseEvent)
 {
-    /*if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseMove(mouseEvent))
-        return true;*/
+    OgreFramework::getSingletonPtr()->mouseMoved(mouseEvent);
 
     return true;
 }
@@ -92,7 +104,7 @@ bool MenuState::mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButton
 {
     /*if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseDown(mouseEvent, id))
         return true;*/
-
+    OgreFramework::getSingletonPtr()->mousePressed(mouseEvent, id);
     return true;
 }
 //-------------------------------------------------------------------------------------------------------
@@ -100,7 +112,7 @@ bool MenuState::mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButto
 {
     /*if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseUp(mouseEvent, id))
         return true;*/
-
+    OgreFramework::getSingletonPtr()->mouseReleased(mouseEvent, id);
     return true;
 }
 //-------------------------------------------------------------------------------------------------------

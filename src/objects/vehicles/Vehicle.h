@@ -57,6 +57,7 @@ private:
     //state variables
     bool mbIsMoving;
     bool mbIsHealthy;       //healthy as in not totaled
+    bool isObstructed;
 
     bool isFollowingClosely;
 
@@ -76,7 +77,7 @@ public:
                                          Ogre::Vector3 initdirection = Ogre::Vector3(0, 0, 0));
     ~Vehicle();
 
-    int getSpeed();
+    float getSpeed();
     void setSpeed(float fSpeed);
 
     Ogre::Vector3 getPosition();
@@ -88,7 +89,7 @@ public:
     virtual void initializePhysics(int cargo, int passengers);
     virtual void initializeMaterial();
 
-    void update(int milliseconds);
+    void update(float milliseconds);
     bool checkForVehicleAhead();
 };
 

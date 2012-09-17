@@ -60,6 +60,7 @@ public:
 
     //OgreBites::SdkTrayManager   *mTrayMgr;
     CEGUI::OgreRenderer                     *mGUIRenderer;
+    CEGUI::System                           *mGUISystem;
 
     Ogre::String                mPluginsCfg;
     
