@@ -29,7 +29,7 @@ using namespace irrklang;
 
 GameState* GameState::mGameSingleton = nullptr;
 
-GameState::GameState() :    mMoveSpeed(0.01f), mMaxMoveSpeed(0.5f), mTranslateVector(0, 0, 0),
+GameState::GameState() :    mAcceleration(0.01f), mMaxMoveSpeed(0.5f), mTranslateVector(0, 0, 0),
                             mbLMouseDown(false), mbRMouseDown(false), 
                             mbQuit(false), mbSettingsMode(false), mbBackslashDown(false),
                             mTimer(new Ogre::Timer),
@@ -309,6 +309,8 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_BACKSLASH))
     {
         mbBackslashDown = !mbBackslashDown;
+        if (!mbBackslashDown)
+            mDebugDrawer->deleteSceneNode();
     }
 
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_F))    //create Drivers and their vehicles
@@ -488,14 +490,16 @@ void GameState::moveCamera()
 void GameState::getInput(float timesince)
 {
     bool keyPressed = false; //so we can speed up the move speed, if not, set move speed to zero
-    mMoveScale = mMoveSpeed * timesince;
+    mMoveScale = mAcceleration;
     float damping = 0.95f;
+    
     //false = unbuffered input
     if (mbSettingsMode == false)
     {
+        //left/right
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_A))
         {
-            mTranslateVector.x = -mMoveScale;
+            mTranslateVector.x += -mAcceleration;
             keyPressed = true;
         }
         else
@@ -503,15 +507,16 @@ void GameState::getInput(float timesince)
 
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_D))
         {
-            mTranslateVector.x = mMoveScale;
+            mTranslateVector.x += mAcceleration;
             keyPressed = true;
         }
         else 
             mTranslateVector.x *= damping;
 
+        //front/back
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_W))
         {
-            mTranslateVector.z = -mMoveScale;
+            mTranslateVector.z += -mAcceleration;
             keyPressed = true;
         }
         else
@@ -519,15 +524,16 @@ void GameState::getInput(float timesince)
 
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_S))
         {
-            mTranslateVector.z = mMoveScale;
+            mTranslateVector.z += mAcceleration;
             keyPressed = true;
         }
         else
             mTranslateVector.z *= damping;
 
+        //down/up
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_Q))
         {
-            mTranslateVector.y = -mMoveScale;
+            mTranslateVector.y += -mAcceleration;
             keyPressed = true;
         }
         else
@@ -535,7 +541,7 @@ void GameState::getInput(float timesince)
 
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_E))
         {
-            mTranslateVector.y = mMoveScale;
+            mTranslateVector.y += mAcceleration;
             keyPressed = true;
         }
         else
@@ -543,10 +549,10 @@ void GameState::getInput(float timesince)
 
         if (keyPressed)
         {
-            float tempspeed = mMoveSpeed * (10.f * (mMaxMoveSpeed - mMoveSpeed));
+            float tempspeed = mAcceleration * (20.f * (mMaxMoveSpeed - mAcceleration)) * timesince;
             if (tempspeed < mMaxMoveSpeed)
             {
-                mMoveSpeed = tempspeed;
+                mAcceleration = tempspeed;
             }
         }
     }
@@ -606,6 +612,7 @@ void GameState::update(double timeSinceLastFrame)
 //-------------------------------------------------------------------------------------------------------
 void GameState::buildGUI()
 {
+    CEGUI::MouseCursor::getSingleton().show();
     /*OgreFramework::getSingletonPtr()->mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
     OgreFramework::getSingletonPtr()->mTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
     OgreFramework::getSingletonPtr()->mTrayMgr->createLabel(OgreBites::TL_TOP, "GameLbl", "Game mode", 250);

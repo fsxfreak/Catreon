@@ -7,6 +7,7 @@
 
 #include <btBulletDynamicsCommon.h>
 #include <OGRE\Ogre.h>
+#include <GameState.hpp>
 
 #include "DynamicLineDrawer.hpp"
 
@@ -25,6 +26,8 @@ public:
 	*/
 	void		Update();
     void drawRay(const btVector3& origin, const btVector3& front);
+    void deleteSceneNode();
+    void createIfNoNode();
 
 protected:
 	void setDebugMode( int DebugMode );

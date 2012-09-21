@@ -182,7 +182,7 @@ bool OgreFramework::keyReleased(const OIS::KeyEvent &keyEvent)
 bool OgreFramework::mouseMoved(const OIS::MouseEvent &mouseEvent)
 {
     CEGUI::System &sys = CEGUI::System::getSingleton();
-    sys.injectMouseMove(mouseEvent.state.X.rel, mouseEvent.state.Y.rel);
+    sys.injectMousePosition(mouseEvent.state.X.abs, mouseEvent.state.Y.abs);
 
     //scroll wheel
     if (mouseEvent.state.Z.rel)

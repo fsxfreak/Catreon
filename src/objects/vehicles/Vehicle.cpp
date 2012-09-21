@@ -146,7 +146,7 @@ void Vehicle::initializePhysics(int cargo, int passengers)
     compound->addChildShape(chassisTransform, mbtChassisShape);
 
     chassisTransform.setOrigin(carPosition);
-    int mass = 300 + cargo + (passengers * 50);
+    float mass = 300 + cargo + (passengers * 50);
     btVector3 localInertia(0, 0, 0);
     mbtChassisShape->calculateLocalInertia(mass, localInertia);
 
@@ -188,7 +188,7 @@ void Vehicle::initializePhysics(int cargo, int passengers)
         wheelinfo.m_wheelsDampingCompression = damping;
         wheelinfo.m_maxSuspensionTravelCm = 500.f;
         wheelinfo.m_maxSuspensionForce = 5000000.f;
-        wheelinfo.m_frictionSlip = 1000.f;
+        wheelinfo.m_frictionSlip = 0.8f;
         wheelinfo.m_rollInfluence = 0.1f;
     }
 
@@ -248,6 +248,7 @@ void Vehicle::accelerate(float power)
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::brake(float power)
 {
+    accelerate(0);
     for (int wheel = 0; wheel <= 3; wheel++)
     {
         mVehicle->setBrake(power, wheel);
@@ -271,12 +272,12 @@ void Vehicle::update(float milliseconds)
     {
         if (mfSpeed < mfTargetSpeed)
         {
-            float power = (mfTargetSpeed - mfSpeed) * 100.f * (milliseconds / 1000.f);
+            float power = (mfTargetSpeed - mfSpeed) * 50.f;
             accelerate(power);
         }
         else if (mfSpeed > mfTargetSpeed)
         {
-            float power = (mfSpeed - mfTargetSpeed) * 100.f * (milliseconds / 1000.f);
+            float power = (mfSpeed - mfTargetSpeed) * 50.f;
             brake(power);
         }
     }
@@ -306,7 +307,11 @@ bool Vehicle::checkForVehicleAhead()
         {
             return 0;
         }*/
-        brake(1000.f);
+        btVector3 hitDistance = rayQuery.m_hitPointWorld - rayOrigin;
+        hitDistance.setY(0);
+        float distance = hitDistance.length2();
+        float brakeForce = 1000 / Ogre::Math::Log(distance);
+        brake(brakeForce);
         return 1;
     }
     else

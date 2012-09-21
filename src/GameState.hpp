@@ -47,6 +47,7 @@ class Ball;
 class Vehicle;
 class Driver;
 class BtOgMotionState;
+class CDebugDraw;
 
 //EVERYTHING SHALL BE PUBLIC -throws enscapulation out the window-
 class GameState: public AppState
@@ -121,7 +122,7 @@ public:
 
     //camera speed scales and vectors
     Ogre::Vector3                           mTranslateVector;
-    Ogre::Real                              mMoveSpeed;
+    float                                   mAcceleration;
     float                                   mMoveScale;
     float                                   mMaxMoveSpeed;
 

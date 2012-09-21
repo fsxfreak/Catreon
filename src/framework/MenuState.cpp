@@ -47,20 +47,14 @@ void MenuState::createScene()
     CEGUI::WindowManager &windowManager = CEGUI::WindowManager::getSingleton();
     CEGUI::Window *menuRoot = windowManager.loadWindowLayout("menuLayout.layout");
     CEGUI::System::getSingleton().setGUISheet(menuRoot);
-    /*CEGUI::Window *menuRoot = windowManager.createWindow("DefaultWindow", "root");
-    CEGUI::System::getSingleton().setGUISheet(menuRoot);
-
-    CEGUI::FrameWindow *fWnd = static_cast<CEGUI::FrameWindow*>(windowManager.createWindow(
-        "TaharezLook/FrameWindow", "testWindow"));
-    menuRoot->addChildWindow(fWnd);
-    fWnd->setPosition(CEGUI::UVector2(CEGUI::UDim(0.25f, 0), CEGUI::UDim(0.25f, 0)));
-    fWnd->setSize(CEGUI::UVector2(CEGUI::UDim(0.5, 0), CEGUI::UDim(0.25, 0)));
-    fWnd->setText("Catreon");*/
 }
 //-------------------------------------------------------------------------------------------------------
 void MenuState::exit()
 {
     OgreFramework::getSingletonPtr()->mLog->logMessage("Leaving MenuState...");
+
+    CEGUI::WindowManager::getSingleton().destroyAllWindows();
+    CEGUI::MouseCursor::getSingleton().hide();
 
     mSceneMgr->destroyCamera(mCamera);
     if (mSceneMgr)

@@ -40,6 +40,7 @@ CDebugDraw::CDebugDraw( Ogre::SceneManager* Scene, btDynamicsWorld* World )
 CDebugDraw::~CDebugDraw()
 {
 	delete DebugLineDrawer;
+    getGameState()->mSceneMgr->destroySceneNode(DebugDrawerNode);
 	World->setDebugDrawer(NULL);
 }
 
@@ -49,6 +50,7 @@ void CDebugDraw::Update()
 	{
 		World->debugDrawWorld();
 		DebugLineDrawer->Update();
+        createIfNoNode();
 		DebugDrawerNode->needUpdate();
 		DebugLineDrawer->Clear();
 	}
@@ -117,6 +119,22 @@ void CDebugDraw::drawLine( const btVector3& from, const btVector3& to,
 {
 	DebugLineDrawer->AddPoint( Ogre::Vector3(from.getX(), from.getY(), from.getZ()), Ogre::ColourValue(color.getX(), color.getY(), color.getZ()) );
 	DebugLineDrawer->AddPoint( Ogre::Vector3(to.getX(), to.getY(), to.getZ()), Ogre::ColourValue(color.getX(), color.getY(), color.getZ()) );
+}
+
+void CDebugDraw::deleteSceneNode()
+{
+    getGameState()->mSceneMgr->destroySceneNode(DebugDrawerNode);
+}
+
+void CDebugDraw::createIfNoNode()
+{
+    if (getGameState()->mSceneMgr->hasSceneNode("DebugDrawer"))
+        return;
+    else
+    {
+        DebugDrawerNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode("DebugDrawer");
+        DebugDrawerNode->attachObject(DebugLineDrawer);
+    }
 }
 
 void CDebugDraw::drawRay(const btVector3& origin, const btVector3& front)
