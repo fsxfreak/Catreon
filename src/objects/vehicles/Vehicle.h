@@ -64,6 +64,10 @@ private:
     float mfTargetSpeed;
     float mfSpeed;
 
+    float mSteeringValue;   //-0.6f - 0.6f
+
+    float mDeltaTime;
+
     //in pounds
     //unsigned int mnCargo;
     //unsigned int mnPassengers;
@@ -72,8 +76,11 @@ private:
 
     virtual void accelerate(float power = 200.f);
     virtual void brake(float power = 200.f);
+    virtual void brake(const btVector3 &rayOrigin, const btCollisionWorld::ClosestRayResultCallback &rayQuery);
+
+    virtual void steer(float targetSteerRadius = 0.0f);
 public:
-    Vehicle(int cargo, int passengers, Ogre::Vector3 initposition = Ogre::Vector3(0, 40, 0), 
+    Vehicle(int cargo, int passengers, Ogre::Vector3 initposition = Ogre::Vector3(0, 30, 0),
                                          Ogre::Vector3 initdirection = Ogre::Vector3(0, 0, 0));
     ~Vehicle();
 

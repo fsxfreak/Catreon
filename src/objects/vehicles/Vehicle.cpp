@@ -31,7 +31,7 @@ btCollisionShape *Vehicle::mbtChassisShape = new btBoxShape(btVector3(8, 7, 23))
 //yay magic numbers
 //-------------------------------------------------------------------------------------------------------
 Vehicle::Vehicle(int cargo, int passengers, Ogre::Vector3 initposition, Ogre::Vector3 initdirection) 
-    : mbIsMoving(0), mbIsHealthy(1), mfTargetSpeed(0), mbtCar(nullptr)
+    : mbIsMoving(0), mbIsHealthy(1), mfTargetSpeed(0), mbtCar(nullptr), mSteeringValue(0.f)
 {
     //give a unique name to each vehicle
     std::ostringstream oss;
@@ -41,8 +41,8 @@ Vehicle::Vehicle(int cargo, int passengers, Ogre::Vector3 initposition, Ogre::Ve
 
     //++nVehiclesCreated;   //iterate in initializeMaterial() instead
     
-    int x = (rand() % 720) - 360;
-    int z = (rand() % 720) - 360;
+    int x = (rand() % 720) - 360.f;
+    int z = (rand() % 720) - 360.f;
 
     initposition = Ogre::Vector3(x, 30, z);
     mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(mstrName, initposition);
@@ -146,7 +146,7 @@ void Vehicle::initializePhysics(int cargo, int passengers)
     compound->addChildShape(chassisTransform, mbtChassisShape);
 
     chassisTransform.setOrigin(carPosition);
-    float mass = 300 + cargo + (passengers * 50);
+    float mass = 300.f + cargo + (passengers * 50.f);
     btVector3 localInertia(0, 0, 0);
     mbtChassisShape->calculateLocalInertia(mass, localInertia);
 
@@ -255,8 +255,43 @@ void Vehicle::brake(float power)
     }
 }
 //-------------------------------------------------------------------------------------------------------
+void Vehicle::brake(const btVector3 &rayOrigin, const btCollisionWorld::ClosestRayResultCallback &rayQuery)
+{
+    btVector3 hitDistance = rayQuery.m_hitPointWorld - rayOrigin;
+    hitDistance.setY(0);
+    if (hitDistance.length2() < 10000)
+    {
+        float brakeForce = (250 / Ogre::Math::Log(hitDistance.length2())) * 1.7f;
+        brake(brakeForce);
+    }
+}
+//-------------------------------------------------------------------------------------------------------
+void Vehicle::steer(float targetSteerRadius)
+{
+    if (targetSteerRadius > 0.6f)
+        targetSteerRadius = 0.6f;
+    else if (targetSteerRadius < -0.6f)
+        targetSteerRadius = -0.6f;
+
+    if (targetSteerRadius > mSteeringValue) //then turn the wheel right
+    {
+        float steerOffset = (targetSteerRadius - mSteeringValue) / 2;   //will most likely have floating point errors
+        mSteeringValue += steerOffset * (mDeltaTime / 1000);            //but precision is not needed
+    }
+    else if (targetSteerRadius < mSteeringValue) //then turn the wheel left
+    {
+        float steerOffset = (mSteeringValue - targetSteerRadius) / 2;
+        mSteeringValue -= steerOffset * (mDeltaTime / 1000);
+    }
+    for (int wheel = 0; wheel <= 1; wheel++)
+    {
+        mVehicle->setSteeringValue(mSteeringValue, wheel);
+    }
+}
+//-------------------------------------------------------------------------------------------------------
 void Vehicle::update(float milliseconds)
 {
+    mDeltaTime = milliseconds;
     mfSpeed = mVehicle->getCurrentSpeedKmHour();
 
     for (int iii = 0; iii < 4; iii++)
@@ -289,12 +324,54 @@ bool Vehicle::checkForVehicleAhead()
     //get ray starting position in front of the car
     btVector3 rayOrigin = GameState::ogreVecToBullet(mNode->_getDerivedPosition() + (getDirection() * 24));
     btVector3 rayFront = GameState::ogreVecToBullet(getDirection() * 300) + rayOrigin; //300 = range of driver's sight
-    btCollisionWorld::ClosestRayResultCallback rayQuery(rayOrigin, rayFront);
-    getGameState()->mDynamicsWorld->rayTest(rayOrigin, rayFront, rayQuery);
-    getGameState()->mDebugDrawer->drawRay(rayOrigin, rayFront);
+    btCollisionWorld::ClosestRayResultCallback rayQueryFront(rayOrigin, rayFront);
 
-    if (rayQuery.hasHit())
+    btVector3 rayRight = rayFront + btVector3(40, 0, -20);
+    btCollisionWorld::ClosestRayResultCallback rayQueryRight(rayOrigin, rayRight);
+
+    btVector3 rayLeft = rayFront + btVector3(-40, 0, -20);
+    btCollisionWorld::ClosestRayResultCallback rayQueryLeft(rayOrigin, rayLeft);
+
+    getGameState()->mDynamicsWorld->rayTest(rayOrigin, rayFront, rayQueryFront);
+    getGameState()->mDynamicsWorld->rayTest(rayOrigin, rayRight, rayQueryRight);
+    getGameState()->mDynamicsWorld->rayTest(rayOrigin, rayLeft, rayQueryLeft);
+//#ifdef _DEBUG
+    getGameState()->mDebugDrawer->drawRay(rayOrigin, rayFront);
+    getGameState()->mDebugDrawer->drawRay(rayOrigin, rayRight);
+    getGameState()->mDebugDrawer->drawRay(rayOrigin, rayLeft);
+//#endif
+
+    bool frontHit = rayQueryFront.hasHit();
+    bool rightHit = rayQueryRight.hasHit();
+    bool leftHit = rayQueryLeft.hasHit();
+
+    if (frontHit || rightHit || leftHit) 
     {
+        if (frontHit && rightHit && leftHit) //shit's goin down
+        {   
+            brake(1000.f);
+            return 1;
+        }
+        else if (frontHit && rightHit && !leftHit) //bro watch that right side
+        {
+            //brake(rayOrigin, rayQueryFront);
+            steer(-0.6f);
+            return 1;
+        }
+        else if (frontHit && !rightHit && leftHit) //bogey coming on your left
+        {
+            //brake(rayOrigin, rayQueryFront);
+            steer(0.6f);
+            return 1;
+        }
+        else
+        {
+            btVector3 hitDistance = rayQueryFront.m_hitPointWorld - rayOrigin;
+            hitDistance.setY(0);
+            float brakeForce = (250 / Ogre::Math::Log(hitDistance.length2())) * 1.7f;
+            brake(brakeForce);
+            return 1;
+        }
         /*btCollisionObject *obj = rayQuery.m_collisionObject;
         btRigidBody *body = btRigidBody::upcast(obj);
         BtOgMotionState *state = (BtOgMotionState*)body->getMotionState();
@@ -307,12 +384,6 @@ bool Vehicle::checkForVehicleAhead()
         {
             return 0;
         }*/
-        btVector3 hitDistance = rayQuery.m_hitPointWorld - rayOrigin;
-        hitDistance.setY(0);
-        float distance = hitDistance.length2();
-        float brakeForce = 1000 / Ogre::Math::Log(distance);
-        brake(brakeForce);
-        return 1;
     }
     else
     {
