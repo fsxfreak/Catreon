@@ -82,7 +82,7 @@ void Ball::initializeMaterial()
     mEntity = getGameState()->mSceneMgr->createEntity(Ogre::SceneManager::PT_CUBE);
     mEntity->setMaterialName("Examples/Rockwall");
     mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(mPosition, Ogre::Quaternion(0, 0, 0, 0));
-    float ballsize = mnSize / 50.0f + 0.02;    //have to translate scale of PT_SPHERE
+    float ballsize = mnSize / 50.0f + 0.02f;    //have to translate scale of PT_SPHERE
     mNode->setScale(ballsize, ballsize, ballsize);
     mNode->attachObject(mEntity);
 

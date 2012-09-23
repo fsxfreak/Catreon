@@ -139,7 +139,7 @@ void CDebugDraw::createIfNoNode()
 
 void CDebugDraw::drawRay(const btVector3& origin, const btVector3& front)
 {
-    drawLine(origin, front, btVector3(0, 0, 255));
+    drawLine(origin, front, btVector3(0, 255, 255));
 }
 
 void CDebugDraw::drawTriangle( const btVector3& v0, const btVector3& v1, const btVector3& v2,

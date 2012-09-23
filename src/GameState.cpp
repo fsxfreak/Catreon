@@ -549,7 +549,7 @@ void GameState::getInput(float timesince)
 
         if (keyPressed)
         {
-            float tempspeed = mAcceleration * (20.f * (mMaxMoveSpeed - mAcceleration)) * timesince;
+            float tempspeed = (mAcceleration * (20.f * (mMaxMoveSpeed - mAcceleration)) * timesince) + 0.001f;
             if (tempspeed < mMaxMoveSpeed)
             {
                 mAcceleration = tempspeed;
@@ -649,7 +649,7 @@ void GameState::updatePhysics()
 #ifdef _DEBUG
     mDynamicsWorld->stepSimulation(static_cast<double>(milliseconds) / 1000, 10);
 #else
-    mDynamicsWorld->stepSimulation(static_cast<double>(milliseconds) / 1000, 1000);
+    mDynamicsWorld->stepSimulation(static_cast<double>(milliseconds) / 1000, 100);
 #endif
 }
 //-------------------------------------------------------------------------------------------------------
