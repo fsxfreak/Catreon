@@ -43,12 +43,14 @@ Vehicle::Vehicle(int cargo, int passengers, Ogre::Vector3 initposition, Ogre::Ve
     
     int x = (rand() % 720) - 360.f;
     int z = (rand() % 720) - 360.f;
+    float yawangle  = (rand () % 720) - 360.f;
 
     initposition = Ogre::Vector3(x, 30, z);
     mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(mstrName, initposition);
+    mNode->yaw(Ogre::Angle(yawangle));
 
-    initializeMaterial();
-    initializePhysics(cargo, passengers);
+    initializeMaterial(yawangle);
+    initializePhysics(cargo, passengers, yawangle);
 }
 //-------------------------------------------------------------------------------------------------------
 Vehicle::~Vehicle()
@@ -127,7 +129,7 @@ bool Vehicle::isHealthy()
     return mbIsHealthy;
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::initializePhysics(int cargo, int passengers)
+void Vehicle::initializePhysics(int cargo, int passengers, float yawangle)
 {
     if (nVehiclesCreated <= 1)
 	{
@@ -139,13 +141,16 @@ void Vehicle::initializePhysics(int cargo, int passengers)
     btVector3 carPosition = GameState::ogreVecToBullet(mNode->getPosition());
     btTransform chassisTransform;
     chassisTransform.setIdentity();
-
+    btQuaternion rotation;
+    rotation.setEulerZYX(0, yawangle, 0);
+   
     //to adjust the center of mass
     btCompoundShape *compound = new btCompoundShape();
     getGameState()->mCollisionShapes.push_back(compound);
     compound->addChildShape(chassisTransform, mbtChassisShape);
 
     chassisTransform.setOrigin(carPosition);
+    chassisTransform.setRotation(rotation);
     float mass = 300.f + cargo + (passengers * 50.f);
     btVector3 localInertia(0, 0, 0);
     mbtChassisShape->calculateLocalInertia(mass, localInertia);
@@ -167,6 +172,9 @@ void Vehicle::initializePhysics(int cargo, int passengers)
     float widthwheel = mFL_Entity->getBoundingBox().getSize().x;
     float radiuswheel = mFL_Entity->getBoundingBox().getSize().y / 2;
     btVector3 wheelDirection(0, -1, 0);
+    /*Ogre::Vector3 wheelAxletemp; //meh, use Ogre to do the vector calculations for me
+    wheelAxletemp = getDirection().crossProduct(Ogre::Vector3(0, 1, 0));
+    btVector3 wheelAxle = GameState::ogreVecToBullet(wheelAxletemp);*/
     btVector3 wheelAxle(-1, 0, 0);
     btScalar suspensionRestLength(0.2f);
 
@@ -194,7 +202,7 @@ void Vehicle::initializePhysics(int cargo, int passengers)
 
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::initializeMaterial()
+void Vehicle::initializeMaterial(float fyawangle)
 {
     mEntity = getGameState()->mSceneMgr->createEntity(mstrName, "car_bmwe46.mesh");
     mNode->attachObject(mEntity);
@@ -205,9 +213,12 @@ void Vehicle::initializeMaterial()
     std::string name = "wheelFL_";
     name += oss.str();
 
+    Ogre::Radian yawangle = Ogre::Angle(fyawangle);
+
     //child nodes do not work with current implementation, inherited rotation is compounded with bullet rotation
     mFL_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
-    mFL_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(name, Ogre::Vector3(9.76f, -6, 15.37f)); 
+    mFL_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(name, Ogre::Vector3(9.76f, -6, 15.37f));
+    mFL_Node->yaw(yawangle);
     mFL_Node->attachObject(mFL_Entity);
     mWheelNodes.push_back(mFL_Node);
     
@@ -215,7 +226,8 @@ void Vehicle::initializeMaterial()
     name += oss.str();
 
     mFR_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
-    mFR_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(name, Ogre::Vector3(-9.76f, -6, 15.37f)); 
+    mFR_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(name, Ogre::Vector3(-9.76f, -6, 15.37f));
+    mFR_Node->yaw(yawangle);
     mFR_Node->attachObject(mFR_Entity);
     mWheelNodes.push_back(mFR_Node);
 
@@ -223,7 +235,8 @@ void Vehicle::initializeMaterial()
     name += oss.str();
 
     mBL_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
-    mBL_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(name, Ogre::Vector3(9.76f, -6, -15.37f)); 
+    mBL_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(name, Ogre::Vector3(9.76f, -6, -15.37f));
+    mBL_Node->yaw(yawangle);
     mBL_Node->attachObject(mBL_Entity);
     mWheelNodes.push_back(mBL_Node);
 
@@ -231,7 +244,8 @@ void Vehicle::initializeMaterial()
     name += oss.str();
     
     mBR_Entity = getGameState()->mSceneMgr->createEntity("wheel.mesh");
-    mBR_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(name, Ogre::Vector3(-9.76f, -6, -15.37f)); 
+    mBR_Node = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(name, Ogre::Vector3(-9.76f, -6, -15.37f));
+    mBR_Node->yaw(yawangle);
     mBR_Node->attachObject(mBR_Entity);
     mWheelNodes.push_back(mBR_Node);
 
@@ -326,20 +340,23 @@ bool Vehicle::checkForVehicleAhead()
     btVector3 rayFront = GameState::ogreVecToBullet(getDirection() * 300) + rayOrigin; //300 = range of driver's sight
     btCollisionWorld::ClosestRayResultCallback rayQueryFront(rayOrigin, rayFront);
 
-    btVector3 rayRight = rayFront + btVector3(40, 0, -20);
+    btVector3 right = GameState::ogreVecToBullet(getDirection().crossProduct(Ogre::Vector3(0, 1, 0)));
+    right.normalize();
+
+    btVector3 rayRight = rayFront + (right * 80);
     btCollisionWorld::ClosestRayResultCallback rayQueryRight(rayOrigin, rayRight);
 
-    btVector3 rayLeft = rayFront + btVector3(-40, 0, -20);
+    btVector3 rayLeft = rayFront - (right * 80);
     btCollisionWorld::ClosestRayResultCallback rayQueryLeft(rayOrigin, rayLeft);
 
     getGameState()->mDynamicsWorld->rayTest(rayOrigin, rayFront, rayQueryFront);
     getGameState()->mDynamicsWorld->rayTest(rayOrigin, rayRight, rayQueryRight);
     getGameState()->mDynamicsWorld->rayTest(rayOrigin, rayLeft, rayQueryLeft);
-//#ifdef _DEBUG
+#ifdef _DEBUG
     getGameState()->mDebugDrawer->drawRay(rayOrigin, rayFront);
     getGameState()->mDebugDrawer->drawRay(rayOrigin, rayRight);
     getGameState()->mDebugDrawer->drawRay(rayOrigin, rayLeft);
-//#endif
+#endif
 
     bool frontHit = rayQueryFront.hasHit();
     bool rightHit = rayQueryRight.hasHit();
@@ -362,6 +379,11 @@ bool Vehicle::checkForVehicleAhead()
         {
             //brake(rayOrigin, rayQueryFront);
             steer(0.6f);
+            return 1;
+        }
+        else if (!frontHit && rightHit && leftHit)  //shoot the gap
+        {
+            steer(0.0f);
             return 1;
         }
         else
@@ -387,6 +409,7 @@ bool Vehicle::checkForVehicleAhead()
     }
     else
     {
+        steer(0.0f);
         return 0;
     }
 }

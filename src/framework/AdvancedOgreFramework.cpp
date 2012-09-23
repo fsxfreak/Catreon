@@ -29,7 +29,7 @@ OgreFramework::OgreFramework() :    mRoot(0), mRenderWindow(0), mViewport(0), mL
                                     mGUIRenderer(0),
                                     mTimeSinceLastFrame(0)                                  
 {
-
+    Ogre::Math math; //for lookup tables to be generated
 }
 //-------------------------------------------------------------------------------------------------------
 OgreFramework::~OgreFramework()

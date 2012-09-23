@@ -93,8 +93,8 @@ public:
     bool isMoving();
     bool isHealthy();
 
-    virtual void initializePhysics(int cargo, int passengers);
-    virtual void initializeMaterial();
+    virtual void initializePhysics(int cargo, int passengers, float yawangle = 0.0f);
+    virtual void initializeMaterial(float yawangle = 0.0f);
 
     void update(float milliseconds);
     bool checkForVehicleAhead();
