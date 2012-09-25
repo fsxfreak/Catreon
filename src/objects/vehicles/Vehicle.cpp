@@ -41,8 +41,8 @@ Vehicle::Vehicle(int cargo, int passengers, Ogre::Vector3 initposition, Ogre::Ve
 
     //++nVehiclesCreated;   //iterate in initializeMaterial() instead
     
-    int x = (rand() % 720) - 360.f;
-    int z = (rand() % 720) - 360.f;
+    int x = (rand() % 1000) - 500.f;
+    int z = (rand() % 1000) - 500.f;
     float yawangle  = (rand () % 720) - 360.f;
 
     initposition = Ogre::Vector3(x, 30, z);
@@ -172,9 +172,6 @@ void Vehicle::initializePhysics(int cargo, int passengers, float yawangle)
     float widthwheel = mFL_Entity->getBoundingBox().getSize().x;
     float radiuswheel = mFL_Entity->getBoundingBox().getSize().y / 2;
     btVector3 wheelDirection(0, -1, 0);
-    /*Ogre::Vector3 wheelAxletemp; //meh, use Ogre to do the vector calculations for me
-    wheelAxletemp = getDirection().crossProduct(Ogre::Vector3(0, 1, 0));
-    btVector3 wheelAxle = GameState::ogreVecToBullet(wheelAxletemp);*/
     btVector3 wheelAxle(-1, 0, 0);
     btScalar suspensionRestLength(0.2f);
 
@@ -271,6 +268,7 @@ void Vehicle::brake(float power)
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::brake(const btVector3 &rayOrigin, const btCollisionWorld::ClosestRayResultCallback &rayQuery)
 {
+    accelerate(0);
     btVector3 hitDistance = rayQuery.m_hitPointWorld - rayOrigin;
     hitDistance.setY(0);
     if (hitDistance.length2() < 10000)
@@ -282,21 +280,22 @@ void Vehicle::brake(const btVector3 &rayOrigin, const btCollisionWorld::ClosestR
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::steer(float targetSteerRadius)
 {
-    if (targetSteerRadius > 0.6f)
-        targetSteerRadius = 0.6f;
-    else if (targetSteerRadius < -0.6f)
-        targetSteerRadius = -0.6f;
+    if (targetSteerRadius > 0.8f)
+        targetSteerRadius = 0.8f;
+    else if (targetSteerRadius < -0.8f)
+        targetSteerRadius = -0.8f;
 
     if (targetSteerRadius > mSteeringValue) //then turn the wheel right
     {
-        float steerOffset = (targetSteerRadius - mSteeringValue) / 2;   //will most likely have floating point errors
-        mSteeringValue += steerOffset * (mDeltaTime / 1000);            //but precision is not needed
+        float steerOffset = (targetSteerRadius - mSteeringValue) / 2.f;   //will most likely have floating point errors
+        mSteeringValue += steerOffset * (mDeltaTime / 1000);               //but precision is not needed
     }
     else if (targetSteerRadius < mSteeringValue) //then turn the wheel left
     {
-        float steerOffset = (mSteeringValue - targetSteerRadius) / 2;
+        float steerOffset = (mSteeringValue - targetSteerRadius) / 2.f;
         mSteeringValue -= steerOffset * (mDeltaTime / 1000);
     }
+
     for (int wheel = 0; wheel <= 1; wheel++)
     {
         mVehicle->setSteeringValue(mSteeringValue, wheel);
@@ -336,7 +335,7 @@ void Vehicle::update(float milliseconds)
 bool Vehicle::checkForVehicleAhead()
 {
     //get ray starting position in front of the car
-    btVector3 rayOrigin = GameState::ogreVecToBullet(mNode->_getDerivedPosition() + (getDirection() * 24));
+    btVector3 rayOrigin = GameState::ogreVecToBullet(mNode->_getDerivedPosition() + (getDirection() * 20));
     btVector3 rayFront = GameState::ogreVecToBullet(getDirection() * 300) + rayOrigin; //300 = range of driver's sight
     btCollisionWorld::ClosestRayResultCallback rayQueryFront(rayOrigin, rayFront);
 
@@ -352,33 +351,53 @@ bool Vehicle::checkForVehicleAhead()
     getGameState()->mDynamicsWorld->rayTest(rayOrigin, rayFront, rayQueryFront);
     getGameState()->mDynamicsWorld->rayTest(rayOrigin, rayRight, rayQueryRight);
     getGameState()->mDynamicsWorld->rayTest(rayOrigin, rayLeft, rayQueryLeft);
-#ifdef _DEBUG
+//#ifdef _DEBUG
     getGameState()->mDebugDrawer->drawRay(rayOrigin, rayFront);
     getGameState()->mDebugDrawer->drawRay(rayOrigin, rayRight);
     getGameState()->mDebugDrawer->drawRay(rayOrigin, rayLeft);
-#endif
+//#endif
 
     bool frontHit = rayQueryFront.hasHit();
     bool rightHit = rayQueryRight.hasHit();
     bool leftHit = rayQueryLeft.hasHit();
 
+    btVector3 hitDistance = rayQueryFront.m_hitPointWorld - rayOrigin;
+    hitDistance.setY(0);
+    btScalar distanceToHit = hitDistance.length2();
+
     if (frontHit || rightHit || leftHit) 
     {
         if (frontHit && rightHit && leftHit) //shit's goin down
         {   
-            brake(1000.f);
+            if (distanceToHit < 10000 && mfSpeed > 0.f)
+                brake(1000.f);
+            else
+                accelerate(-200.f);
+                steer(-0.8f);
             return 1;
         }
         else if (frontHit && rightHit && !leftHit) //bro watch that right side
         {
             //brake(rayOrigin, rayQueryFront);
-            steer(-0.6f);
+            if (distanceToHit < 7500 || mfSpeed <= 0.f)
+            {
+                steer(0.8f);
+                accelerate(-500.f);
+            }
+            else if (mfSpeed > 0.f)
+                steer(-0.6f);
             return 1;
         }
         else if (frontHit && !rightHit && leftHit) //bogey coming on your left
         {
             //brake(rayOrigin, rayQueryFront);
-            steer(0.6f);
+            if (distanceToHit < 7500 || mfSpeed <= 0.f)
+            {
+                steer(-0.8f);
+                accelerate(-500.f);
+            }
+            else if (mfSpeed > 0.f)
+                steer(0.6f);
             return 1;
         }
         else if (!frontHit && rightHit && leftHit)  //shoot the gap
@@ -386,12 +405,28 @@ bool Vehicle::checkForVehicleAhead()
             steer(0.0f);
             return 1;
         }
+        else if (!frontHit && !rightHit && leftHit)
+        {
+            steer(-0.3f);
+            return 1;
+        }
+        else if (!frontHit && rightHit && !leftHit)
+        {
+            steer(0.3f);
+            return 1;
+        }
+        else if (mfSpeed <= 0)
+        {
+            accelerate(-500.f);
+            return 1;
+        }
         else
         {
             btVector3 hitDistance = rayQueryFront.m_hitPointWorld - rayOrigin;
             hitDistance.setY(0);
-            float brakeForce = (250 / Ogre::Math::Log(hitDistance.length2())) * 1.7f;
+            float brakeForce = (250 / Ogre::Math::Log(hitDistance.length2())) * 1.2f;
             brake(brakeForce);
+            steer(0.0f);
             return 1;
         }
         /*btCollisionObject *obj = rayQuery.m_collisionObject;
