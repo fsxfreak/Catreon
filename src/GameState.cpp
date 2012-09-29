@@ -29,7 +29,7 @@ using namespace irrklang;
 
 GameState* GameState::mGameSingleton = nullptr;
 
-GameState::GameState() :    mAcceleration(0.01f), mMaxMoveSpeed(0.5f), mTranslateVector(0, 0, 0),
+GameState::GameState() :    mAcceleration(0.01f), mMaxMoveSpeed(0.3f), mTranslateVector(0, 0, 0),
                             mbLMouseDown(false), mbRMouseDown(false), 
                             mbQuit(false), mbSettingsMode(false), mbBackslashDown(false),
                             mTimer(new Ogre::Timer),
@@ -319,10 +319,13 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         mDrivers.push_back(driver);
     }
 
-    if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_V))
+    if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_V))    //create 100 drivers and their vehicles
     {
-//      Ball *ball = new Ball(50, 5000.0, mCamera->getDerivedPosition() + (mCamera->getDerivedDirection() * Ogre::Vector3(20, 20, 20)), Ogre::Vector3(0, 0, 0));
-//      mBalls.push_back(ball);
+        for (int iii = 0; iii < 100; iii++)
+        {
+            Driver *driver = new Driver();
+            mDrivers.push_back(driver);
+        }
     }
 
     //clear all balls
@@ -482,79 +485,72 @@ void GameState::moveCamera()
     //if lshift down, move 10x faster
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_LSHIFT))
     {
-        mCamera->moveRelative(mTranslateVector * 5);
+        mCamera->moveRelative(mTranslateVector * 50);
     }
-    mCamera->moveRelative(mTranslateVector);
+    mCamera->moveRelative(mTranslateVector * 20);
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::getInput(float timesince)
 {
     bool keyPressed = false; //so we can speed up the move speed, if not, set move speed to zero
-    mMoveScale = mAcceleration;
-    float damping = 0.95f;
-    
     //false = unbuffered input
     if (mbSettingsMode == false)
     {
         //left/right
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_A))
         {
-            mTranslateVector.x += -mAcceleration;
+            mTranslateVector.x = -mMoveScale;
             keyPressed = true;
         }
-        else
-            mTranslateVector.x *= damping;
 
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_D))
         {
-            mTranslateVector.x += mAcceleration;
+            mTranslateVector.x = mMoveScale;
             keyPressed = true;
         }
-        else 
-            mTranslateVector.x *= damping;
 
         //front/back
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_W))
         {
-            mTranslateVector.z += -mAcceleration;
+            mTranslateVector.z = -mMoveScale;
             keyPressed = true;
         }
-        else
-            mTranslateVector.z *= damping;
 
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_S))
         {
-            mTranslateVector.z += mAcceleration;
+            mTranslateVector.z = mMoveScale;
             keyPressed = true;
         }
-        else
-            mTranslateVector.z *= damping;
 
         //down/up
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_Q))
         {
-            mTranslateVector.y += -mAcceleration;
+            mTranslateVector.y = -mMoveScale;
             keyPressed = true;
         }
-        else
-            mTranslateVector.y *= damping;
 
         if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_E))
         {
-            mTranslateVector.y += mAcceleration;
+            mTranslateVector.y = mMoveScale;
             keyPressed = true;
         }
-        else
-            mTranslateVector.y *= damping;
 
         if (keyPressed)
         {
-            float tempspeed = (mAcceleration * (20.f * (mMaxMoveSpeed - mAcceleration)) * timesince) + 0.001f;
-            if (tempspeed < mMaxMoveSpeed)
+            float tempaccel = mAcceleration + 0.01f;
+            if (tempaccel < mMaxMoveSpeed)
             {
-                mAcceleration = tempspeed;
+                mAcceleration = tempaccel;
+                mMoveScale = tempaccel * (timesince / 1000);
+                mMoveScale *= 50;
             }
         }
+        else
+        {
+            mAcceleration = 0.f;
+        }
+        float damping = 1.00f - (5.f * (timesince / 1000));
+        mTranslateVector *= Ogre::Math::Abs(damping);
     }
 }
 //-------------------------------------------------------------------------------------------------------
