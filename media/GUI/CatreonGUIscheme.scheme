@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<GUIScheme Name="CatreonGUIscheme">
+	<Imageset Filename="CatreonGUI.imageset" />
+	<Font Filename="DejaVuSans-10.font" />
+	<LookNFeel Filename="CatreonGUI.looknfeel" />
+	<WindowRendererSet Filename="CEGUIFalagardWRBase" />
+	<FalagardMapping WindowType="CatreonGUI/Button" TargetType="CEGUI/PushButton" Renderer="Falagard/Button" LookNFeel="CatreonGUI/Button" />
+</GUIScheme>
+
+

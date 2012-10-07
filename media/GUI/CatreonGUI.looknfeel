@@ -1,0 +1,87 @@
+<?xml version="1.0" ?>
+<Falagard>
+	<WidgetLook name="CatreonGUI/Button">
+		<PropertyDefinition name="NormalTextColour" initialValue="FFFFFFFF" redrawOnWrite="true" />
+        <PropertyDefinition name="HoverTextColour" initialValue="FFFFFFFF" redrawOnWrite="true" />
+        <PropertyDefinition name="PushedTextColour" initialValue="FFFFFFFF" redrawOnWrite="true" />
+        <PropertyDefinition name="DisabledTextColour" initialValue="FF888888" redrawOnWrite="true" />
+        <PropertyDefinition name="UseStandardImagery" initialValue="True" redrawOnWrite="true" />
+        <PropertyDefinition name="NormalImage" initialValue="" redrawOnWrite="true" />
+        <PropertyDefinition name="HoverImage" initialValue="" redrawOnWrite="true" />
+        <PropertyDefinition name="PushedImage" initialValue="" redrawOnWrite="true" />
+        <PropertyDefinition name="VertImageFormatting" initialValue="Stretched" redrawOnWrite="true" />
+        <PropertyDefinition name="HorzImageFormatting" initialValue="Stretched" redrawOnWrite="true" />
+		
+		<Property name="WantsMultiClickEvents" value="False" />
+			<!-- Defining the text position and style -->
+		<ImagerySection name="label">
+			<TextComponent>
+				<Area>
+                    <Dim type="LeftEdge"><AbsoluteDim value="0" /></Dim>
+                    <Dim type="TopEdge"><AbsoluteDim value="0" /></Dim>
+                    <Dim type="RightEdge"><UnifiedDim scale="1" type="RightEdge" /></Dim>
+                    <Dim type="BottomEdge"><UnifiedDim scale="1" type="BottomEdge" /></Dim>
+				</Area>
+				
+                <VertFormat type="CentreAligned" />
+                <HorzFormat type="WordWrapCentreAligned" />
+			</TextComponent>
+		</ImagerySection>
+			<!-- Defining the neutral button image -->
+		<ImagerySection name="normal_image">
+            <ImageryComponent>
+                <Area>
+                    <Dim type="LeftEdge"><AbsoluteDim value="0" /></Dim>
+                    <Dim type="TopEdge"><AbsoluteDim value="0" /></Dim>
+                    <Dim type="Width"><UnifiedDim scale="1" type="Width" /></Dim>
+                    <Dim type="Height"><UnifiedDim scale="1" type="Height" /></Dim>
+                </Area>
+				
+                <ImageProperty name="NormalImage" />
+                <VertFormatProperty name="VertImageFormatting" />
+                <HorzFormatProperty name="HorzImageFormatting" />
+            </ImageryComponent>
+		</ImagerySection>
+			<!-- Defining the "mouse over" image -->
+		<ImagerySection name="hover_image">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge"><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge"><AbsoluteDim value="0" /></Dim>
+                    <Dim type="Width"><UnifiedDim scale="1" type="Width" /></Dim>
+                    <Dim type="Height"><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				
+				<ImageProperty name="HoverImage" />
+				<VertFormatProperty name="VertImageFormatting" />
+				<HorzFormatProperty name="HorzImageFormatting" />
+			</ImageryComponent>
+		</ImagerySection>
+			<!-- Defining the "mouse clicked" image -->
+		<ImagerySection name="pushed_image">
+			<ImageryComponent>
+				<Area>
+					<Dim type="LeftEdge"><AbsoluteDim value="0" /></Dim>
+					<Dim type="TopEdge"><AbsoluteDim value="0" /></Dim>
+                    <Dim type="Width"><UnifiedDim scale="1" type="Width" /></Dim>
+                    <Dim type="Height"><UnifiedDim scale="1" type="Height" /></Dim>
+				</Area>
+				
+				<ImageProperty name="PushedImage" />
+				<VertFormatProperty name="VertImageFormatting" />
+				<HorzFormatProperty name="HorzImageFormatting" />
+			</ImageryComponent>
+		</ImagerySection>
+	
+		<StateImagery name="Normal"> 
+		</StateImagery>
+		<StateImagery name="Hover">
+		</StateImagery>
+		<StateImagery name="Pushed">
+		</StateImagery>
+		<StateImagery name="Disabled">
+		</StateImagery>
+	</WidgetLook>
+</Falagard>
+
+
