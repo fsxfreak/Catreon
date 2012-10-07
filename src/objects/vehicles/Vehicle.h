@@ -76,7 +76,8 @@ private:
 
     virtual void accelerate(float power = 200.f);
     virtual void brake(float power = 200.f);
-    virtual void brake(const btVector3 &rayOrigin, const btCollisionWorld::ClosestRayResultCallback &rayQuery);
+    virtual void brake(const btVector3 &rayOrigin, const btCollisionWorld::ClosestRayResultCallback &rayQuery, 
+                       float brakeFactor = 1.7f);
 
     virtual void steer(float targetSteerRadius = 0.0f);
 public:

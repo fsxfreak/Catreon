@@ -127,8 +127,8 @@ bool OgreFramework::initOgre(Ogre::String wndTitle, OIS::KeyListener *pKeyListen
     CEGUI::Scheme::setDefaultResourceGroup("Schemes");
     CEGUI::WidgetLookManager::setDefaultResourceGroup("LookNFeel");
     CEGUI::WindowManager::setDefaultResourceGroup("Layouts");
-    CEGUI::SchemeManager::getSingleton().create("TaharezLook.scheme");
-    CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseArrow");
+    CEGUI::SchemeManager::getSingleton().create("CatreonGUIscheme.scheme");
+    CEGUI::System::getSingleton().setDefaultMouseCursor("CatreonGUI", "mousePointer");
 
     mTimer = new Ogre::Timer();
     mTimer->reset();

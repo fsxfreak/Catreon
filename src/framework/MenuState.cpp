@@ -43,9 +43,8 @@ void MenuState::enter()
 //menu scene, actually the GUI
 void MenuState::createScene()
 {
-    CEGUI::System::getSingleton().setDefaultMouseCursor("TaharezLook", "MouseArrow");
     CEGUI::WindowManager &windowManager = CEGUI::WindowManager::getSingleton();
-    CEGUI::Window *menuRoot = windowManager.loadWindowLayout("menuLayout.layout");
+    CEGUI::Window *menuRoot = windowManager.loadWindowLayout("CatreonMenuState.layout");
     CEGUI::System::getSingleton().setGUISheet(menuRoot);
 }
 //-------------------------------------------------------------------------------------------------------
