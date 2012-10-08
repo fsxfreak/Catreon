@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Imageset Name="CatreonGUI" Imagefile="CatreonGUI.png" NativeHorzRes="1920" NativeVertRes="1080" AutoScaled="true" >
-	<Image Name="treeon" XPos="4" YPos="5" Width="965" Height="539" />
-	<Image Name="mousePointer" XPos="972" YPos="5" Width="52" Height="106" />
-	<Image Name="buttonNeutral" XPos="-1" YPos="543" Width="474" Height="61" />
-	<Image Name="buttonHover" XPos="-1" YPos="600" Width="474" Height="61" />
-	<Image Name="buttonPushed" XPos="-1" YPos="657" Width="474" Height="61" />
-	<Image Name="buttonDisabled" XPos="-1" YPos="712" Width="474" Height="61" />
-	<Image Name="windowGeneral" XPos="3" YPos="771" Width="496" Height="567" />
+	<Image Name="treeon" XPos="5" YPos="5" Width="965" Height="539" />
+	<Image Name="mousePointer" XPos="974" YPos="5" Width="52" Height="106" />
+	<Image Name="buttonNeutral" XPos="0" YPos="544" Width="474" Height="61" />
+	<Image Name="buttonHover" XPos="0" YPos="601" Width="474" Height="61" />
+	<Image Name="buttonPushed" XPos="0" YPos="658" Width="474" Height="61" />
+	<Image Name="buttonDisabled" XPos="0" YPos="715" Width="474" Height="61" />
+	<Image Name="windowGeneral" XPos="4" YPos="776" Width="496" Height="567" />
 </Imageset>
