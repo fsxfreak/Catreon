@@ -26,8 +26,11 @@ class BtOgMotionState;
 class Vehicle
 {
 private:
-    static long int nVehiclesCreated;
+    static long int mVehiclesCreated;
     std::string mstrName;
+
+    Ogre::SceneManager *mSceneManager;
+    btDynamicsWorld* mDynamicsWorld;
 
     //main body
     Ogre::SceneNode *mNode;
@@ -48,6 +51,7 @@ private:
     Ogre::Entity *mBR_Entity;
 
     std::vector<Ogre::SceneNode*> mWheelNodes;
+    std::vector<Ogre::Entity*> mWheelEntities;;
 
     //static btCollisionShape *mbtWheelShape;
     btRaycastVehicle::btVehicleTuning mTuning;

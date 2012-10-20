@@ -11,6 +11,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #define GUI_EVENT_SUBSCRIBER_HPP
 
 #include "stdafx.h"
+#include <framework\AdvancedOgreFramework.hpp>
 
 class GUIEventSubscriber
 {
@@ -20,8 +21,10 @@ private:
     GUIEventSubscriber& operator=(const GUIEventSubscriber&) {};
 
     static GUIEventSubscriber* mInstance;
+    void update();
 public:
     static GUIEventSubscriber* get();
+    void subscribe(const Ogre::String& buttonName, void *subscriberClass);
 
 };
 

@@ -26,3 +26,13 @@ GUIEventSubscriber* GUIEventSubscriber::get()
     return mInstance;
 }
 //-------------------------------------------------------------------------------------------------------
+void GUIEventSubscriber::update()
+{
+    CEGUI::Window *button = CEGUI::System::getSingleton().getGUISheet()->getChild("EnterButton");
+    button->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&MenuState::mousePressed, 
+}
+//-------------------------------------------------------------------------------------------------------
+void GUIEventSubscriber::subscribe(const Ogre::String& buttonName, void* subscriberClass)
+{
+
+}
