@@ -41,14 +41,14 @@ private:
 
     //wheels
     //FL = front left, BL = back left
-    Ogre::SceneNode *mFL_Node;
+    /*Ogre::SceneNode *mFL_Node;
     Ogre::Entity *mFL_Entity;
     Ogre::SceneNode *mFR_Node;
     Ogre::Entity *mFR_Entity;
     Ogre::SceneNode *mBL_Node;
     Ogre::Entity *mBL_Entity;
     Ogre::SceneNode *mBR_Node;
-    Ogre::Entity *mBR_Entity;
+    Ogre::Entity *mBR_Entity;*/
 
     std::vector<Ogre::SceneNode*> mWheelNodes;
     std::vector<Ogre::Entity*> mWheelEntities;;

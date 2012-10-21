@@ -24,6 +24,7 @@ TODO
 #include "stdafx.h"
 
 #include "GameState.hpp"
+#include <boost\thread.hpp>
 
 using namespace irrklang;
 
@@ -76,6 +77,7 @@ void GameState::enter()
     mDynamicsWorld = new btDiscreteDynamicsWorld(mDispatcher, mBroadphase, mSolver, mCollisionConfiguration);
 
     mDynamicsWorld->setGravity(btVector3(0, -100, 0));
+    mDynamicsWorld->setForceUpdateAllAabbs(false);
 
     Ogre::MaterialManager::getSingleton().load("DebugLines.material", "General");
     mDebugDrawer = new CDebugDraw(mSceneMgr, mDynamicsWorld);
@@ -597,13 +599,16 @@ void GameState::update(double timeSinceLastFrame)
 
     getInput(timeSinceLastFrame);
     moveCamera();
-    updatePhysics();
-    updateSound();
-    
+
     for (std::vector<Driver*>::iterator it = mDrivers.begin(); it != mDrivers.end(); ++it)
     {
         (*it)->update(timeSinceLastFrame);
     }
+
+    updatePhysics();
+    updateSound();
+    
+
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::buildGUI()

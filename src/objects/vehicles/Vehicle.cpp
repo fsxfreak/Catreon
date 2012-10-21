@@ -23,6 +23,7 @@ TODO
 #include "objects\vehicles\Vehicle.h"
 #include <sstream>
 
+
 long int Vehicle::mVehiclesCreated = 0;
 btCollisionShape *Vehicle::mbtChassisShape = new btBoxShape(btVector3(8, 7, 23));
 //box as the main body
@@ -63,11 +64,11 @@ Vehicle::~Vehicle()
     {
         mSceneManager->destroySceneNode(*it);
     }
-	mSceneManager->destroyEntity(mFL_Entity);
-	mSceneManager->destroyEntity(mFR_Entity);
-	mSceneManager->destroyEntity(mBL_Entity);
-	mSceneManager->destroyEntity(mBR_Entity);
-	//i'm sure there is a way better way to do this;
+	std::vector<Ogre::Entity*>::iterator itr = mWheelEntities.begin();
+    for (itr; itr != mWheelEntities.end(); ++itr)
+    {
+        mSceneManager->destroyEntity(*itr);
+    }
     
     for (int iii = mDynamicsWorld->getNumCollisionObjects() - 1; iii >= 0; iii--)
     {
@@ -310,13 +311,14 @@ void Vehicle::update(float milliseconds)
     for (int iii = 0; iii < 4; iii++)
     {
         btTransform wheeltrans = mVehicle->getWheelTransformWS(iii);
-        mWheelNodes[iii]->_setDerivedPosition(GameState::bulletVecToOgre(wheeltrans.getOrigin()));
+        mWheelNodes[iii]->setPosition(wheeltrans.getOrigin().x(), wheeltrans.getOrigin().y(), wheeltrans.getOrigin().z());
         mWheelNodes[iii]->setOrientation(wheeltrans.getRotation().w(), 
                                          wheeltrans.getRotation().x(),
                                          wheeltrans.getRotation().y(),
                                          wheeltrans.getRotation().z());
     }
-    if (!checkForVehicleAhead()) //true if vehicle ahead, false if not
+
+    /*if (!checkForVehicleAhead()) //true if vehicle ahead, false if not
     {
         if (mfSpeed < mfTargetSpeed)
         {
@@ -328,7 +330,7 @@ void Vehicle::update(float milliseconds)
             float power = (mfSpeed - mfTargetSpeed) * 50.f;
             brake(power);
         }
-    }
+    }*/
     mVehicle->updateVehicle((int)milliseconds / 1000);
 }
 //-------------------------------------------------------------------------------------------------------
@@ -385,125 +387,7 @@ bool Vehicle::checkForVehicleAhead()
 
     if (frontHit || rightHit || leftHit) //let the logic begin
     {
-        if (rayQueryBack.hasHit() && mfSpeed < 0.f)
-        {
-            brake(400.f);
-        }
-        else if (frontHit && rightHit && leftHit) //shit's goin down
-        {   
-            btVector3 leftHit = rayQueryLeft.m_hitPointWorld - rayOrigin;
-            leftHit.setY(0);
-            btVector3 rightHit = rayQueryRight.m_hitPointWorld - rayOrigin;
-            rightHit.setY(0);
-            float leftHitDistance = leftHit.length2();
-            float rightHitDistance = rightHit.length2();
-
-            if (distanceToHit < 7500 && mfSpeed > 5.f)
-            {
-                brake(rayOrigin, rayQueryFront, 20.f);
-                return 1;
-            }
-            else if (leftHitDistance < rightHitDistance && mfSpeed > 5.f && distanceToHit > 7500)
-            {
-                steer(0.5f);
-                return 1;
-            }
-            else if (rightHitDistance < leftHitDistance && mfSpeed > 5.f && distanceToHit > 7500)
-            {
-                steer(-0.5f);
-                return 1;
-            }
-            else if (mfSpeed < 1.f && distanceToHit < 3000)
-            {
-                accelerate(-200.f);
-
-                if (leftHitDistance < rightHitDistance)
-                {
-                    steer(-0.8f);
-                    return 1;
-                }
-                else
-                {
-                    steer(0.8f);
-                    return 1;
-                }
-            }
-            else
-            {
-                if (leftHitDistance < rightHitDistance)
-                    steer(0.5f);
-                else
-                    steer(-0.5f);
-
-                return 0;
-            }
-            return 1;
-        }
-        else if (frontHit && !leftHit && rightHit) //bro watch that right side
-        {
-            //brake(rayOrigin, rayQueryFront);
-            if (distanceToHit < 7500 && mfSpeed <= 0.f)
-            {
-                steer(0.4f);
-                accelerate(-500.f);
-            }
-            else if (mfSpeed > 0.f)
-                steer(-0.4f);
-            return 1;
-        }
-        else if (frontHit && leftHit && !rightHit) //bogey coming on your left
-        {
-            //brake(rayOrigin, rayQueryFront);
-            if (distanceToHit < 7500 && mfSpeed <= 0.f)
-            {
-                steer(-0.4f);
-                accelerate(-500.f);
-            }
-            else if (mfSpeed > 0.f)
-                steer(0.6f);
-            return 1;
-        }
-        else if (!frontHit && leftHit && !rightHit)
-        {
-            if (mfSpeed > 0.f)
-                steer(0.3f);
-            return 1;
-        }
-        else if (!frontHit && !leftHit && rightHit)
-        {
-            if (mfSpeed > 0.f)
-                steer(-0.3f);
-            return 1;
-        }
-        else if (!frontHit && rightHit && leftHit)  //shoot the gap
-        {
-            if (mfSpeed > 0.f)
-                steer(0.0f);
-            return 1;
-        }
-        else if (mfSpeed <= 0)
-        {
-            if (distanceToHit < 5000)
-                accelerate(-500.f);
-            return 1;
-        }
-        /*btCollisionObject *obj = rayQuery.m_collisionObject;
-        btRigidBody *body = btRigidBody::upcast(obj);
-        BtOgMotionState *state = (BtOgMotionState*)body->getMotionState();
-        if (body == getGameState()->mRigidBodies[1])
-        {
-            brake(1000.f);
-            return 1;
-        }
-        else
-        {
-            return 0;
-        }*/
-    }
-    else
-    {
-        steer(0.0f);
-        return 0;
+        return 1;
     }
     return 0;
 }
