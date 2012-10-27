@@ -32,7 +32,7 @@ btCollisionShape *Vehicle::mbtChassisShape = new btBoxShape(btVector3(8, 7, 23))
 //yay magic numbers
 //-------------------------------------------------------------------------------------------------------
 Vehicle::Vehicle(int cargo, int passengers, Ogre::Vector3 initposition, Ogre::Vector3 initdirection) 
-    : mbIsMoving(0), mbIsHealthy(1), mfTargetSpeed(0), mbtCar(nullptr), mSteeringValue(0.f), 
+    : mbIsMoving(0), mbIsHealthy(1), mfTargetSpeed(0), mbtCar(nullptr), mSteeringValue(0.f), mMillisecondsCounter(0),
       mSceneManager(getGameState()->mSceneMgr), mDynamicsWorld(getGameState()->mDynamicsWorld)
 {
     //give a unique name to each vehicle
@@ -64,12 +64,13 @@ Vehicle::~Vehicle()
     {
         mSceneManager->destroySceneNode(*it);
     }
+    mWheelNodes.clear();
 	std::vector<Ogre::Entity*>::iterator itr = mWheelEntities.begin();
     for (itr; itr != mWheelEntities.end(); ++itr)
     {
         mSceneManager->destroyEntity(*itr);
     }
-    
+    mWheelEntities.clear();
     for (int iii = mDynamicsWorld->getNumCollisionObjects() - 1; iii >= 0; iii--)
     {
         btCollisionObject *obj = mDynamicsWorld->getCollisionObjectArray()[iii];
@@ -88,12 +89,12 @@ Vehicle::~Vehicle()
             mDynamicsWorld->removeRigidBody(body);
         }
     }
+    mDynamicsWorld->removeCollisionObject(mTriangleGhost);
+    delete mTriangleGhost;
     delete mVehicleRaycaster;
     mDynamicsWorld->removeAction(mVehicle);
     delete mVehicle;
-    
-    //if (mbtChassisShape) delete mbtChassisShape;
-    //if (mbtWheelShape) delete mbtWheelShape;
+
 }
 //-------------------------------------------------------------------------------------------------------
 float Vehicle::getSpeed()
@@ -117,7 +118,6 @@ Ogre::Vector3 Vehicle::getPosition()
 Ogre::Vector3 Vehicle::getDirection()
 {
     //Converts quaternions into a direction vector for easier direction checking of AI driving on roads
-    //return mNode->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z;
     return mNode->getOrientation() * Ogre::Vector3::UNIT_Z;
 }
 //-------------------------------------------------------------------------------------------------------
@@ -133,7 +133,7 @@ bool Vehicle::isHealthy()
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::initializePhysics(int cargo, int passengers, float yawangle)
 {
-    if (mVehiclesCreated <= 1)
+    if (mVehiclesCreated < 1)
 	{
         getGameState()->mCollisionShapes.push_back(mbtChassisShape);
 	}
@@ -199,6 +199,14 @@ void Vehicle::initializePhysics(int cargo, int passengers, float yawangle)
         wheelinfo.m_rollInfluence = 0.1f;
     }
 
+    //set up a empty triangle shape in order to simulate a field of view for the driver
+    btTriangleShape *triangleCast = new btTriangleShape(btVector3(0, 0, 0), btVector3(100, 0, 250), btVector3(-100, 0, 250));
+    mTriangleGhost = new btPairCachingGhostObject();
+    mTriangleGhost->setWorldTransform(btTransform(rotation, carPosition));
+    mTriangleGhost->setCollisionShape(triangleCast);
+    mTriangleGhost->setCollisionFlags(mTriangleGhost->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+
+    //mDynamicsWorld->addCollisionObject(mTriangleGhost, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter & ~btBroadphaseProxy::SensorTrigger);
 }
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::initializeMaterial(float fyawangle)
@@ -307,6 +315,7 @@ void Vehicle::steer(float targetSteerRadius)
 void Vehicle::update(float milliseconds)
 {
     mDeltaTime = milliseconds;
+    mMillisecondsCounter += milliseconds;
     mfSpeed = mVehicle->getCurrentSpeedKmHour();
     for (int iii = 0; iii < 4; iii++)
     {
@@ -318,26 +327,23 @@ void Vehicle::update(float milliseconds)
                                          wheeltrans.getRotation().z());
     }
 
-    /*if (!checkForVehicleAhead()) //true if vehicle ahead, false if not
+    maintainSpeed();
+    if (mMillisecondsCounter > 500)    //check this only about every half second
     {
-        if (mfSpeed < mfTargetSpeed)
+        if (!checkForVehicleAhead()) //true if vehicle ahead, false if not
         {
-            float power = (mfTargetSpeed - mfSpeed) * 50.f;
-            accelerate(power);
+
         }
-        else if (mfSpeed > mfTargetSpeed)
-        {
-            float power = (mfSpeed - mfTargetSpeed) * 50.f;
-            brake(power);
-        }
-    }*/
+        mMillisecondsCounter = 0;
+    }
+
     mVehicle->updateVehicle((int)milliseconds / 1000);
 }
 //-------------------------------------------------------------------------------------------------------
 bool Vehicle::checkForVehicleAhead()
 {
     //get ray starting position in front of the car
-    btVector3 rayOrigin = GameState::ogreVecToBullet(mNode->_getDerivedPosition() + (getDirection() * 20));
+    /*btVector3 rayOrigin = GameState::ogreVecToBullet(mNode->_getDerivedPosition() + (getDirection() * 20));
     btVector3 rayFront = GameState::ogreVecToBullet(getDirection() * 300) + rayOrigin; //300 = range of driver's sight
     btCollisionWorld::ClosestRayResultCallback rayQueryFront(rayOrigin, rayFront);
 
@@ -387,8 +393,28 @@ bool Vehicle::checkForVehicleAhead()
 
     if (frontHit || rightHit || leftHit) //let the logic begin
     {
+        brake(0);
         return 1;
-    }
+    }*/
+
+
+    mTriangleGhost->setWorldTransform(btTransform(GameState::ogreQuatToBullet(mNode->getOrientation())
+        , GameState::ogreVecToBullet(mNode->getPosition())));
+
     return 0;
+}
+//-------------------------------------------------------------------------------------------------------
+void Vehicle::maintainSpeed()
+{
+    if (mfSpeed < mfTargetSpeed)
+    {
+        float power = (mfTargetSpeed - mfSpeed) * 50;
+        accelerate(power);
+    }
+    else if (mfSpeed > mfTargetSpeed)
+    {
+        float power = (mfSpeed - mfTargetSpeed) * 10;
+        brake(power);
+    }
 }
 //-------------------------------------------------------------------------------------------------------

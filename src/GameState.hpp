@@ -84,6 +84,7 @@ public:
 
     static btVector3 ogreVecToBullet(const Ogre::Vector3 &ogrevector);
     static Ogre::Vector3 bulletVecToOgre(const btVector3 &bulletvector);
+    static btQuaternion ogreQuatToBullet(const Ogre::Quaternion &ogrequat);
 
     void updateSound();
 
@@ -141,6 +142,7 @@ public:
     btBroadphaseInterface                   *mBroadphase;
     btSequentialImpulseConstraintSolver     *mSolver;
     btDiscreteDynamicsWorld                 *mDynamicsWorld;
+    btOverlappingPairCallback               *mGhostCallback;
 
     std::vector<btCollisionShape*>          mCollisionShapes;
     std::vector<btRigidBody*>               mRigidBodies;

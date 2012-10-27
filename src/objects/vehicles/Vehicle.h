@@ -18,7 +18,8 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
 #include <BtOgMotionState.h>
-
+#include <BulletCollision\CollisionShapes\btTriangleShape.h>
+#include <BulletCollision\CollisionDispatch\btGhostObject.h>
 #include "MaterialParser.hpp"
 
 class BtOgMotionState;
@@ -39,17 +40,6 @@ private:
     static btCollisionShape *mbtChassisShape;
     btRigidBody *mbtCar;
 
-    //wheels
-    //FL = front left, BL = back left
-    /*Ogre::SceneNode *mFL_Node;
-    Ogre::Entity *mFL_Entity;
-    Ogre::SceneNode *mFR_Node;
-    Ogre::Entity *mFR_Entity;
-    Ogre::SceneNode *mBL_Node;
-    Ogre::Entity *mBL_Entity;
-    Ogre::SceneNode *mBR_Node;
-    Ogre::Entity *mBR_Entity;*/
-
     std::vector<Ogre::SceneNode*> mWheelNodes;
     std::vector<Ogre::Entity*> mWheelEntities;;
 
@@ -57,6 +47,8 @@ private:
     btRaycastVehicle::btVehicleTuning mTuning;
     btVehicleRaycaster* mVehicleRaycaster;
     btRaycastVehicle* mVehicle;
+
+    btGhostObject *mTriangleGhost;
 
     //state variables
     bool mbIsMoving;
@@ -71,6 +63,7 @@ private:
     float mSteeringValue;   //-0.6f - 0.6f
 
     float mDeltaTime;
+    float mMillisecondsCounter; //in order to do several things like collision checking every one second
 
     //in pounds
     //unsigned int mnCargo;
@@ -84,6 +77,8 @@ private:
                        float brakeFactor = 1.7f);
 
     virtual void steer(float targetSteerRadius = 0.0f);
+    bool checkForVehicleAhead();
+    void maintainSpeed();
 public:
     Vehicle(int cargo, int passengers, Ogre::Vector3 initposition = Ogre::Vector3(0, 30, 0),
                                          Ogre::Vector3 initdirection = Ogre::Vector3(0, 0, 0));
@@ -102,7 +97,7 @@ public:
     virtual void initializeMaterial(float yawangle = 0.0f);
 
     void update(float milliseconds);
-    bool checkForVehicleAhead();
+    
 };
 
 #endif

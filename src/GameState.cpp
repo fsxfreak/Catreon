@@ -76,6 +76,9 @@ void GameState::enter()
     mSolver = new btSequentialImpulseConstraintSolver();
     mDynamicsWorld = new btDiscreteDynamicsWorld(mDispatcher, mBroadphase, mSolver, mCollisionConfiguration);
 
+    mGhostCallback = new btGhostPairCallback();
+    mDynamicsWorld->getPairCache()->setInternalGhostPairCallback(mGhostCallback);
+
     mDynamicsWorld->setGravity(btVector3(0, -100, 0));
     mDynamicsWorld->setForceUpdateAllAabbs(false);
 
@@ -138,6 +141,7 @@ void GameState::exit()
 
     mCollisionShapes.clear();
 
+    delete mGhostCallback;
     delete mDynamicsWorld;
     delete mSolver;
     delete mCollisionConfiguration;
@@ -323,7 +327,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
 
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_V))    //create 100 drivers and their vehicles
     {
-        for (int iii = 0; iii < 100; iii++)
+        for (int iii = 0; iii < 20; ++iii)
         {
             Driver *driver = new Driver();
             mDrivers.push_back(driver);
@@ -600,7 +604,8 @@ void GameState::update(double timeSinceLastFrame)
     getInput(timeSinceLastFrame);
     moveCamera();
 
-    for (std::vector<Driver*>::iterator it = mDrivers.begin(); it != mDrivers.end(); ++it)
+    std::vector<Driver*>::iterator itend = mDrivers.end();
+    for (std::vector<Driver*>::iterator it = mDrivers.begin(); it != itend; ++it)
     {
         (*it)->update(timeSinceLastFrame);
     }
@@ -662,6 +667,11 @@ btVector3 GameState::ogreVecToBullet(const Ogre::Vector3 &ogrevector)
 Ogre::Vector3 GameState::bulletVecToOgre(const btVector3 &bulletvector)
 {
     return Ogre::Vector3(bulletvector.x(), bulletvector.y(), bulletvector.z());
+}
+//-------------------------------------------------------------------------------------------------------
+btQuaternion GameState::ogreQuatToBullet(const Ogre::Quaternion &ogrequat)
+{
+    return btQuaternion(ogrequat.x, ogrequat.y, ogrequat.z, ogrequat.w);
 }
 //-------------------------------------------------------------------------------------------------------
 int GameState::getMillisecondsFromLastCall()
