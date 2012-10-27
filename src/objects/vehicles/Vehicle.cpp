@@ -89,8 +89,6 @@ Vehicle::~Vehicle()
             mDynamicsWorld->removeRigidBody(body);
         }
     }
-    mDynamicsWorld->removeCollisionObject(mTriangleGhost);
-    delete mTriangleGhost;
     delete mVehicleRaycaster;
     mDynamicsWorld->removeAction(mVehicle);
     delete mVehicle;
@@ -198,15 +196,6 @@ void Vehicle::initializePhysics(int cargo, int passengers, float yawangle)
         wheelinfo.m_frictionSlip = 0.8f;
         wheelinfo.m_rollInfluence = 0.1f;
     }
-
-    //set up a empty triangle shape in order to simulate a field of view for the driver
-    btTriangleShape *triangleCast = new btTriangleShape(btVector3(0, 0, 0), btVector3(100, 0, 250), btVector3(-100, 0, 250));
-    mTriangleGhost = new btPairCachingGhostObject();
-    mTriangleGhost->setWorldTransform(btTransform(rotation, carPosition));
-    mTriangleGhost->setCollisionShape(triangleCast);
-    mTriangleGhost->setCollisionFlags(mTriangleGhost->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
-
-    //mDynamicsWorld->addCollisionObject(mTriangleGhost, btBroadphaseProxy::SensorTrigger, btBroadphaseProxy::AllFilter & ~btBroadphaseProxy::SensorTrigger);
 }
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::initializeMaterial(float fyawangle)
@@ -232,26 +221,26 @@ void Vehicle::initializeMaterial(float fyawangle)
 
     std::string name = "wheelFL_";
     name += oss.str();
-    Ogre::Entity *fl_ent;
-    Ogre::SceneNode *fl_node;
+    Ogre::Entity *fl_ent = nullptr;
+    Ogre::SceneNode *fl_node = nullptr;
     createWheel(fl_ent, fl_node, Ogre::Vector3(9.76f, -6, 15.37f), name);
     
     name = "wheelFR_";
     name += oss.str();
-    Ogre::Entity *fr_ent;
-    Ogre::SceneNode *fr_node;
+    Ogre::Entity *fr_ent = nullptr;
+    Ogre::SceneNode *fr_node = nullptr;
     createWheel(fr_ent, fr_node, Ogre::Vector3(-9.76f, -6, 15.37f), name);
 
     name = "wheelBL_";
     name += oss.str();
-    Ogre::Entity *bl_ent;
-    Ogre::SceneNode *bl_node;
+    Ogre::Entity *bl_ent = nullptr;
+    Ogre::SceneNode *bl_node = nullptr;
     createWheel(bl_ent, bl_node, Ogre::Vector3(9.76f, -6, -15.37f), name);
 
     name = "wheelBR_";
     name += oss.str();
-    Ogre::Entity *br_ent;
-    Ogre::SceneNode *br_node;
+    Ogre::Entity *br_ent = nullptr;
+    Ogre::SceneNode *br_node = nullptr;
     createWheel(br_ent, br_node, Ogre::Vector3(-9.76f, -6, -15.37f), name);
 
     ++mVehiclesCreated;
@@ -343,7 +332,7 @@ void Vehicle::update(float milliseconds)
 bool Vehicle::checkForVehicleAhead()
 {
     //get ray starting position in front of the car
-    /*btVector3 rayOrigin = GameState::ogreVecToBullet(mNode->_getDerivedPosition() + (getDirection() * 20));
+    btVector3 rayOrigin = GameState::ogreVecToBullet(mNode->_getDerivedPosition() + (getDirection() * 20));
     btVector3 rayFront = GameState::ogreVecToBullet(getDirection() * 300) + rayOrigin; //300 = range of driver's sight
     btCollisionWorld::ClosestRayResultCallback rayQueryFront(rayOrigin, rayFront);
 
@@ -395,11 +384,7 @@ bool Vehicle::checkForVehicleAhead()
     {
         brake(0);
         return 1;
-    }*/
-
-
-    mTriangleGhost->setWorldTransform(btTransform(GameState::ogreQuatToBullet(mNode->getOrientation())
-        , GameState::ogreVecToBullet(mNode->getPosition())));
+    }
 
     return 0;
 }
