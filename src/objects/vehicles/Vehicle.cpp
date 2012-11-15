@@ -23,9 +23,9 @@ TODO
 #include "objects\vehicles\Vehicle.h"
 #include <sstream>
 
+#include <vld.h>
 
 long int Vehicle::mVehiclesCreated = 0;
-btCollisionShape *Vehicle::mbtChassisShape = new btBoxShape(btVector3(8, 7, 23));
 //box as the main body
 //the middle is a bit mis-aligned
 //btCollisionShape *Vehicle::mbtWheelShape = new btCylinderShapeX(btVector3(1.02, 4.07, 3.88));
@@ -130,12 +130,7 @@ bool Vehicle::isHealthy()
 }
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::initializePhysics(int cargo, int passengers, float yawangle)
-{
-    if (mVehiclesCreated < 1)
-	{
-        getGameState()->mCollisionShapes.push_back(mbtChassisShape);
-	}
-    
+{  
     //main body
 //  mbtChassisShape = new btBoxShape(btVector3(8.92499, 7.48537, 24.072));
     btVector3 carPosition = GameState::ogreVecToBullet(mNode->getPosition());
@@ -145,6 +140,7 @@ void Vehicle::initializePhysics(int cargo, int passengers, float yawangle)
     rotation.setEulerZYX(0, yawangle, 0);
    
     //to adjust the center of mass
+    btCollisionShape *mbtChassisShape = new btBoxShape(btVector3(8, 7, 23));
     btCompoundShape *compound = new btCompoundShape();
     getGameState()->mCollisionShapes.push_back(compound);
     compound->addChildShape(chassisTransform, mbtChassisShape);

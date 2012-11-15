@@ -12,6 +12,14 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include "stdafx.h"
 #include <framework\AdvancedOgreFramework.hpp>
+#include <framework\MenuState.hpp>
+
+enum ButtonTypes
+{
+    PUSH_BUTTON,
+    RADIO_BUTTON,
+    CHECKBOX
+};
 
 class GUIEventSubscriber
 {
@@ -21,10 +29,16 @@ private:
     GUIEventSubscriber& operator=(const GUIEventSubscriber&) {};
 
     static GUIEventSubscriber* mInstance;
+
+    std::vector<CEGUI::Window*> mButtons;
     void update();
+    
+    bool onPushButtonClicked(const CEGUI::EventArgs &mouseEvent);
+    bool onMouseEnter(const CEGUI::EventArgs &mouseEvent);
+    bool onMouseLeave(const CEGUI::EventArgs &mouseEvent);
 public:
     static GUIEventSubscriber* get();
-    void subscribe(const Ogre::String& buttonName, void *subscriberClass);
+    void subscribe(const Ogre::String& buttonName, ButtonTypes buttonType);
 
 };
 

@@ -122,6 +122,10 @@ void MenuState::update(double timeSinceLastFrame)
     }
 }
 //-------------------------------------------------------------------------------------------------------
+void MenuState::buttonHit(const CEGUI::EventArgs &mouseEvent)
+{
+}
+//-------------------------------------------------------------------------------------------------------
 //triggered whenever a UI button is clicked
 /*void MenuState::buttonHit(OgreBites::Button *button)
 {

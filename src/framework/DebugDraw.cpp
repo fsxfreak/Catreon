@@ -40,7 +40,8 @@ CDebugDraw::CDebugDraw( Ogre::SceneManager* Scene, btDynamicsWorld* World )
 CDebugDraw::~CDebugDraw()
 {
 	delete DebugLineDrawer;
-    getGameState()->mSceneMgr->destroySceneNode(DebugDrawerNode);
+    if (getGameState()->mSceneMgr->hasSceneNode("DebugDrawer"))
+        getGameState()->mSceneMgr->destroySceneNode(DebugDrawerNode);
 	World->setDebugDrawer(NULL);
 }
 

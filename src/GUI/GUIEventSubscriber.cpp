@@ -15,24 +15,74 @@ TODO
 
 #include "stdafx.h"
 #include <GUI/GUIEventSubscriber.hpp>
+#include <memory>
 
 GUIEventSubscriber* GUIEventSubscriber::mInstance = nullptr;
 //-------------------------------------------------------------------------------------------------------
 GUIEventSubscriber* GUIEventSubscriber::get()
 {
     if (!mInstance)
+    {
         mInstance = new GUIEventSubscriber();
+    }
     //singleton pattern done right
     return mInstance;
 }
 //-------------------------------------------------------------------------------------------------------
 void GUIEventSubscriber::update()
 {
-    CEGUI::Window *button = CEGUI::System::getSingleton().getGUISheet()->getChild("EnterButton");
-    button->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&MenuState::mousePressed, 
+
 }
 //-------------------------------------------------------------------------------------------------------
-void GUIEventSubscriber::subscribe(const Ogre::String& buttonName, void* subscriberClass)
+void GUIEventSubscriber::subscribe(const Ogre::String& buttonName, ButtonTypes buttonType)
+{
+    if (buttonType == PUSH_BUTTON)
+    {
+        CEGUI::PushButton *pushButton = static_cast<CEGUI::PushButton*>(CEGUI::WindowManager::getSingleton().
+            getWindow(buttonName));
+
+        mButtons.push_back(pushButton);
+
+        pushButton->subscribeEvent(CEGUI::PushButton::EventClicked, 
+            CEGUI::Event::Subscriber(&GUIEventSubscriber::onPushButtonClicked, this));
+        pushButton->subscribeEvent(CEGUI::PushButton::EventMouseEnters,
+            CEGUI::Event::Subscriber(&GUIEventSubscriber::onMouseEnter, this));
+        pushButton->subscribeEvent(CEGUI::PushButton::EventMouseLeaves,
+            CEGUI::Event::Subscriber(&GUIEventSubscriber::onMouseLeave, this));
+    }
+    else if (buttonType == RADIO_BUTTON)
+    {
+        // implementation not needed at this moment
+    }
+    else if (buttonType == CHECKBOX)
+    {
+        // implementation not needed at this moment
+    }
+}
+//-------------------------------------------------------------------------------------------------------
+bool GUIEventSubscriber::onPushButtonClicked(const CEGUI::EventArgs &mouseEvent)
+{
+    const CEGUI::MouseEventArgs& caller = static_cast<const CEGUI::MouseEventArgs&>(mouseEvent);
+    
+    CEGUI::Window *button = nullptr;
+
+    std::vector<CEGUI::Window*>::iterator itend = mButtons.end();
+    for (std::vector<CEGUI::Window*>::iterator it = mButtons.begin(); it != itend; ++it)
+    {
+        if ((*it)->getName() == caller.window->getName())
+        {
+
+        }
+    }
+
+}
+//-------------------------------------------------------------------------------------------------------
+bool GUIEventSubscriber::onMouseEnter(const CEGUI::EventArgs &mouseEvent)
+{
+
+}
+//-------------------------------------------------------------------------------------------------------
+bool GUIEventSubscriber::onMouseLeave(const CEGUI::EventArgs &mouseEvent)
 {
 
 }

@@ -129,8 +129,8 @@ void GameState::exit()
     mDrivers.clear();
     mBalls.clear();
 
-    if (mSceneMgr)
-        OgreFramework::getSingletonPtr()->mRoot->destroySceneManager(mSceneMgr);
+    delete mDebugDrawer;
+    OgreFramework::getSingletonPtr()->mRoot->destroySceneManager(mSceneMgr);
 
     for (int body = mDynamicsWorld->getNumCollisionObjects() - 1; body >= 0; body--)
     {
@@ -138,7 +138,11 @@ void GameState::exit()
         mDynamicsWorld->removeCollisionObject(object);
     }
     mRigidBodies.clear();
-
+    auto itend = mCollisionShapes.end();
+    for (auto it = mCollisionShapes.begin(); it != itend; ++it)
+    {
+        delete *it;
+    }
     mCollisionShapes.clear();
 
     delete mGhostCallback;
