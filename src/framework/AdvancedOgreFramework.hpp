@@ -27,6 +27,7 @@
 //#include <SdkTrays.h>
 #include <CEGUIOgreRenderer.h>
 #include <CEGUI.h>
+#include <GUI\GUIEventSubscriber.hpp>
 
 class OgreFramework : public Ogre::Singleton<OgreFramework>, OIS::KeyListener, OIS::MouseListener
 {

@@ -12,7 +12,16 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include "stdafx.h"
 #include <framework\AdvancedOgreFramework.hpp>
-#include <framework\MenuState.hpp>
+#include <framework\AppState.hpp>
+#include <CEGUIOgreRenderer.h>
+#include <CEGUI.h>
+
+#include <GUI/PushButtonTracked.hpp>
+
+//function callback to needed function for GUI in various states
+typedef std::tr1::function<void (const CEGUI::EventArgs&)> HandleFunc;
+
+class PushButtonTracked;
 
 enum ButtonTypes
 {
@@ -38,7 +47,8 @@ private:
     bool onMouseLeave(const CEGUI::EventArgs &mouseEvent);
 public:
     static GUIEventSubscriber* get();
-    void subscribe(const Ogre::String& buttonName, ButtonTypes buttonType);
+    void subscribe(const Ogre::String& buttonName, ButtonTypes buttonType, HandleFunc func);
+    //need the class containing the function to call the member function pointer
 
 };
 

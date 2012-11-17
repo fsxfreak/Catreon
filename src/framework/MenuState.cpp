@@ -46,6 +46,8 @@ void MenuState::createScene()
     CEGUI::WindowManager &windowManager = CEGUI::WindowManager::getSingleton();
     CEGUI::Window *menuRoot = windowManager.loadWindowLayout("CatreonMenuState.layout");
     CEGUI::System::getSingleton().setGUISheet(menuRoot);
+
+    GUIEventSubscriber::get()->subscribe("EnterButton", ButtonTypes(0), &MenuState::buttonHit);
 }
 //-------------------------------------------------------------------------------------------------------
 void MenuState::exit()
@@ -124,6 +126,11 @@ void MenuState::update(double timeSinceLastFrame)
 //-------------------------------------------------------------------------------------------------------
 void MenuState::buttonHit(const CEGUI::EventArgs &mouseEvent)
 {
+    const CEGUI::MouseEventArgs& caller = static_cast<const CEGUI::MouseEventArgs&>(mouseEvent);
+    if (caller.window->getName() == "EnterButton")
+    {
+        changeAppState(findByName("GameState"));
+    }
 }
 //-------------------------------------------------------------------------------------------------------
 //triggered whenever a UI button is clicked

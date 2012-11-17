@@ -28,7 +28,7 @@ public:
     bool mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
 
     //void buttonHit(OgreBites::Button *button);
-    void buttonHit(const CEGUI::EventArgs &MouseEventArgs)
+    void buttonHit(const CEGUI::EventArgs &MouseEventArgs);
 
     void update(double timeSinceLastFrame);
 

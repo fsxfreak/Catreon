@@ -9,8 +9,9 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 /********************************************************
 TODO
--Create a singleton for this class
 -Subscribe, handle, and parse events
+    -Identify what functions outside of this class need
+    information on button pushed
 ********************************************************/
 
 #include "stdafx.h"
@@ -34,12 +35,13 @@ void GUIEventSubscriber::update()
 
 }
 //-------------------------------------------------------------------------------------------------------
-void GUIEventSubscriber::subscribe(const Ogre::String& buttonName, ButtonTypes buttonType)
+void GUIEventSubscriber::subscribe(const Ogre::String& buttonName, ButtonTypes buttonType, HandleFunc func)
 {
     if (buttonType == PUSH_BUTTON)
     {
-        CEGUI::PushButton *pushButton = static_cast<CEGUI::PushButton*>(CEGUI::WindowManager::getSingleton().
+        PushButtonTracked *pushButton = static_cast<PushButtonTracked*>(CEGUI::WindowManager::getSingleton().
             getWindow(buttonName));
+        pushButton->replaceFunctor(func);
 
         mButtons.push_back(pushButton);
 
@@ -71,18 +73,20 @@ bool GUIEventSubscriber::onPushButtonClicked(const CEGUI::EventArgs &mouseEvent)
     {
         if ((*it)->getName() == caller.window->getName())
         {
-
+            button = *it;
+            static_cast<PushButtonTracked*>(button)->deliverAction(mouseEvent);
         }
     }
+    return true;
 
 }
 //-------------------------------------------------------------------------------------------------------
 bool GUIEventSubscriber::onMouseEnter(const CEGUI::EventArgs &mouseEvent)
 {
-
+    return true;
 }
 //-------------------------------------------------------------------------------------------------------
 bool GUIEventSubscriber::onMouseLeave(const CEGUI::EventArgs &mouseEvent)
 {
-
+    return true;
 }
