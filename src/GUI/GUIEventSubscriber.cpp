@@ -30,9 +30,13 @@ GUIEventSubscriber* GUIEventSubscriber::get()
     return mInstance;
 }
 //-------------------------------------------------------------------------------------------------------
-void GUIEventSubscriber::update()
+void GUIEventSubscriber::unsubscribeAll()
 {
-
+    std::vector<CEGUI::Window*>::iterator itend = mButtons.end();
+    for (std::vector<CEGUI::Window*>::iterator it = mButtons.begin(); it != itend; ++it)
+    {
+        CEGUI::WindowManager::getSingleton().destroyWindow((*it));
+    }
 }
 //-------------------------------------------------------------------------------------------------------
 void GUIEventSubscriber::subscribe(const Ogre::String& buttonName, ButtonTypes buttonType, HandleFunc func)
@@ -78,7 +82,6 @@ bool GUIEventSubscriber::onPushButtonClicked(const CEGUI::EventArgs &mouseEvent)
         }
     }
     return true;
-
 }
 //-------------------------------------------------------------------------------------------------------
 bool GUIEventSubscriber::onMouseEnter(const CEGUI::EventArgs &mouseEvent)

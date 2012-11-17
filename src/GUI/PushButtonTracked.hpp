@@ -12,19 +12,20 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include "stdafx.h"
 #include <framework\AdvancedOgreFramework.hpp>
-#include <framework\AppState.hpp>
 #include <CEGUIOgreRenderer.h>
 #include <CEGUI.h>
 
+#include <functional>
+
 //function callback to needed function
-typedef std::tr1::function<void (const CEGUI::EventArgs&)> HandleFunc;
+typedef std::function<void (const CEGUI::EventArgs&)> HandleFunc;
 
 class PushButtonTracked : public CEGUI::PushButton
 {
 private:
-    HandleFunc mFunc;
+    HandleFunc *mFunc;
 public:
-    void replaceFunctor(HandleFunc func);
+    void replaceFunctor(HandleFunc binded);
     //only allow functions that receive a mouseEvent to refer to this pushbutton
 
     PushButtonTracked(const CEGUI::String& name);

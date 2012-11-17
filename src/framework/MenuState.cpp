@@ -5,6 +5,8 @@
 
 #include "MenuState.hpp"
 
+typedef std::function<void (const CEGUI::EventArgs&)> HandleFunc;
+
 MenuState::MenuState() : mbQuit(false)
 {
     mFrameEvent = Ogre::FrameEvent();
@@ -47,13 +49,15 @@ void MenuState::createScene()
     CEGUI::Window *menuRoot = windowManager.loadWindowLayout("CatreonMenuState.layout");
     CEGUI::System::getSingleton().setGUISheet(menuRoot);
 
-    GUIEventSubscriber::get()->subscribe("EnterButton", ButtonTypes(0), &MenuState::buttonHit);
+    GUIEventSubscriber::get()->subscribe("EnterButton", ButtonTypes(0)
+        , std::bind(&MenuState::buttonHit, this, std::placeholders::_1));
 }
 //-------------------------------------------------------------------------------------------------------
 void MenuState::exit()
 {
     OgreFramework::getSingletonPtr()->mLog->logMessage("Leaving MenuState...");
 
+    GUIEventSubscriber::get()->unsubscribeAll();
     CEGUI::WindowManager::getSingleton().destroyAllWindows();
     CEGUI::MouseCursor::getSingleton().hide();
 
