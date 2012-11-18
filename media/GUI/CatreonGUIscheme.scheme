@@ -5,6 +5,5 @@
 	<LookNFeel Filename="CatreonGUI.looknfeel" />
 	<WindowRendererSet Filename="CEGUIFalagardWRBase" />
 	<FalagardMapping WindowType="CatreonGUI/Button" TargetType="CEGUI/PushButton" Renderer="Falagard/Button" LookNFeel="CatreonGUI/Button" />
+	<FalagardMapping WindowType="CatreonGUI/Logo" TargetType="DefaultWindow" Renderer="Falagard/StaticImage" LookNFeel="CatreonGUI/Logo" />
 </GUIScheme>
-
-

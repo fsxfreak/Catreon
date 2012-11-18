@@ -3,13 +3,22 @@
     <Window Type="DefaultWindow" Name="root">
         <Property Name="UnifiedPosition" Value="{{0,0},{0,0}}" />
         <Property Name="UnifiedSize" Value="{{1,0},{1,0}}" />
-        <Property Name="FrameEnabled" Value="False" />
-        <Property Name="BackgroundEnabled" Value="False" />
 		
-		<Window Type="CatreonGUI/Button" Name="text">
-			<Property Name="UnifiedPosition" Value="{ {0.375, 0}, {0.60, 0} }" />
+        <Window Type="CatreonGUI/Logo" Name="Logo">
+            <Property Name="UnifiedPosition" Value="{ {0.25, 0}, {0.14, 0} }" />
+            <Property Name="UnifiedSize" Value="{ {0.5, 0}, {0.28, 0} }" />
+        </Window>
+
+		<Window Type="CatreonGUI/Button" Name="EnterButton">
+			<Property Name="UnifiedPosition" Value="{ {0.375, 0}, {0.50, 0} }" />
 			<Property Name="UnifiedSize" Value="{ {0.25, 0}, {0.08, 0} }" />
-			<Property Name="Text" Value="Enter Catreon" />
+    		<Property Name="Text" Value="Enter Catreon" />
 		</Window>
+
+        <Window Type="CatreonGUI/Button" Name="ExitButton">
+            <Property Name="UnifiedPosition" Value="{ {0.375, 0}, {0.60, 0} }" />
+            <Property Name="UnifiedSize" Value="{ {0.25, 0}, {0.08, 0} }" />
+            <Property Name="Text" Value="Exit Catreon" />
+        </Window>
     </Window>
 </GUILayout>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<Imageset Name="CatreonGUI" Imagefile="CatreonGUI.png" NativeHorzRes="1920" NativeVertRes="1080" AutoScaled="true" >
+<Imageset Name="CatreonGUI" Imagefile="CatreonGUI.png" NativeHorzRes="1440" NativeVertRes="900" AutoScaled="true" >
 	<Image Name="treeon" XPos="5" YPos="5" Width="965" Height="539" />
 	<Image Name="mousePointer" XPos="974" YPos="5" Width="52" Height="106" />
 	<Image Name="buttonNeutral" XPos="0" YPos="544" Width="474" Height="61" />
