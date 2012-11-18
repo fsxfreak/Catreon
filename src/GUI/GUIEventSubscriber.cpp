@@ -10,8 +10,8 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 /********************************************************
 TODO
 -Subscribe, handle, and parse events
-    -Identify what functions outside of this class need
-    information on button pushed
+-Identify what functions outside of this class need
+information on button pushed
 ********************************************************/
 
 #include "stdafx.h"
@@ -30,9 +30,13 @@ GUIEventSubscriber* GUIEventSubscriber::get()
     return mInstance;
 }
 //-------------------------------------------------------------------------------------------------------
-void GUIEventSubscriber::update()
+void GUIEventSubscriber::unsubscribeAll()
 {
-
+    std::vector<CEGUI::Window*>::iterator itend = mButtons.end();
+    for (std::vector<CEGUI::Window*>::iterator it = mButtons.begin(); it != itend; ++it)
+    {
+        CEGUI::WindowManager::getSingleton().destroyWindow((*it));
+    }
 }
 //-------------------------------------------------------------------------------------------------------
 void GUIEventSubscriber::subscribe(const Ogre::String& buttonName, ButtonTypes buttonType, HandleFunc func)
@@ -45,7 +49,7 @@ void GUIEventSubscriber::subscribe(const Ogre::String& buttonName, ButtonTypes b
 
         mButtons.push_back(pushButton);
 
-        pushButton->subscribeEvent(CEGUI::PushButton::EventClicked, 
+        pushButton->subscribeEvent(CEGUI::PushButton::EventClicked,
             CEGUI::Event::Subscriber(&GUIEventSubscriber::onPushButtonClicked, this));
         pushButton->subscribeEvent(CEGUI::PushButton::EventMouseEnters,
             CEGUI::Event::Subscriber(&GUIEventSubscriber::onMouseEnter, this));
@@ -78,7 +82,6 @@ bool GUIEventSubscriber::onPushButtonClicked(const CEGUI::EventArgs &mouseEvent)
         }
     }
     return true;
-
 }
 //-------------------------------------------------------------------------------------------------------
 bool GUIEventSubscriber::onMouseEnter(const CEGUI::EventArgs &mouseEvent)

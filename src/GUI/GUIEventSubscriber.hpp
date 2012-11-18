@@ -19,7 +19,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include <GUI/PushButtonTracked.hpp>
 
 //function callback to needed function for GUI in various states
-typedef std::tr1::function<void (const CEGUI::EventArgs&)> HandleFunc;
+typedef std::function<void (const CEGUI::EventArgs&)> HandleFunc;
 
 class PushButtonTracked;
 
@@ -40,7 +40,6 @@ private:
     static GUIEventSubscriber* mInstance;
 
     std::vector<CEGUI::Window*> mButtons;
-    void update();
     
     bool onPushButtonClicked(const CEGUI::EventArgs &mouseEvent);
     bool onMouseEnter(const CEGUI::EventArgs &mouseEvent);
@@ -48,6 +47,7 @@ private:
 public:
     static GUIEventSubscriber* get();
     void subscribe(const Ogre::String& buttonName, ButtonTypes buttonType, HandleFunc func);
+    void unsubscribeAll();
     //need the class containing the function to call the member function pointer
 
 };

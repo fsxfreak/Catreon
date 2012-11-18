@@ -10,29 +10,30 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 /********************************************************
 TODO
 - Maybe include KeyState information, in the future?
-    pushButtonMine->setState(KeyStates::Clicked);
+pushButtonMine->setState(KeyStates::Clicked);
 ********************************************************/
 
 #include "stdafx.h"
 #include <GUI/PushButtonTracked.hpp>
+
 //-------------------------------------------------------------------------------------------------------
-PushButtonTracked::PushButtonTracked(const CEGUI::String& name) 
+PushButtonTracked::PushButtonTracked(const CEGUI::String& name)
     : CEGUI::PushButton(CEGUI::String("CEGUI/PushButton"), name)
 {
 
 }
 //-------------------------------------------------------------------------------------------------------
 PushButtonTracked::PushButtonTracked(const CEGUI::Window &window, HandleFunc func)
-    : mFunc(func), CEGUI::PushButton(CEGUI::String("CEGUI/PushButton"), window.getName())
+    : mFunc(nullptr), CEGUI::PushButton(CEGUI::String("CEGUI/PushButton"), window.getName())
 {
 }
 //-------------------------------------------------------------------------------------------------------
-void PushButtonTracked::replaceFunctor(HandleFunc func)
+void PushButtonTracked::replaceFunctor(HandleFunc binded)
 {
-    mFunc = func;
+    mFunc = new HandleFunc(binded);
 }
 //-------------------------------------------------------------------------------------------------------
 void PushButtonTracked::deliverAction(const CEGUI::EventArgs &mouseEvent)
 {
-    mFunc(mouseEvent);
+    (*mFunc)(mouseEvent);
 }

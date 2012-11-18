@@ -5,6 +5,8 @@
 
 #include "MenuState.hpp"
 
+typedef std::function<void (const CEGUI::EventArgs&)> HandleFunc;
+
 MenuState::MenuState() : mbQuit(false)
 {
     mFrameEvent = Ogre::FrameEvent();
@@ -23,19 +25,12 @@ void MenuState::enter()
     mCamera->lookAt(0, 0, 0);
     mCamera->setNearClipDistance(1);
 
-    mCamera->setAspectRatio(Ogre::Real(OgreFramework::getSingletonPtr()->mViewport->getActualWidth()) / 
+    mCamera->setAspectRatio(Ogre::Real(OgreFramework::getSingletonPtr()->mViewport->getActualWidth()) /
         Ogre::Real(OgreFramework::getSingletonPtr()->mViewport->getActualHeight()));
 
+    OgreFramework::getSingletonPtr()->mViewport->setBackgroundColour(Ogre::ColourValue(1, 1, 1, 1));
+
     OgreFramework::getSingletonPtr()->mViewport->setCamera(mCamera);
-
-    /*OgreFramework::getSingletonPtr()->mTrayMgr->destroyAllWidgets();
-    OgreFramework::getSingletonPtr()->mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
-    OgreFramework::getSingletonPtr()->mTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
-    OgreFramework::getSingletonPtr()->mTrayMgr->showCursor();
-    OgreFramework::getSingletonPtr()->mTrayMgr->createButton(OgreBites::TL_CENTER, "EnterBtn", "Enter Catreon", 250);
-    OgreFramework::getSingletonPtr()->mTrayMgr->createButton(OgreBites::TL_CENTER, "ExitBtn", "Exit Catreon", 250);
-    OgreFramework::getSingletonPtr()->mTrayMgr->createLabel(OgreBites::TL_TOP, "MenuLbl", "Menu", 250);*/
-
 
     createScene();
 }
@@ -47,23 +42,21 @@ void MenuState::createScene()
     CEGUI::Window *menuRoot = windowManager.loadWindowLayout("CatreonMenuState.layout");
     CEGUI::System::getSingleton().setGUISheet(menuRoot);
 
-    GUIEventSubscriber::get()->subscribe("EnterButton", ButtonTypes(0), &MenuState::buttonHit);
+    GUIEventSubscriber::get()->subscribe("EnterButton", ButtonTypes(0)
+        , std::bind(&MenuState::buttonHit, this, std::placeholders::_1));
 }
 //-------------------------------------------------------------------------------------------------------
 void MenuState::exit()
 {
     OgreFramework::getSingletonPtr()->mLog->logMessage("Leaving MenuState...");
 
+    GUIEventSubscriber::get()->unsubscribeAll();
     CEGUI::WindowManager::getSingleton().destroyAllWindows();
     CEGUI::MouseCursor::getSingleton().hide();
 
     mSceneMgr->destroyCamera(mCamera);
     if (mSceneMgr)
         OgreFramework::getSingletonPtr()->mRoot->destroySceneManager(mSceneMgr);
-
-    /*OgreFramework::getSingletonPtr()->mTrayMgr->clearAllTrays();
-    OgreFramework::getSingletonPtr()->mTrayMgr->destroyAllWidgets();
-    OgreFramework::getSingletonPtr()->mTrayMgr->setListener(0);*/
 }
 //-------------------------------------------------------------------------------------------------------
 bool MenuState::keyPressed(const OIS::KeyEvent &keyEvent)
@@ -97,16 +90,12 @@ bool MenuState::mouseMoved(const OIS::MouseEvent &mouseEvent)
 //-------------------------------------------------------------------------------------------------------
 bool MenuState::mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
 {
-    /*if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseDown(mouseEvent, id))
-        return true;*/
     OgreFramework::getSingletonPtr()->mousePressed(mouseEvent, id);
     return true;
 }
 //-------------------------------------------------------------------------------------------------------
 bool MenuState::mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
 {
-    /*if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseUp(mouseEvent, id))
-        return true;*/
     OgreFramework::getSingletonPtr()->mouseReleased(mouseEvent, id);
     return true;
 }
@@ -114,7 +103,6 @@ bool MenuState::mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButto
 void MenuState::update(double timeSinceLastFrame)
 {
     mFrameEvent.timeSinceLastFrame = timeSinceLastFrame;
-    //OgreFramework::getSingletonPtr()->mTrayMgr->frameRenderingQueued(mFrameEvent);
     CEGUI::System::getSingleton().injectTimePulse(timeSinceLastFrame);
 
     if (mbQuit == true)
@@ -132,14 +120,3 @@ void MenuState::buttonHit(const CEGUI::EventArgs &mouseEvent)
         changeAppState(findByName("GameState"));
     }
 }
-//-------------------------------------------------------------------------------------------------------
-//triggered whenever a UI button is clicked
-/*void MenuState::buttonHit(OgreBites::Button *button)
-{
-    if (button->getName() == "ExitBtn")
-        mbQuit = true;
-    else if (button->getName() == "EnterBtn")
-    {
-        changeAppState(findByName("GameState"));
-    }
-}*/
