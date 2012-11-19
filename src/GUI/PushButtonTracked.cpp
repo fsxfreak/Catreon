@@ -36,4 +36,8 @@ void PushButtonTracked::replaceFunctor(HandleFunc binded)
 void PushButtonTracked::deliverAction(const CEGUI::EventArgs &mouseEvent)
 {
     (*mFunc)(mouseEvent);
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 932c36bce5170be72e85705441b75143a56fbfcb
