@@ -15,23 +15,31 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include <CEGUIOgreRenderer.h>
 #include <CEGUI.h>
 
-#include <functional>
+#include <GameState.hpp>
+#include <framework\PauseState.hpp>
+#include <framework\MenuState.hpp>
+#include <framework\AppState.hpp>
 
-//function callback to needed function
-typedef std::function<void (const CEGUI::EventArgs&)> HandleFunc;
+enum States
+{
+    MENUSTATE,
+    PAUSESTATE,
+    GAMESTATE
+};
 
 class PushButtonTracked : public CEGUI::PushButton
 {
 private:
-    HandleFunc *mFunc;
+    AppState *mState;
+    States mStateId;
+    CEGUI::Window *mWindow;
 public:
-    void replaceFunctor(HandleFunc binded);
     //only allow functions that receive a mouseEvent to refer to this pushbutton
-
     PushButtonTracked(const CEGUI::String& name);
-    PushButtonTracked(const CEGUI::Window &window, HandleFunc func);
+    PushButtonTracked(const CEGUI::String &name, States stateId, AppState *state);
 
     void deliverAction(const CEGUI::EventArgs &mouseEvent);
+    CEGUI::Window* getWindow();
 };
 
 #endif 
