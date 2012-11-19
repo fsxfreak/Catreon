@@ -39,21 +39,21 @@ void GUIEventSubscriber::unsubscribeAll()
     }
 }
 //-------------------------------------------------------------------------------------------------------
-void GUIEventSubscriber::subscribe(const Ogre::String& buttonName, ButtonTypes buttonType, HandleFunc func)
+void GUIEventSubscriber::subscribe(const CEGUI::String& buttonName, ButtonTypes buttonType, States stateId, AppState *state)
 {
     if (buttonType == PUSH_BUTTON)
     {
-        PushButtonTracked *pushButton = static_cast<PushButtonTracked*>(CEGUI::WindowManager::getSingleton().
-            getWindow(buttonName));
-        pushButton->replaceFunctor(func);
+        PushButtonTracked *pushButton = new PushButtonTracked(buttonName, stateId, state);
 
         mButtons.push_back(pushButton);
+        int size = mButtons.size();
 
-        pushButton->subscribeEvent(CEGUI::PushButton::EventClicked,
+        //CEGUI::WindowManager::getSingleton().getWindow(buttonName)->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GUIEventSubscriber::onPushButtonClicked, this));
+        pushButton->getWindow()->subscribeEvent(CEGUI::PushButton::EventClicked,
             CEGUI::Event::Subscriber(&GUIEventSubscriber::onPushButtonClicked, this));
-        pushButton->subscribeEvent(CEGUI::PushButton::EventMouseEnters,
+        pushButton->getWindow()->subscribeEvent(CEGUI::PushButton::EventMouseEnters,
             CEGUI::Event::Subscriber(&GUIEventSubscriber::onMouseEnter, this));
-        pushButton->subscribeEvent(CEGUI::PushButton::EventMouseLeaves,
+        pushButton->getWindow()->subscribeEvent(CEGUI::PushButton::EventMouseLeaves,
             CEGUI::Event::Subscriber(&GUIEventSubscriber::onMouseLeave, this));
     }
     else if (buttonType == RADIO_BUTTON)

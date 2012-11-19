@@ -5,8 +5,6 @@
 
 #include "MenuState.hpp"
 
-typedef std::function<void (const CEGUI::EventArgs&)> HandleFunc;
-
 MenuState::MenuState() : mbQuit(false)
 {
     mFrameEvent = Ogre::FrameEvent();
@@ -42,8 +40,8 @@ void MenuState::createScene()
     CEGUI::Window *menuRoot = windowManager.loadWindowLayout("CatreonMenuState.layout");
     CEGUI::System::getSingleton().setGUISheet(menuRoot);
 
-    GUIEventSubscriber::get()->subscribe("EnterButton", ButtonTypes(0)
-        , std::bind(&MenuState::buttonHit, this, std::placeholders::_1));
+    GUIEventSubscriber::get()->subscribe("EnterButton", ButtonTypes::PUSH_BUTTON, States::MENUSTATE, this);
+    GUIEventSubscriber::get()->subscribe("ExitButton", ButtonTypes::PUSH_BUTTON, States::MENUSTATE, this);
 }
 //-------------------------------------------------------------------------------------------------------
 void MenuState::exit()
@@ -118,5 +116,9 @@ void MenuState::buttonHit(const CEGUI::EventArgs &mouseEvent)
     if (caller.window->getName() == "EnterButton")
     {
         changeAppState(findByName("GameState"));
+    }
+    if (caller.window->getName() == "ExitButton")
+    {
+        mbQuit = true;
     }
 }
