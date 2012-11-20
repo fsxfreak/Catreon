@@ -27,8 +27,9 @@ void MenuState::enter()
         Ogre::Real(OgreFramework::getSingletonPtr()->mViewport->getActualHeight()));
 
     OgreFramework::getSingletonPtr()->mViewport->setBackgroundColour(Ogre::ColourValue(1, 1, 1, 1));
-
     OgreFramework::getSingletonPtr()->mViewport->setCamera(mCamera);
+
+    mSound = irrklang::createIrrKlangDevice();
 
     createScene();
 }
@@ -51,6 +52,8 @@ void MenuState::exit()
     GUIEventSubscriber::get()->unsubscribeAll();
     CEGUI::WindowManager::getSingleton().destroyAllWindows();
     CEGUI::MouseCursor::getSingleton().hide();
+
+    mSound->drop();
 
     mSceneMgr->destroyCamera(mCamera);
     if (mSceneMgr)
@@ -121,4 +124,9 @@ void MenuState::buttonHit(const CEGUI::EventArgs &mouseEvent)
     {
         mbQuit = true;
     }
+}
+//-------------------------------------------------------------------------------------------------------
+void MenuState::buttonHovered(const CEGUI::EventArgs &mouseEvent)
+{
+    mSound->play2D("../media/sound/gui_rollover.wav");
 }

@@ -6,6 +6,7 @@
 #include "stdafx.h"
 
 #include "framework\AppState.hpp"
+#include <irrKlang.h>
 
 class GUIEventSubscriber;
 
@@ -28,7 +29,8 @@ public:
     bool mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
 
     //void buttonHit(OgreBites::Button *button);
-    void buttonHit(const CEGUI::EventArgs &MouseEventArgs);
+    void buttonHit(const CEGUI::EventArgs &mouseEvent);
+    void buttonHovered(const CEGUI::EventArgs &mouseEvent);
 
     void update(double timeSinceLastFrame);
 
@@ -36,6 +38,7 @@ public:
     Ogre::Camera       *mCamera;
 private:
     bool mbQuit;
+    irrklang::ISoundEngine *mSound;
 };
 
 #endif

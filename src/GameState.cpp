@@ -34,7 +34,7 @@ GameState::GameState() :    mAcceleration(0.01f), mMaxMoveSpeed(0.3f), mTranslat
                             mbLMouseDown(false), mbRMouseDown(false), 
                             mbQuit(false), mbSettingsMode(false), mbBackslashDown(false),
                             mTimer(new Ogre::Timer),
-                            sound(0)
+                            sound(nullptr)
 {
     mGameSingleton = this;  //is that even right? - doesn't matter, works
 }
@@ -87,7 +87,10 @@ void GameState::enter()
 
     sound = createIrrKlangDevice();
     if (!sound)
+    {
+        OgreFramework::getSingletonPtr()->mLog->logMessage("Unable to create sound in GameState");
         return;
+    }
 
     buildGUI();
 
