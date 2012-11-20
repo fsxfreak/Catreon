@@ -66,30 +66,51 @@ void GUIEventSubscriber::subscribe(const CEGUI::String& buttonName, ButtonTypes 
     }
 }
 //-------------------------------------------------------------------------------------------------------
-bool GUIEventSubscriber::onPushButtonClicked(const CEGUI::EventArgs &mouseEvent)
+CEGUI::Window* GUIEventSubscriber::getButtonFromArgs(const CEGUI::EventArgs &mouseEvent)
 {
     const CEGUI::MouseEventArgs& caller = static_cast<const CEGUI::MouseEventArgs&>(mouseEvent);
-    
-    CEGUI::Window *button = nullptr;
 
     std::vector<CEGUI::Window*>::iterator itend = mButtons.end();
     for (std::vector<CEGUI::Window*>::iterator it = mButtons.begin(); it != itend; ++it)
     {
         if ((*it)->getName() == caller.window->getName())
         {
-            button = *it;
-            static_cast<PushButtonTracked*>(button)->deliverAction(mouseEvent);
+            return *it;
         }
     }
+    return nullptr;
+}
+//-------------------------------------------------------------------------------------------------------
+bool GUIEventSubscriber::onPushButtonClicked(const CEGUI::EventArgs &mouseEvent)
+{
+    CEGUI::Window *button = getButtonFromArgs(mouseEvent);
+    if (button != nullptr)
+    {
+        static_cast<PushButtonTracked*>(getButtonFromArgs(mouseEvent))->deliverClicked(mouseEvent);
+    }
+    else
+        return false;
+
     return true;
 }
 //-------------------------------------------------------------------------------------------------------
 bool GUIEventSubscriber::onMouseEnter(const CEGUI::EventArgs &mouseEvent)
 {
+    CEGUI::Window *button = getButtonFromArgs(mouseEvent);
+    if (button != nullptr)
+        static_cast<PushButtonTracked*>(getButtonFromArgs(mouseEvent))->deliverHovered(mouseEvent);
+    else
+        return false;
+
     return true;
 }
 //-------------------------------------------------------------------------------------------------------
 bool GUIEventSubscriber::onMouseLeave(const CEGUI::EventArgs &mouseEvent)
 {
+    CEGUI::Window *button = getButtonFromArgs(mouseEvent);
+    if (button != nullptr)
+        static_cast<PushButtonTracked*>(getButtonFromArgs(mouseEvent))->deliverExited(mouseEvent);
+    else
+        return false;
     return true;
 }

@@ -38,6 +38,8 @@ private:
 
     std::vector<CEGUI::Window*> mButtons;
     
+    CEGUI::Window* getButtonFromArgs(const CEGUI::EventArgs &mouseEvent);
+
     bool onPushButtonClicked(const CEGUI::EventArgs &mouseEvent);
     bool onMouseEnter(const CEGUI::EventArgs &mouseEvent);
     bool onMouseLeave(const CEGUI::EventArgs &mouseEvent);

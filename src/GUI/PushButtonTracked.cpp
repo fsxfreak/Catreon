@@ -30,14 +30,52 @@ PushButtonTracked::PushButtonTracked(const CEGUI::String &name, States stateId, 
     mWindow = CEGUI::WindowManager::getSingletonPtr()->getWindow(name);
 }
 //-------------------------------------------------------------------------------------------------------
-void PushButtonTracked::deliverAction(const CEGUI::EventArgs &mouseEvent)
+void PushButtonTracked::deliverClicked(const CEGUI::EventArgs &mouseEvent)
 {
     switch (mStateId)
     {
-    case MENUSTATE: 
+    case MENUSTATE:
         static_cast<MenuState*>(mState)->buttonHit(mouseEvent);
         break;
-    case PAUSESTATE:    //these states will have future implementations
+    case PAUSESTATE:
+        static_cast<PauseState*>(mState);
+        break;
+    case GAMESTATE:
+        static_cast<GameState*>(mState);
+        break;
+    default:
+        OgreFramework::getSingletonPtr()->mLog->logMessage("Tried to use PushButtonTracked without assigning a valid state");
+        break;
+    }
+}
+//-------------------------------------------------------------------------------------------------------
+void PushButtonTracked::deliverHovered(const CEGUI::EventArgs &mouseEvent)
+{
+    switch (mStateId)
+    {
+    case MENUSTATE:
+        static_cast<MenuState*>(mState)->buttonHovered(mouseEvent);
+        break;
+    case PAUSESTATE:
+        static_cast<PauseState*>(mState);
+        break;
+    case GAMESTATE:
+        static_cast<GameState*>(mState);
+        break;
+    default:
+        OgreFramework::getSingletonPtr()->mLog->logMessage("Tried to use PushButtonTracked without assigning a valid state");
+        break;
+    }
+}
+//-------------------------------------------------------------------------------------------------------
+void PushButtonTracked::deliverExited(const CEGUI::EventArgs &mouseEvent)
+{
+    switch (mStateId)
+    {
+    case MENUSTATE:
+        static_cast<MenuState*>(mState);
+        break;
+    case PAUSESTATE:
         static_cast<PauseState*>(mState);
         break;
     case GAMESTATE:

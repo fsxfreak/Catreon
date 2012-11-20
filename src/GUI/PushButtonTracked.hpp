@@ -27,6 +27,13 @@ enum States
     GAMESTATE
 };
 
+enum EventType
+{
+    CLICKED,
+    HOVERED,
+    EXITED
+};
+
 class PushButtonTracked : public CEGUI::PushButton
 {
 private:
@@ -38,7 +45,9 @@ public:
     PushButtonTracked(const CEGUI::String& name);
     PushButtonTracked(const CEGUI::String &name, States stateId, AppState *state);
 
-    void deliverAction(const CEGUI::EventArgs &mouseEvent);
+    void deliverClicked(const CEGUI::EventArgs &mouseEvent);
+    void deliverHovered(const CEGUI::EventArgs &mouseEvent);
+    void deliverExited(const CEGUI::EventArgs &mouseEvent);
     CEGUI::Window* getWindow();
 };
 
