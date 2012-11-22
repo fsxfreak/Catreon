@@ -400,10 +400,6 @@ bool GameState::mouseMoved(const OIS::MouseEvent &mouseEvent)
 //-------------------------------------------------------------------------------------------------------
 bool GameState::mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
 {
-    /*if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseDown(mouseEvent, id))
-    {
-        return true;
-    }*/
     OgreFramework::getSingletonPtr()->mousePressed(mouseEvent, id);
 
     if (id == OIS::MB_Left)
@@ -421,10 +417,6 @@ bool GameState::mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButton
 //-------------------------------------------------------------------------------------------------------
 bool GameState::mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
 {
-    /*if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseUp(mouseEvent, id))
-    {
-        return true;
-    }*/
     OgreFramework::getSingletonPtr()->mouseReleased(mouseEvent, id);
 
     if (id == OIS::MB_Left)
@@ -468,30 +460,12 @@ void GameState::onLeftPressed(const OIS::MouseEvent &mouseEvent)
     {
         if (itRayScene->movable)
         {
-            //OgreFramework::getSingletonPtr()->mLog->logMessage("MovableName: " + itRayScene->movable->getName());
             mCurrentObject = mSceneMgr->getEntity(itRayScene->movable->getName())->getParentSceneNode();
-            //OgreFramework::getSingletonPtr()->mLog->logMessage("ObjName " + mCurrentObject->getName());
             mCurrentObject->showBoundingBox(true);
             break;
         }
     }
 }
-//-------------------------------------------------------------------------------------------------------
-/*void GameState::itemSelected(OgreBites::SelectMenu *menu)
-{
-    switch (menu->getSelectionIndex())
-    {
-    case 0:
-        mCamera->setPolygonMode(Ogre::PM_SOLID);
-        break;
-    case 1:
-        mCamera->setPolygonMode(Ogre::PM_WIREFRAME);
-        break;
-    case 2:
-        mCamera->setPolygonMode(Ogre::PM_POINTS);
-        break;
-    }
-}*/
 //-------------------------------------------------------------------------------------------------------
 void GameState::moveCamera()
 {
@@ -579,35 +553,6 @@ void GameState::update(double timeSinceLastFrame)
         return;
     }
 
-    /*if (!OgreFramework::getSingletonPtr()->mTrayMgr->isDialogVisible())
-    {
-        if (mDetailsPanel->isVisible())
-        {
-            mDetailsPanel->setParamValue(0, Ogre::StringConverter::toString(mCamera->getDerivedPosition().x));
-            mDetailsPanel->setParamValue(1, Ogre::StringConverter::toString(mCamera->getDerivedPosition().y));
-            mDetailsPanel->setParamValue(2, Ogre::StringConverter::toString(mCamera->getDerivedPosition().z));
-            mDetailsPanel->setParamValue(3, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().w));
-            mDetailsPanel->setParamValue(4, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().x));
-            mDetailsPanel->setParamValue(5, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().y));
-            mDetailsPanel->setParamValue(6, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().z));
-            mDetailsPanel->setParamValue(7, Ogre::StringConverter::toString(mMoveSpeed));
-            if (mCurrentObject)
-            {
-                mDetailsPanel->setParamValue(7, Ogre::StringConverter::toString(mCurrentObject->getPosition()));
-            }
-            if (mbSettingsMode)
-            {
-                mDetailsPanel->setParamValue(7, "Buffered Input");
-            }
-            else
-                mDetailsPanel->setParamValue(7, "Un-buffered Input");
-        }
-    }*/
-
-    
-
-    //mTranslateVector = Ogre::Vector3::ZERO;   //works against my camera smoothing
-
     getInput(timeSinceLastFrame);
     moveCamera();
 
@@ -626,29 +571,6 @@ void GameState::update(double timeSinceLastFrame)
 void GameState::buildGUI()
 {
     CEGUI::MouseCursor::getSingleton().show();
-    /*OgreFramework::getSingletonPtr()->mTrayMgr->showFrameStats(OgreBites::TL_BOTTOMLEFT);
-    OgreFramework::getSingletonPtr()->mTrayMgr->showLogo(OgreBites::TL_BOTTOMRIGHT);
-    OgreFramework::getSingletonPtr()->mTrayMgr->createLabel(OgreBites::TL_TOP, "GameLbl", "Game mode", 250);
-    OgreFramework::getSingletonPtr()->mTrayMgr->showCursor();
-
-    Ogre::StringVector items;
-    items.push_back("cam.pX");
-    items.push_back("cam.pY");
-    items.push_back("cam.pZ");
-    items.push_back("cam.oW");
-    items.push_back("cam.oX");
-    items.push_back("cam.oY");
-    items.push_back("cam.oZ");
-    items.push_back("Mode");
-
-    mDetailsPanel = OgreFramework::getSingletonPtr()->mTrayMgr->createParamsPanel(OgreBites::TL_TOPLEFT, "DetailsPanel", 200, items);
-    mDetailsPanel->show();
-
-    Ogre::StringVector chatModes;
-    chatModes.push_back("Solid mode");
-    chatModes.push_back("Wireframe mode");
-    chatModes.push_back("Point mode");
-    OgreFramework::getSingletonPtr()->mTrayMgr->createLongSelectMenu(OgreBites::TL_TOPRIGHT, "ChatModeSelMenu", "ChatMode", 200, 3, chatModes);*/
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::updatePhysics()
