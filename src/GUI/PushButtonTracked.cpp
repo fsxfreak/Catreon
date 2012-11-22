@@ -38,7 +38,7 @@ void PushButtonTracked::deliverClicked(const CEGUI::EventArgs &mouseEvent)
         static_cast<MenuState*>(mState)->buttonHit(mouseEvent);
         break;
     case PAUSESTATE:
-        static_cast<PauseState*>(mState);
+        static_cast<PauseState*>(mState)->buttonHit(mouseEvent);
         break;
     case GAMESTATE:
         static_cast<GameState*>(mState);
@@ -57,7 +57,7 @@ void PushButtonTracked::deliverHovered(const CEGUI::EventArgs &mouseEvent)
         static_cast<MenuState*>(mState)->buttonHovered(mouseEvent);
         break;
     case PAUSESTATE:
-        static_cast<PauseState*>(mState);
+        static_cast<PauseState*>(mState)->buttonHovered(mouseEvent);
         break;
     case GAMESTATE:
         static_cast<GameState*>(mState);

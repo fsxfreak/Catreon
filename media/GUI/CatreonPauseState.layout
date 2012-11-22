@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<GUILayout>
+    <Window Type="DefaultWindow" Name="root">
+        <Property Name="UnifiedPosition" Value="{{0,0},{0,0}}" />
+        <Property Name="UnifiedSize" Value="{{1,0},{1,0}}" />
+		
+        <Window Type="CatreonGUI/Logo" Name="Logo">
+            <Property Name="UnifiedPosition" Value="{ {0.25, 0}, {0.06, 0} }" />
+            <Property Name="UnifiedSize" Value="{ {0.5, 0}, {0.40, 0} }" />
+        </Window>
+
+		<Window Type="CatreonGUI/Button" Name="Pause/ExitButton">
+			<Property Name="UnifiedPosition" Value="{ {0.375, 0}, {0.55, 0} }" />
+			<Property Name="UnifiedSize" Value="{ {0.25, 0}, {0.06, 0} }" />
+    		<Property Name="Text" Value="Exit Catreon" />
+		</Window>
+
+        <Window Type="CatreonGUI/Button" Name="Pause/ReturnButton">
+            <Property Name="UnifiedPosition" Value="{ {0.375, 0}, {0.65, 0} }" />
+            <Property Name="UnifiedSize" Value="{ {0.25, 0}, {0.06, 0} }" />
+            <Property Name="Text" Value="Return to Catreon" />
+        </Window>
+
+        <Window Type="CatreonGUI/Button" Name="Pause/ReturnToMenu">
+            <Property Name="UnifiedPosition" Value="{ {0.375, 0}, {0.75, 0} }" />
+            <Property Name="UnifiedSize" Value="{ {0.25, 0}, {0.06, 0} }" />
+            <Property Name="Text" Value="Return to Menu" />
+        </Window>
+    </Window>
+</GUILayout>

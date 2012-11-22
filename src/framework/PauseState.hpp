@@ -25,8 +25,8 @@ public:
     bool mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
     bool mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id);
 
-    //void buttonHit(OgreBites::Button *button);
-    void yesNoDialogClosed(const Ogre::DisplayString &question, bool yesHit);
+    void buttonHit(const CEGUI::EventArgs &mouseEvent);
+    void buttonHovered(const CEGUI::EventArgs &mouseEvent);
 
     void update(double timeSinceLastFrame);
 
@@ -35,5 +35,6 @@ public:
 private:
     bool mbQuit;
     bool mbQuestionActive;
+    irrklang::ISoundEngine *mSound;
 };
 #endif

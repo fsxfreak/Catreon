@@ -46,7 +46,6 @@ void GUIEventSubscriber::subscribe(const CEGUI::String& buttonName, ButtonTypes 
         PushButtonTracked *pushButton = new PushButtonTracked(buttonName, stateId, state);
 
         mButtons.push_back(pushButton);
-        int size = mButtons.size();
 
         //CEGUI::WindowManager::getSingleton().getWindow(buttonName)->subscribeEvent(CEGUI::PushButton::EventClicked, CEGUI::Event::Subscriber(&GUIEventSubscriber::onPushButtonClicked, this));
         pushButton->getWindow()->subscribeEvent(CEGUI::PushButton::EventClicked,
@@ -98,7 +97,7 @@ bool GUIEventSubscriber::onMouseEnter(const CEGUI::EventArgs &mouseEvent)
 {
     CEGUI::Window *button = getButtonFromArgs(mouseEvent);
     if (button != nullptr)
-        static_cast<PushButtonTracked*>(getButtonFromArgs(mouseEvent))->deliverHovered(mouseEvent);
+        static_cast<PushButtonTracked*>(button)->deliverHovered(mouseEvent);
     else
         return false;
 
@@ -109,7 +108,7 @@ bool GUIEventSubscriber::onMouseLeave(const CEGUI::EventArgs &mouseEvent)
 {
     CEGUI::Window *button = getButtonFromArgs(mouseEvent);
     if (button != nullptr)
-        static_cast<PushButtonTracked*>(getButtonFromArgs(mouseEvent))->deliverExited(mouseEvent);
+        static_cast<PushButtonTracked*>(button)->deliverExited(mouseEvent);
     else
         return false;
     return true;

@@ -27,6 +27,8 @@ void PauseState::enter()
 
     OgreFramework::getSingletonPtr()->mViewport->setCamera(mCamera);
 
+    mSound = irrklang::createIrrKlangDevice();
+
     /*OgreFramework::getSingletonPtr()->mTrayMgr->destroyAllWidgets();
     OgreFramework::getSingletonPtr()->mTrayMgr->showCursor();
     OgreFramework::getSingletonPtr()->mTrayMgr->createButton(OgreBites::TL_CENTER, "BackToGameBtn", "Return to Catreon", 250);
@@ -41,16 +43,27 @@ void PauseState::enter()
 //-------------------------------------------------------------------------------------------------------
 void PauseState::createScene()
 {
-    //only gui elements, so not needed now
+    CEGUI::WindowManager &windowManager = CEGUI::WindowManager::getSingleton();
+    CEGUI::Window *pauseRoot = windowManager.loadWindowLayout("CatreonPauseState.layout");
+    CEGUI::System::getSingleton().setGUISheet(pauseRoot);
+
+    GUIEventSubscriber::get()->subscribe("Pause/ExitButton", ButtonTypes::PUSH_BUTTON, States::PAUSESTATE, this);
+    GUIEventSubscriber::get()->subscribe("Pause/ReturnButton", ButtonTypes::PUSH_BUTTON, States::PAUSESTATE, this);
+    GUIEventSubscriber::get()->subscribe("Pause/ReturnToMenu", ButtonTypes::PUSH_BUTTON, States::PAUSESTATE, this);
 }
 //-------------------------------------------------------------------------------------------------------
 void PauseState::exit()
 {
     OgreFramework::getSingletonPtr()->mLog->logMessage("Leaving PauseState...");
 
+    GUIEventSubscriber::get()->unsubscribeAll();
+    CEGUI::WindowManager::getSingleton().destroyAllWindows();
+
     mSceneMgr->destroyCamera(mCamera);
     if (mSceneMgr)
         OgreFramework::getSingletonPtr()->mRoot->destroySceneManager(mSceneMgr);
+
+    mSound->drop();
 
     /*OgreFramework::getSingletonPtr()->mTrayMgr->clearAllTrays();
     OgreFramework::getSingletonPtr()->mTrayMgr->destroyAllWidgets();
@@ -66,38 +79,30 @@ bool PauseState::keyPressed(const OIS::KeyEvent &keyEvent)
     }
 
     OgreFramework::getSingletonPtr()->keyPressed(keyEvent);
-
     return true;
 }
 //-------------------------------------------------------------------------------------------------------
 bool PauseState::keyReleased(const OIS::KeyEvent &keyEvent)
 {
     OgreFramework::getSingletonPtr()->keyReleased(keyEvent);
-
     return true;
 }
 //-------------------------------------------------------------------------------------------------------
 bool PauseState::mouseMoved(const OIS::MouseEvent &mouseEvent)
 {
-    /*if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseMove(mouseEvent))
-        return true;*/
-
+    OgreFramework::getSingletonPtr()->mouseMoved(mouseEvent);
     return true;
 }
 //-------------------------------------------------------------------------------------------------------
 bool PauseState::mousePressed(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
 {
-    /*if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseDown(mouseEvent, id))
-        return true;*/
-
+    OgreFramework::getSingletonPtr()->mousePressed(mouseEvent, id);
     return true;
 }
 //-------------------------------------------------------------------------------------------------------
 bool PauseState::mouseReleased(const OIS::MouseEvent &mouseEvent, OIS::MouseButtonID id)
 {
-    /*if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseUp(mouseEvent, id))
-        return true;*/
-
+    OgreFramework::getSingletonPtr()->mouseReleased(mouseEvent, id);
     return true;
 }
 //-------------------------------------------------------------------------------------------------------
@@ -109,36 +114,31 @@ void PauseState::update(double timeSinceLastFrame)
 
     if (mbQuit == true)
     {
-        popAppState();
+        shutdown();
         return;
     }
 
 }
 //-------------------------------------------------------------------------------------------------------
-/*void PauseState::buttonHit(OgreBites::Button *button)
+void PauseState::buttonHit(const CEGUI::EventArgs &mouseEvent)
 {
-    if (button->getName() == "ExitBtn")
+    const CEGUI::MouseEventArgs& caller = static_cast<const CEGUI::MouseEventArgs&>(mouseEvent);
+    if (caller.window->getName() == "Pause/ExitButton")
     {
-        OgreFramework::getSingletonPtr()->mTrayMgr->showYesNoDialog("Exit Catreon", "Are you sure you want to quit?");
-        mbQuestionActive = true;
-    }
-    else if (button->getName() == "BackToGameBtn")
-    {
-        popAllAndPushAppState(findByName("GameState"));
         mbQuit = true;
     }
-    else if (button->getName() == "BackToMenuBtn")
+    else if (caller.window->getName() == "Pause/ReturnButton")
+    {
+        popAllAndPushAppState(findByName("GameState"));
+    }
+    else if (caller.window->getName() == "Pause/ReturnToMenu")
     {
         popAllAndPushAppState(findByName("MenuState"));
     }
-}*/
+}
 //-------------------------------------------------------------------------------------------------------
-void PauseState::yesNoDialogClosed(const Ogre::DisplayString &question, bool yesHit)
+void PauseState::buttonHovered(const CEGUI::EventArgs &mouseEvent)
 {
-    if (yesHit == true)
-        shutdown();
-    else
-        //OgreFramework::getSingletonPtr()->mTrayMgr->closeDialog();
-
-    mbQuestionActive = false;
+    mSound->play2D("../media/sound/gui_rollover.wav");
+    //probably should replace this with Sound->play(Snd::Hovered);
 }

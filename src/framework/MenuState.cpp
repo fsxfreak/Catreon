@@ -41,8 +41,8 @@ void MenuState::createScene()
     CEGUI::Window *menuRoot = windowManager.loadWindowLayout("CatreonMenuState.layout");
     CEGUI::System::getSingleton().setGUISheet(menuRoot);
 
-    GUIEventSubscriber::get()->subscribe("EnterButton", ButtonTypes::PUSH_BUTTON, States::MENUSTATE, this);
-    GUIEventSubscriber::get()->subscribe("ExitButton", ButtonTypes::PUSH_BUTTON, States::MENUSTATE, this);
+    GUIEventSubscriber::get()->subscribe("Menu/EnterButton", ButtonTypes::PUSH_BUTTON, States::MENUSTATE, this);
+    GUIEventSubscriber::get()->subscribe("Menu/ExitButton", ButtonTypes::PUSH_BUTTON, States::MENUSTATE, this);
 }
 //-------------------------------------------------------------------------------------------------------
 void MenuState::exit()
@@ -51,7 +51,6 @@ void MenuState::exit()
 
     GUIEventSubscriber::get()->unsubscribeAll();
     CEGUI::WindowManager::getSingleton().destroyAllWindows();
-    CEGUI::MouseCursor::getSingleton().hide();
 
     mSound->drop();
 
@@ -116,11 +115,11 @@ void MenuState::update(double timeSinceLastFrame)
 void MenuState::buttonHit(const CEGUI::EventArgs &mouseEvent)
 {
     const CEGUI::MouseEventArgs& caller = static_cast<const CEGUI::MouseEventArgs&>(mouseEvent);
-    if (caller.window->getName() == "EnterButton")
+    if (caller.window->getName() == "Menu/EnterButton")
     {
         changeAppState(findByName("GameState"));
     }
-    if (caller.window->getName() == "ExitButton")
+    if (caller.window->getName() == "Menu/ExitButton")
     {
         mbQuit = true;
     }
