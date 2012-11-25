@@ -24,9 +24,9 @@ CEGUI::MouseButton OgreFramework::convertButton(OIS::MouseButtonID buttonID)
 }
 template <>OgreFramework* Ogre::Singleton<OgreFramework>::ms_Singleton = 0;
 //-------------------------------------------------------------------------------------------------------
-OgreFramework::OgreFramework() :    mRoot(0), mRenderWindow(0), mViewport(0), mLog(0), mTimer(0), 
-                                    mInputMgr(0), mKb(0), mMouse(0), /*mTrayMgr(0),*/
-                                    mGUIRenderer(0),
+OgreFramework::OgreFramework() :    mRoot(nullptr), mRenderWindow(nullptr), mViewport(nullptr), mLog(nullptr), mTimer(nullptr), 
+                                    mInputMgr(nullptr), mKb(nullptr), mMouse(nullptr),
+                                    mGUIRenderer(nullptr),
                                     mTimeSinceLastFrame(0)                                  
 {
     Ogre::Math math; //for lookup tables to be generated

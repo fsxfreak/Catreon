@@ -35,8 +35,9 @@ void GUIEventSubscriber::unsubscribeAll()
     std::vector<CEGUI::Window*>::iterator itend = mButtons.end();
     for (std::vector<CEGUI::Window*>::iterator it = mButtons.begin(); it != itend; ++it)
     {
-        CEGUI::WindowManager::getSingleton().destroyWindow((*it));
+        CEGUI::WindowManager::getSingletonPtr()->destroyWindow((*it));
     }
+    mButtons.clear();
 }
 //-------------------------------------------------------------------------------------------------------
 void GUIEventSubscriber::subscribe(const CEGUI::String& buttonName, ButtonTypes buttonType, States stateId, AppState *state)

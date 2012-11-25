@@ -37,7 +37,7 @@ private:
     Ogre::SceneNode *mNode;
     Ogre::Entity *mEntity;
 
-    static btCollisionShape *mbtChassisShape;
+    btCollisionShape *mbtChassisShape;
     btRigidBody *mbtCar;
 
     std::vector<Ogre::SceneNode*> mWheelNodes;

@@ -130,9 +130,15 @@ void GameState::exit()
         delete *it;
     }
     mDrivers.clear();
+    
+    for (auto it = mBalls.begin(); it != mBalls.end(); ++it)
+    {
+        delete *it;
+    }
     mBalls.clear();
 
     delete mDebugDrawer;
+
     OgreFramework::getSingletonPtr()->mRoot->destroySceneManager(mSceneMgr);
 
     for (int body = mDynamicsWorld->getNumCollisionObjects() - 1; body >= 0; body--)
@@ -140,7 +146,13 @@ void GameState::exit()
         btCollisionObject *object = mDynamicsWorld->getCollisionObjectArray()[body];
         mDynamicsWorld->removeCollisionObject(object);
     }
+    for (auto it = mRigidBodies.begin(); it != mRigidBodies.end(); ++it)
+    {
+        mDynamicsWorld->removeRigidBody(*it);
+        delete *it;
+    }
     mRigidBodies.clear();
+
     auto itend = mCollisionShapes.end();
     for (auto it = mCollisionShapes.begin(); it != itend; ++it)
     {

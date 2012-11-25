@@ -89,6 +89,8 @@ Vehicle::~Vehicle()
             mDynamicsWorld->removeRigidBody(body);
         }
     }
+    delete mbtCar;
+    delete mbtChassisShape;
     delete mVehicleRaycaster;
     mDynamicsWorld->removeAction(mVehicle);
     delete mVehicle;
@@ -140,7 +142,7 @@ void Vehicle::initializePhysics(int cargo, int passengers, float yawangle)
     rotation.setEulerZYX(0, yawangle, 0);
    
     //to adjust the center of mass
-    btCollisionShape *mbtChassisShape = new btBoxShape(btVector3(8, 7, 23));
+    mbtChassisShape = new btBoxShape(btVector3(8, 7, 23));
     btCompoundShape *compound = new btCompoundShape();
     getGameState()->mCollisionShapes.push_back(compound);
     compound->addChildShape(chassisTransform, mbtChassisShape);
