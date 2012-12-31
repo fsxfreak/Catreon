@@ -53,7 +53,6 @@ void GameState::enter()
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.1f, 0.1f, 0.1f));
 
     mRaySceneQuery = mSceneMgr->createRayQuery(Ogre::Ray());
-    //mRaySceneQuery->setQueryMask(OGRE_HEAD_MASK);
 
     mCamera = mSceneMgr->createCamera("GameCamera");
     mCamera->setPosition(Ogre::Vector3(0, 200, -300));
@@ -91,6 +90,8 @@ void GameState::enter()
         OgreFramework::getSingletonPtr()->mLog->logMessage("Unable to create sound in GameState");
         return;
     }
+
+    
 
     buildGUI();
 
@@ -174,6 +175,13 @@ void GameState::exit()
 //inherited from Appstate, fill the scene
 void GameState::createScene()
 {
+    Ogre::SceneNode *sceneNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+    DotSceneLoader loader;
+    loader.parseDotScene("catreoncity.scene", "General", mSceneMgr, sceneNode);
+    sceneNode->scale(6, 1, 6);
+    sceneNode->translate(0, 5, 0);
+    Ogre::Node::ChildNodeIterator iterator = sceneNode->getChildIterator();
+
     Ogre::Light *directional = mSceneMgr->createLight("directionallight");
     directional->setType(Ogre::Light::LT_DIRECTIONAL);
     directional->setDirection(0, -0.85f, -0.3f);
@@ -191,52 +199,6 @@ void GameState::createScene()
     entityGround->setMaterialName("Examples/BumpyMetal");
     nodeGround = mSceneMgr->getRootSceneNode()->createChildSceneNode("groundnode");
     nodeGround->attachObject(entityGround);
-
-    /*btCollisionShape *groundShape;
-    const float TRIANGLE_SIZE = 20.0f;
-    //triangle mesh ground
-    int vertStride = sizeof(btVector3);
-    int indexStride = 3 * sizeof(int);
-    const int NUM_VERTS_X = 200;
-    const int NUM_VERTS_Y = 200;
-    const int totalVerts = NUM_VERTS_X * NUM_VERTS_Y;
-    const int totalTriangles = 2 * (NUM_VERTS_X - 1) * (NUM_VERTS_Y - 1);
-    
-    mVertices = new btVector3[totalVerts];
-    int *gIndices = new int[totalTriangles * 3];
-
-    for (int iii = 0; iii < NUM_VERTS_X; iii++)
-    {
-        for (int jjj = 0; jjj < NUM_VERTS_Y; jjj++)
-        {
-            float w1 = 0.2f;
-            float height = 0.0f;    //flat land
-
-            mVertices[iii + jjj * NUM_VERTS_X].setValue
-                ( (iii - NUM_VERTS_X * 0.5f) * TRIANGLE_SIZE
-                , height
-                , (jjj - NUM_VERTS_Y * 0.5f) * TRIANGLE_SIZE);
-        }
-    }
-
-    int index = 0;
-    for (int iii = 0; iii < NUM_VERTS_X - 1; iii++)
-    {
-        for (int jjj = 0; jjj < NUM_VERTS_Y - 1; jjj++)
-        {
-            gIndices[index++] = jjj * NUM_VERTS_X + iii;
-            gIndices[index++] = jjj * NUM_VERTS_X + iii + 1;
-            gIndices[index++] = (jjj + 1) * NUM_VERTS_X + iii + 1;
-
-            gIndices[index++] = jjj * NUM_VERTS_X + iii;
-            gIndices[index++] = (jjj + 1) * NUM_VERTS_X + iii + 1;
-            gIndices[index++] = (jjj + 1) * NUM_VERTS_X + iii;
-        }
-    }
-
-    mIndexVertexArray = new btTriangleIndexVertexArray(totalTriangles, gIndices, indexStride, totalVerts, (btScalar*) &mVertices[0].x(), vertStride);
-    bool useQuantizedAabbCompression = true;
-    groundShape = new btBvhTriangleMeshShape(mIndexVertexArray, useQuantizedAabbCompression);*/
 
     btTransform tr;
     tr.setIdentity();
@@ -282,48 +244,12 @@ void GameState::createScene()
 //-------------------------------------------------------------------------------------------------------
 bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
 {
-    /*if (mbSettingsMode == true)
-    {
-        if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_S))
-        {
-            //cycle up the settings menu toggled by TAB
-            OgreBites::SelectMenu* pMenu = (OgreBites::SelectMenu*)OgreFramework::getSingletonPtr()->mTrayMgr->getWidget("ChatModeSelMenu");
-            if (pMenu->getSelectionIndex() + 1 < static_cast<int>(pMenu->getNumItems()))
-            {
-                pMenu->selectItem(pMenu->getSelectionIndex() + 1);
-            }
-        }
-        if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_W))
-        {
-            OgreBites::SelectMenu* pMenu = (OgreBites::SelectMenu*)OgreFramework::getSingletonPtr()->mTrayMgr->getWidget("ChatModeSelMenu");
-            if (pMenu->getSelectionIndex() - 1 >= 0)
-            {
-                pMenu->selectItem(pMenu->getSelectionIndex() - 1);
-            }
-        }
-    }*/
-
     //pause the state
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_ESCAPE))
     {
         pushAppState(findByName("PauseState"));
         return true;
     }
-
-    //toggle information
-    /*if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_I))
-    {
-        if (mDetailsPanel->getTrayLocation() == OgreBites::TL_NONE)
-        {
-            OgreFramework::getSingletonPtr()->mTrayMgr->moveWidgetToTray(mDetailsPanel, OgreBites::TL_TOPLEFT, 0);
-            mDetailsPanel->show();
-        }
-        else
-        {
-            OgreFramework::getSingletonPtr()->mTrayMgr->removeWidgetFromTray(mDetailsPanel);
-            mDetailsPanel->hide();
-        }
-    }*/
 
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_CAPITAL))
     {
@@ -344,7 +270,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         mDrivers.push_back(driver);
     }
 
-    if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_V))    //create 100 drivers and their vehicles
+    if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_V))    //create 20 drivers and their vehicles
     {
         for (int iii = 0; iii < 20; ++iii)
         {
@@ -383,10 +309,6 @@ bool GameState::keyReleased(const OIS::KeyEvent &keyEvent)
 //-------------------------------------------------------------------------------------------------------
 bool GameState::mouseMoved(const OIS::MouseEvent &mouseEvent)
 {
-    /*if (OgreFramework::getSingletonPtr()->mTrayMgr->injectMouseMove(mouseEvent))
-    {
-        return true;
-    }*/
     OgreFramework::getSingletonPtr()->mouseMoved(mouseEvent);
     //if right mouse down, camera look is activated
     if (mbRMouseDown)
@@ -472,8 +394,11 @@ void GameState::onLeftPressed(const OIS::MouseEvent &mouseEvent)
     {
         if (itRayScene->movable)
         {
-            mCurrentObject = mSceneMgr->getEntity(itRayScene->movable->getName())->getParentSceneNode();
+            //mCurrentObject = mSceneMgr->getEntity(itRayScene->movable->getName())->getParentSceneNode();
+            mCurrentObject = itRayScene->movable->getParentSceneNode();
             mCurrentObject->showBoundingBox(true);
+
+            DebugWindow::get()->debugVehicle(mCurrentObject->getName());
             break;
         }
     }
@@ -577,12 +502,20 @@ void GameState::update(double timeSinceLastFrame)
     updatePhysics();
     updateSound();
     
+    DebugWindow::get()->update();
 
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::buildGUI()
 {
     CEGUI::MouseCursor::getSingleton().show();
+
+    CEGUI::WindowManager &windowManager = CEGUI::WindowManager::getSingleton();
+    CEGUI::Window *gameRoot = windowManager.loadWindowLayout("CatreonGameState.layout");
+    CEGUI::System::getSingletonPtr()->setGUISheet(gameRoot);
+
+    //construct DebugWindow
+    DebugWindow::get();
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::updatePhysics()
@@ -613,6 +546,11 @@ Ogre::Vector3 GameState::bulletVecToOgre(const btVector3 &bulletvector)
 btQuaternion GameState::ogreQuatToBullet(const Ogre::Quaternion &ogrequat)
 {
     return btQuaternion(ogrequat.x, ogrequat.y, ogrequat.z, ogrequat.w);
+}
+//-------------------------------------------------------------------------------------------------------
+float GameState::round(double d, int places)
+{
+    return static_cast<int>(d * Ogre::Math::Pow(10, places)) / static_cast<float>(Ogre::Math::Pow(10, places));
 }
 //-------------------------------------------------------------------------------------------------------
 int GameState::getMillisecondsFromLastCall()

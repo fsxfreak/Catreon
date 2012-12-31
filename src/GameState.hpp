@@ -33,6 +33,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include <CEGUI.h>
 #include <CEGUIOgreRenderer.h>
+#include <GUI\DebugWindow.hpp>
 
 using namespace irrklang;
 
@@ -48,6 +49,7 @@ class Vehicle;
 class Driver;
 class BtOgMotionState;
 class CDebugDraw;
+class DebugWindow;
 
 //EVERYTHING SHALL BE PUBLIC -throws enscapulation out the window-
 class GameState: public AppState
@@ -90,6 +92,8 @@ public:
 
     static vec3df ogreVecToIrr(const Ogre::Vector3 &ogrevector);
     static Ogre::Vector3 irrVecToOgre(const vec3df &irrvector);
+
+    static float round(double d, int places);
 
     Ogre::SceneManager *mSceneMgr;
     Ogre::Camera       *mCamera;
@@ -158,6 +162,7 @@ public:
     ISoundEngine                            *sound;
 
     //GUI
+
 };
 
 //just a little of what I like to call function typedef
