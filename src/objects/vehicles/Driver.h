@@ -29,7 +29,7 @@ private:
 
     bool bIsFollowingClose;
 
-    std::unique_ptr<Vehicle> pVehicle;
+    std::shared_ptr<Vehicle> pVehicle;
 
     Driver& operator=(const Driver& cDriver);
 public:
@@ -48,6 +48,7 @@ public:
     void setNervousness(int nNervous);
 
     std::string getDestination();
+    std::shared_ptr<Vehicle> getVehicle();
 
 };
 

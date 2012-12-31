@@ -20,12 +20,20 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include <BtOgMotionState.h>
 #include <BulletCollision\CollisionShapes\btTriangleShape.h>
 #include <BulletCollision\CollisionDispatch\btGhostObject.h>
-#include "MaterialParser.hpp"
+
+#include <framework\DotSceneLoader.h>
+#include <rapidxml\rapidxml.hpp>
+
+#include <GUI\DebugWindow.hpp>
 
 class BtOgMotionState;
 
 class Vehicle
 {
+    /* DebugWindow needs pretty much everything from Vehicle to display
+       vital information */
+    friend class DebugWindow;
+
 private:
     static long int mVehiclesCreated;
     std::string mstrName;
@@ -73,7 +81,8 @@ private:
 
     virtual void accelerate(float power = 200.f);
     virtual void brake(float power = 200.f);
-    virtual void brake(const btVector3 &rayOrigin, const btCollisionWorld::ClosestRayResultCallback &rayQuery, 
+    virtual void brake(const btVector3 &rayOrigin, 
+                       const btCollisionWorld::ClosestRayResultCallback &rayQuery, 
                        float brakeFactor = 1.7f);
 
     virtual void steer(float targetSteerRadius = 0.0f);
@@ -81,7 +90,7 @@ private:
     void maintainSpeed();
 public:
     Vehicle(int cargo, int passengers, Ogre::Vector3 initposition = Ogre::Vector3(0, 30, 0),
-                                         Ogre::Vector3 initdirection = Ogre::Vector3(0, 0, 0));
+                                       Ogre::Vector3 initdirection = Ogre::Vector3(0, 0, 0));
     ~Vehicle();
 
     float getSpeed();

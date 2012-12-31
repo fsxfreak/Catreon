@@ -23,8 +23,6 @@ TODO
 #include "objects\vehicles\Vehicle.h"
 #include <sstream>
 
-#include <vld.h>
-
 long int Vehicle::mVehiclesCreated = 0;
 //box as the main body
 //the middle is a bit mis-aligned

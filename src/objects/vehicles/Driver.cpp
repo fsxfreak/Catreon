@@ -23,7 +23,7 @@ Driver::Driver(int nSkill, int nRiskTaker,
                 int nCargo, int nPassengers, Ogre::Vector3 position) 
                 : mstrGoal(""), mnNervousness(0), bIsFollowingClose(0)
 {
-    pVehicle = std::unique_ptr<Vehicle>(new Vehicle(nCargo, nPassengers, position));
+    pVehicle = std::shared_ptr<Vehicle>(new Vehicle(nCargo, nPassengers, position));
     mnSkill = rand() % 100 + 1;
     mnRiskTaker = rand() % 100 + 1;
 }
@@ -89,4 +89,9 @@ void Driver::update(int milliseconds, std::string goal)
 
     pVehicle->update(milliseconds);
 
+}
+//-------------------------------------------------------------------------------------------------------
+std::shared_ptr<Vehicle> Driver::getVehicle()
+{
+    return pVehicle;
 }
