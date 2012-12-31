@@ -18,7 +18,7 @@ TODO
 
 DebugWindow* DebugWindow::mInstance = nullptr;
 //-------------------------------------------------------------------------------------------------------
-DebugWindow::DebugWindow()
+DebugWindow::DebugWindow() : lastTimeSinceLastFrame(0)
 {
     mVehicle.reset();
     CEGUI::Window* rootWindow = CEGUI::WindowManager::getSingletonPtr()->getWindow("Game/DebugWindow");
@@ -67,13 +67,15 @@ void DebugWindow::update()
     //update the fps (included here because this is DebugWindow,
     //and is easier due to Window structure in the .layout
     //long double for VS2010 compatibility
-    double fps = 1.0 / OgreFramework::getSingletonPtr()->mTimeSinceLastFrame;
-    mWindows[0]->setText("FPS: " + Ogre::StringConverter::toString(Ogre::Real(fps)));
+    float time = OgreFramework::getSingletonPtr()->mTimeSinceLastFrame * 0.1 + lastTimeSinceLastFrame * 0.9;
+    lastTimeSinceLastFrame = time;
+    int fps = (1 / time) * 1000;
+    mWindows[0]->setText("FPS: " + Ogre::StringConverter::toString(fps));
                               
     if (mVehicle)
     {
-        mWindows[1]->setText(mVehicle->mstrName);
-        mWindows[2]->setText("Speed " + Ogre::StringConverter::toString(GameState::round(mVehicle->mfSpeed, 2)));
+        mWindows[1]->setText("Name: " + mVehicle->mstrName);
+        mWindows[2]->setText("Speed: " + Ogre::StringConverter::toString(GameState::round(mVehicle->mfSpeed, 2)));
         Ogre::Vector3 pos = mVehicle->mNode->getPosition();
         mWindows[3]->setText("Position: " + Ogre::StringConverter::toString(static_cast<int>(pos.x)) 
                                     + " " + Ogre::StringConverter::toString(static_cast<int>(pos.y)) 

@@ -33,7 +33,7 @@ GameState* GameState::mGameSingleton = nullptr;
 GameState::GameState() :    mAcceleration(0.01f), mMaxMoveSpeed(0.3f), mTranslateVector(0, 0, 0),
                             mbLMouseDown(false), mbRMouseDown(false), 
                             mbQuit(false), mbSettingsMode(false), mbBackslashDown(false),
-                            mTimer(new Ogre::Timer),
+                            mTimer(new Ogre::Timer), mTimeSinceUpdate(0), 
                             sound(nullptr)
 {
     mGameSingleton = this;  //is that even right? - doesn't matter, works
@@ -502,7 +502,12 @@ void GameState::update(double timeSinceLastFrame)
     updatePhysics();
     updateSound();
     
-    DebugWindow::get()->update();
+    mTimeSinceUpdate += timeSinceLastFrame;
+    if (mTimeSinceUpdate >= 41)
+    {
+        mTimeSinceUpdate = 0;
+        DebugWindow::get()->update();
+    }
 
 }
 //-------------------------------------------------------------------------------------------------------

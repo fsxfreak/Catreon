@@ -35,6 +35,8 @@ private:
        Game/FPSText, Game/VehicleName, Game/VehicleSpeed, Game/VehiclePosition,
        Game/VehicleDirection */
     std::vector<CEGUI::Window*> mWindows;
+
+    float lastTimeSinceLastFrame;
 public:
     static DebugWindow* get();
 

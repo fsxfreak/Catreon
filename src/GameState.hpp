@@ -162,7 +162,7 @@ public:
     ISoundEngine                            *sound;
 
     //GUI
-
+    float                                   mTimeSinceUpdate;
 };
 
 //just a little of what I like to call function typedef
