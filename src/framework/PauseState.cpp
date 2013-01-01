@@ -130,6 +130,7 @@ void PauseState::buttonHit(const CEGUI::EventArgs &mouseEvent)
     else if (caller.window->getName() == "Pause/ReturnButton")
     {
         popAllAndPushAppState(findByName("GameState"));
+        mbQuit = true;
     }
     else if (caller.window->getName() == "Pause/ReturnToMenu")
     {

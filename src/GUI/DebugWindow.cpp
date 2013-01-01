@@ -20,7 +20,7 @@ DebugWindow* DebugWindow::mInstance = nullptr;
 //-------------------------------------------------------------------------------------------------------
 DebugWindow::DebugWindow() : lastTimeSinceLastFrame(0)
 {
-    mVehicle.reset();
+    mVehicle = nullptr;
     CEGUI::Window* rootWindow = CEGUI::WindowManager::getSingletonPtr()->getWindow("Game/DebugWindow");
     
     int numChildren = rootWindow->getChildCount();
@@ -43,15 +43,15 @@ DebugWindow* DebugWindow::get()
 //-------------------------------------------------------------------------------------------------------
 void DebugWindow::debugVehicle(Vehicle *vehicle)
 {
-    mVehicle.reset(vehicle);
+    mVehicle = vehicle;
 }
 //-------------------------------------------------------------------------------------------------------
 void DebugWindow::debugVehicle(const Ogre::String& name)
 {
     //need to extract the vehicle pointer from the name
-    std::vector<Driver*> drivers = GameState::getSingleton()->mDrivers;
-    std::vector<Driver*>::iterator it = drivers.begin();
-    std::vector<Driver*>::iterator itend = drivers.end();
+    auto drivers = GameState::getSingleton()->mDrivers;
+    auto it = drivers.begin();
+    auto itend = drivers.end();
     for (it; it != itend; ++it)
     {
         if ((*it)->getVehicle()->mstrName == name)
@@ -66,8 +66,7 @@ void DebugWindow::update()
 {
     //update the fps (included here because this is DebugWindow,
     //and is easier due to Window structure in the .layout
-    //long double for VS2010 compatibility
-    float time = OgreFramework::getSingletonPtr()->mTimeSinceLastFrame * 0.1 + lastTimeSinceLastFrame * 0.9;
+    float time = OgreFramework::getSingletonPtr()->mTimeSinceLastFrame * 0.9 + lastTimeSinceLastFrame * 0.1;
     lastTimeSinceLastFrame = time;
     int fps = (1 / time) * 1000;
     mWindows[0]->setText("FPS: " + Ogre::StringConverter::toString(fps));
@@ -85,4 +84,19 @@ void DebugWindow::update()
                                      + " " + Ogre::StringConverter::toString(GameState::round(dir.y, 2))
                                      + " " + Ogre::StringConverter::toString(GameState::round(dir.z, 2)));
     }
+}
+//-------------------------------------------------------------------------------------------------------
+void DebugWindow::reset()
+{
+    std::vector<CEGUI::Window*>::iterator it = mWindows.begin();
+    auto itend = mWindows.end();
+    for (it; it != itend; ++it)
+    {
+        CEGUI::WindowManager::getSingletonPtr()->destroyWindow((*it));
+    }
+    //delete mVehicle;  ---  Driver handles this
+    mVehicle = nullptr;
+    mWindows.clear();
+    delete mInstance;
+    mInstance = nullptr;
 }

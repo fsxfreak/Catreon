@@ -151,7 +151,7 @@ public:
     std::vector<btCollisionShape*>          mCollisionShapes;
     std::vector<btRigidBody*>               mRigidBodies;
     std::vector<Ball*>                      mBalls;
-    std::vector<Driver*>                    mDrivers;
+    std::vector<std::shared_ptr<Driver> >   mDrivers;
 
     btVector3                               *mVertices;
     btTriangleIndexVertexArray              *mIndexVertexArray;

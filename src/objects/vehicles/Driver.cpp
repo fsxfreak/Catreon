@@ -23,7 +23,7 @@ Driver::Driver(int nSkill, int nRiskTaker,
                 int nCargo, int nPassengers, Ogre::Vector3 position) 
                 : mstrGoal(""), mnNervousness(0), bIsFollowingClose(0)
 {
-    pVehicle = std::shared_ptr<Vehicle>(new Vehicle(nCargo, nPassengers, position));
+    pVehicle = new Vehicle(nCargo, nPassengers, position);
     mnSkill = rand() % 100 + 1;
     mnRiskTaker = rand() % 100 + 1;
 }
@@ -31,14 +31,14 @@ Driver::Driver(int nSkill, int nRiskTaker,
 //random, default constructor
 Driver::Driver() : mnNervousness(0), bIsFollowingClose(0)
 {
-    pVehicle = std::unique_ptr<Vehicle>(new Vehicle(150, 1));
+    pVehicle = new Vehicle(150, 1);
     mnSkill = rand() % 100 + 1;
     mnRiskTaker = rand() % 100 + 1;
 }
 //-------------------------------------------------------------------------------------------------------
 Driver::~Driver()
 {
-    //delete pVehicle;  deleted automatically
+    delete pVehicle;
 }
 //-------------------------------------------------------------------------------------------------------
 void Driver::updateGoal(std::string strGoal)
@@ -91,7 +91,7 @@ void Driver::update(int milliseconds, std::string goal)
 
 }
 //-------------------------------------------------------------------------------------------------------
-std::shared_ptr<Vehicle> Driver::getVehicle()
+Vehicle* Driver::getVehicle()
 {
     return pVehicle;
 }

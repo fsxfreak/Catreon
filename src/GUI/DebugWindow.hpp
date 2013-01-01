@@ -23,12 +23,13 @@ class DebugWindow
 {
 private:
     DebugWindow();
+    ~DebugWindow() {};
     DebugWindow(const DebugWindow&) {};
     DebugWindow& operator=(const DebugWindow&) {};
 
     static DebugWindow *mInstance;
 
-    std::shared_ptr<Vehicle> mVehicle;
+    Vehicle *mVehicle;
 
     /* to group these windows in a more organized fashion in the memory
        The order of the windows is as follows:
@@ -44,6 +45,7 @@ public:
     void debugVehicle(const Ogre::String& name);
 
     void update();
+    void reset();
 };
 
 #endif

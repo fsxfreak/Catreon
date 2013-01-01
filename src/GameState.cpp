@@ -125,11 +125,6 @@ void GameState::exit()
     mSceneMgr->destroyCamera(mCamera);
     mSceneMgr->destroyQuery(mRaySceneQuery);
     
-    std::vector<Driver*>::iterator it = mDrivers.begin();
-    for (it; it != mDrivers.end(); ++it)
-    {
-        delete *it;
-    }
     mDrivers.clear();
     
     for (auto it = mBalls.begin(); it != mBalls.end(); ++it)
@@ -170,6 +165,8 @@ void GameState::exit()
 
     if (sound)
         sound->drop();
+
+    DebugWindow::get()->reset();
 }
 //-------------------------------------------------------------------------------------------------------
 //inherited from Appstate, fill the scene
@@ -267,7 +264,8 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_F))    //create Drivers and their vehicles
     {
         Driver *driver = new Driver();
-        mDrivers.push_back(driver);
+        std::shared_ptr<Driver> driverPtr(driver);
+        mDrivers.push_back(driverPtr);
     }
 
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_V))    //create 20 drivers and their vehicles
@@ -275,18 +273,14 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
         for (int iii = 0; iii < 20; ++iii)
         {
             Driver *driver = new Driver();
-            mDrivers.push_back(driver);
+            std::shared_ptr<Driver> driverPtr(driver);
+            mDrivers.push_back(driverPtr);
         }
     }
 
     //clear all balls
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_NUMPAD0))
     {
-        std::vector<Driver*>::iterator it = mDrivers.begin();
-        for (it; it != mDrivers.end(); ++it)
-        {
-            delete *it;
-        }
         mDrivers.clear();
 //      mBalls.clear();
         //iterator starts at one because the ground plane is at 0
@@ -493,8 +487,8 @@ void GameState::update(double timeSinceLastFrame)
     getInput(timeSinceLastFrame);
     moveCamera();
 
-    std::vector<Driver*>::iterator itend = mDrivers.end();
-    for (std::vector<Driver*>::iterator it = mDrivers.begin(); it != itend; ++it)
+    auto itend = mDrivers.end();
+    for (auto it = mDrivers.begin(); it != itend; ++it)
     {
         (*it)->update(timeSinceLastFrame);
     }
