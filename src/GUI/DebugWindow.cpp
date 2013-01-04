@@ -62,6 +62,11 @@ void DebugWindow::debugVehicle(const Ogre::String& name)
     }
 }
 //-------------------------------------------------------------------------------------------------------
+Vehicle* DebugWindow::getVehicle()
+{
+    return mVehicle;
+}
+//-------------------------------------------------------------------------------------------------------
 void DebugWindow::update()
 {
     //update the fps (included here because this is DebugWindow,

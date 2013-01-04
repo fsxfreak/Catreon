@@ -44,6 +44,8 @@ public:
     void debugVehicle(Vehicle *vehicle);
     void debugVehicle(const Ogre::String& name);
 
+    Vehicle* getVehicle();
+
     void update();
     void reset();
 };

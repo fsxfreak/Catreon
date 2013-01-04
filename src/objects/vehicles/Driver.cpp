@@ -38,6 +38,10 @@ Driver::Driver() : mnNervousness(0), bIsFollowingClose(0)
 //-------------------------------------------------------------------------------------------------------
 Driver::~Driver()
 {
+    if (DebugWindow::get()->getVehicle() == pVehicle)
+    {
+        DebugWindow::get()->debugVehicle(nullptr);
+    }
     delete pVehicle;
 }
 //-------------------------------------------------------------------------------------------------------

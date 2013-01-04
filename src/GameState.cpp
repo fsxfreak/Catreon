@@ -237,6 +237,16 @@ void GameState::createScene()
     btRigidBody *boxbody = new btRigidBody(consinfo);
     mDynamicsWorld->addRigidBody(boxbody);
     mRigidBodies.push_back(boxbody);
+
+    /*Ogre::Vector3 pos(5, 30, 10);
+    Road *nextRoad = new Road(pos);
+    for (int iii = 0; iii < 20; ++iii)
+    {
+        pos.z += 30;
+        pos.x += 2 * iii * iii;
+        Road *road = new Road(pos, nextRoad);
+        nextRoad = road;
+    }*/
 }
 //-------------------------------------------------------------------------------------------------------
 bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
@@ -365,11 +375,6 @@ void GameState::onLeftPressed(const OIS::MouseEvent &mouseEvent)
     if (mbBackslashDown)
         return;
 
-    if (mCurrentObject)
-    {
-        mCurrentObject->showBoundingBox(false);
-    }
-
     //quite the formatting
     Ogre::Ray mouseRay = mCamera->getCameraToViewportRay(
         OgreFramework::getSingletonPtr()->mMouse->getMouseState().X.abs / 
@@ -390,9 +395,10 @@ void GameState::onLeftPressed(const OIS::MouseEvent &mouseEvent)
         {
             //mCurrentObject = mSceneMgr->getEntity(itRayScene->movable->getName())->getParentSceneNode();
             mCurrentObject = itRayScene->movable->getParentSceneNode();
-            mCurrentObject->showBoundingBox(true);
+            mCurrentObject->showBoundingBox(!mCurrentObject->getShowBoundingBox());
 
             DebugWindow::get()->debugVehicle(mCurrentObject->getName());
+            mCurrentObject = nullptr;
             break;
         }
     }

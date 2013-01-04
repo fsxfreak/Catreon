@@ -305,11 +305,10 @@ void Vehicle::update(float milliseconds)
     for (int iii = 0; iii < 4; iii++)
     {
         btTransform wheeltrans = mVehicle->getWheelTransformWS(iii);
-        mWheelNodes[iii]->setPosition(wheeltrans.getOrigin().x(), wheeltrans.getOrigin().y(), wheeltrans.getOrigin().z());
-        mWheelNodes[iii]->setOrientation(wheeltrans.getRotation().w(), 
-                                         wheeltrans.getRotation().x(),
-                                         wheeltrans.getRotation().y(),
-                                         wheeltrans.getRotation().z());
+        btVector3 position = wheeltrans.getOrigin();
+        mWheelNodes[iii]->setPosition(position.x(), position.y(), position.z());
+        btQuaternion rotation = wheeltrans.getRotation();
+        mWheelNodes[iii]->setOrientation(rotation.w(), rotation.x(), rotation.y(), rotation.z());
     }
 
     maintainSpeed();
