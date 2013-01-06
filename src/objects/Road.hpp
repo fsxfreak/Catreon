@@ -40,6 +40,8 @@ private:
 
     Road(const Road& road);
 
+    Ogre::SceneNode *mNode;
+
     btRigidBody *mTriggerNode; //to check if a vehicle is close enough to the center of the node
     void updateTriggerPosition(btTransform& trans);
     void initOther();

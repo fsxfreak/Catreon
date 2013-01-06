@@ -125,6 +125,11 @@ Ogre::Vector3 Vehicle::getDirection()
     return mNode->getOrientation() * Ogre::Vector3::UNIT_Z;
 }
 //-------------------------------------------------------------------------------------------------------
+Ogre::Vector3 Vehicle::getUp()
+{
+    return mNode->getOrientation() * Ogre::Vector3::UNIT_Y;
+}
+//-------------------------------------------------------------------------------------------------------
 bool Vehicle::isMoving()
 {
     return mbIsMoving;
@@ -162,7 +167,7 @@ void Vehicle::initializePhysics(int cargo, int passengers, float yawangle)
     mbtCar = new btRigidBody(conInfo);
 
     mbtCar->setActivationState(DISABLE_DEACTIVATION);
-    mbtCar->setUserPointer(this, VEHICLE);
+    mbtCar->setUserPointer(this, OTHER);
 
     mVehicleRaycaster = new btDefaultVehicleRaycaster(mDynamicsWorld);
     mVehicle = new btRaycastVehicle(mTuning, mbtCar, mVehicleRaycaster);
@@ -201,8 +206,11 @@ void Vehicle::initializePhysics(int cargo, int passengers, float yawangle)
     }
 
     mTriggerNode = new btGhostObject();
-    btCollisionShape *shape = new btBoxShape(btVector3(10, 9, 25));
+    btCollisionShape *shape = new btBoxShape(btVector3(4, 1, 4));
     mTriggerNode->setCollisionShape(shape);
+    btVector3 offsetOrigin = chassisTransform.getOrigin();
+    offsetOrigin += btVector3(0, 10, 0) * GameState::ogreVecToBullet(getUp());
+    chassisTransform.setOrigin(offsetOrigin);
     mTriggerNode->setWorldTransform(chassisTransform);
     mTriggerNode->setCollisionFlags(mTriggerNode->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
     getGameState()->mDynamicsWorld->addCollisionObject(mTriggerNode);
@@ -213,6 +221,7 @@ void Vehicle::initializeMaterial(float fyawangle)
     mEntity = mSceneManager->createEntity(mstrName, "car_bmwe46.mesh");
     mNode->attachObject(mEntity);
     mEntity->setCastShadows(true);
+
 
     Ogre::Radian yawangle = Ogre::Angle(fyawangle);
 
@@ -342,7 +351,11 @@ void Vehicle::update(float milliseconds)
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::updateTrigger()
 {
-    mTriggerNode->setWorldTransform(mbtCar->getWorldTransform());
+    btTransform trans = mbtCar->getWorldTransform();
+    btVector3 origin = trans.getOrigin();
+    origin += btVector3(0, 10, 0) * GameState::ogreVecToBullet(getUp());
+    trans.setOrigin(origin);
+    mTriggerNode->setWorldTransform(trans);
     int numOverlapping = mTriggerNode->getNumOverlappingObjects();
 
     /* need to determine at the end of looping through all of the objects that the Vehicle is not
@@ -352,14 +365,14 @@ void Vehicle::updateTrigger()
     {
         btRigidBody *body = dynamic_cast<btRigidBody*>(mTriggerNode->getOverlappingObject(iii));
         void *object = body->getUserPointer();
+        if (body->getUserPointerType() == ROAD)
+        {
+            inRoad = true;
+            Road *road = static_cast<Road*>(object);
+            mOccupiedRoadName = road->getName();
+        }
         if (object != this)
         {
-            if (body->getUserPointerType() == ROAD)
-            {
-                inRoad = true;
-                Road *road = static_cast<Road*>(object);
-                mOccupiedRoadName = road->getName();
-            }
             if (body->getUserPointerType() == VEHICLE)
             {
                 Vehicle *vehicle = static_cast<Vehicle*>(object);
@@ -367,10 +380,10 @@ void Vehicle::updateTrigger()
             }
         }
     }
-    if (!inRoad)
+    /*if (!inRoad)
     {
         mOccupiedRoadName = "null";
-    }
+    }*/
 }
 //-------------------------------------------------------------------------------------------------------
 bool Vehicle::checkForVehicleAhead()

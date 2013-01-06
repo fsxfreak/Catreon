@@ -22,7 +22,7 @@ TODO
 
 #include <objects\Road.hpp>
 
-const btVector3 TRIGGER_SIZE(10, 10, 10);
+const btVector3 TRIGGER_SIZE(10, 11, 10);
 long int Road::mRoadsCreated = 0;
 //-------------------------------------------------------------------------------------------------------
 Road::Road() : mPosition(Ogre::Vector3(0, 0, 0)), mNextRoad(nullptr), occupied(false), cost(1)
@@ -67,8 +67,11 @@ void Road::initOther()
     btTransform trans;
     updateTriggerPosition(trans);
     btCollisionShape *shape = new btBoxShape(TRIGGER_SIZE);
+    getGameState()->mCollisionShapes.push_back(shape);
 
-    BtOgMotionState *motionState = new BtOgMotionState(trans, nullptr);
+    mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(mName);
+
+    BtOgMotionState *motionState = new BtOgMotionState(trans, mNode);
     btRigidBody::btRigidBodyConstructionInfo conInfo(0, motionState, shape, btVector3(0, 0, 0));
     mTriggerNode = new btRigidBody(conInfo);
 
@@ -76,6 +79,17 @@ void Road::initOther()
     mTriggerNode->setUserPointer(this, ROAD);
 
     getGameState()->mDynamicsWorld->addRigidBody(mTriggerNode);
+
+    /*mTriggerNode = new btGhostObject();
+    btCollisionShape *shape = new btBoxShape(TRIGGER_SIZE);
+    mTriggerNode->setCollisionShape(shape);
+    btTransform transform;
+    updateTriggerPosition(transform);
+    mTriggerNode->setWorldTransform(transform);
+    mTriggerNode->setCollisionFlags(mTriggerNode->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+    mTriggerNode->setUserPointer(this, ROAD);
+    getGameState()->mDynamicsWorld->addCollisionObject(mTriggerNode);*/
+
 }
 //-------------------------------------------------------------------------------------------------------
 void Road::replaceNextRoad(Road *nextRoad)
@@ -119,7 +133,10 @@ void Road::update()
     for (int iii = 0; iii < numOverlapping; ++iii)
     {
         btRigidBody *body = dynamic_cast<btRigidBody*>(mTriggerNode->getOverlappingObject(iii));
-        Vehicle *vehicle = static_cast<Vehicle*>(body->getUserPointer());
-        //vehicle->inRoad(mName);
+        if (body->getUserPointerType() == VEHICLE)
+        {
+            Vehicle *vehicle = static_cast<Vehicle*>(body->getUserPointer());
+            vehicle->inRoad(mName);
+        }
     }*/
 }

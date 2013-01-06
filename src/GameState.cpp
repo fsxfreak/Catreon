@@ -239,7 +239,7 @@ void GameState::createScene()
     mDynamicsWorld->addRigidBody(boxbody);
     mRigidBodies.push_back(boxbody);
 
-    Ogre::Vector3 pos(-150, 10, 0);
+    Ogre::Vector3 pos(-150, 15, 0);
     Road *nextRoad = new Road(pos);
     mRoads.push_back(nextRoad);
     for (int iii = 0; iii < 20; ++iii)

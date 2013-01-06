@@ -14,6 +14,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include "framework\AdvancedOgreFramework.hpp"
 #include "GameState.hpp"
+#include <objects\Road.hpp>
 
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
@@ -102,6 +103,7 @@ public:
 
     Ogre::Vector3 getPosition();
     Ogre::Vector3 getDirection();
+    Ogre::Vector3 getUp();
 
     bool isMoving();
     bool isHealthy();
