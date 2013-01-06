@@ -76,7 +76,7 @@ void GameState::enter()
     mDynamicsWorld = new btDiscreteDynamicsWorld(mDispatcher, mBroadphase, mSolver, mCollisionConfiguration);
 
     mGhostCallback = new btGhostPairCallback();
-    mDynamicsWorld->getPairCache()->setInternalGhostPairCallback(mGhostCallback);
+    mDynamicsWorld->getBroadphase()->getOverlappingPairCache()->setInternalGhostPairCallback(mGhostCallback);
 
     mDynamicsWorld->setGravity(btVector3(0, -100, 0));
     mDynamicsWorld->setForceUpdateAllAabbs(false);
@@ -126,7 +126,8 @@ void GameState::exit()
     mSceneMgr->destroyQuery(mRaySceneQuery);
     
     mDrivers.clear();
-    
+    mRoads.clear();
+
     for (auto it = mBalls.begin(); it != mBalls.end(); ++it)
     {
         delete *it;
@@ -238,15 +239,16 @@ void GameState::createScene()
     mDynamicsWorld->addRigidBody(boxbody);
     mRigidBodies.push_back(boxbody);
 
-    /*Ogre::Vector3 pos(5, 30, 10);
+    Ogre::Vector3 pos(-150, 10, 0);
     Road *nextRoad = new Road(pos);
+    mRoads.push_back(nextRoad);
     for (int iii = 0; iii < 20; ++iii)
     {
-        pos.z += 30;
-        pos.x += 2 * iii * iii;
+        pos.x += 30;
         Road *road = new Road(pos, nextRoad);
+        mRoads.push_back(road);
         nextRoad = road;
-    }*/
+    }
 }
 //-------------------------------------------------------------------------------------------------------
 bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
@@ -503,12 +505,13 @@ void GameState::update(double timeSinceLastFrame)
     updateSound();
     
     mTimeSinceUpdate += timeSinceLastFrame;
+    updateRoads();
     if (mTimeSinceUpdate >= 41)
     {
         mTimeSinceUpdate = 0;
         DebugWindow::get()->update();
     }
-
+    
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::buildGUI()
@@ -580,4 +583,14 @@ vec3df GameState::ogreVecToIrr(const Ogre::Vector3 &ogrevector)
 Ogre::Vector3 GameState::irrVecToOgre(const vec3df &irrvector)
 {
     return Ogre::Vector3(irrvector.X, irrvector.Y, irrvector.Z);
+}
+//-------------------------------------------------------------------------------------------------------
+void GameState::updateRoads()
+{
+    auto it = mRoads.begin();
+    auto itend = mRoads.end();
+    for (it; it != itend; ++it)
+    {
+        (*it)->update();
+    }
 }

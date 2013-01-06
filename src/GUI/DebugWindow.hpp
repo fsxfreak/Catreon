@@ -34,7 +34,7 @@ private:
     /* to group these windows in a more organized fashion in the memory
        The order of the windows is as follows:
        Game/FPSText, Game/VehicleName, Game/VehicleSpeed, Game/VehiclePosition,
-       Game/VehicleDirection */
+       Game/VehicleDirection, Game/RoadOccupied */
     std::vector<CEGUI::Window*> mWindows;
 
     float lastTimeSinceLastFrame;

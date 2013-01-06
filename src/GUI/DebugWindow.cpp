@@ -88,6 +88,7 @@ void DebugWindow::update()
         mWindows[4]->setText("Direction: " + Ogre::StringConverter::toString(GameState::round(dir.x, 2))
                                      + " " + Ogre::StringConverter::toString(GameState::round(dir.y, 2))
                                      + " " + Ogre::StringConverter::toString(GameState::round(dir.z, 2)));
+        mWindows[5]->setText("Road: " + mVehicle->mOccupiedRoadName);
     }
 }
 //-------------------------------------------------------------------------------------------------------
