@@ -56,7 +56,7 @@ private:
     btVehicleRaycaster* mVehicleRaycaster;
     btRaycastVehicle* mVehicle;
 
-    btGhostObject *mTriangleGhost;
+    btGhostObject *mTriggerNode;
 
     //state variables
     bool mbIsMoving;
@@ -72,6 +72,8 @@ private:
 
     float mDeltaTime;
     float mMillisecondsCounter; //in order to do several things like collision checking every one second
+
+    std::string mOccupiedRoadName;
 
     //in pounds
     //unsigned int mnCargo;
@@ -96,6 +98,8 @@ public:
     float getSpeed();
     void setSpeed(float fSpeed);
 
+    void inRoad(const std::string& road);
+
     Ogre::Vector3 getPosition();
     Ogre::Vector3 getDirection();
 
@@ -106,6 +110,7 @@ public:
     virtual void initializeMaterial(float yawangle = 0.0f);
 
     void update(float milliseconds);
+    void updateTrigger();
     
 };
 

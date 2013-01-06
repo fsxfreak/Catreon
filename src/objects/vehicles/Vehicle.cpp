@@ -31,7 +31,7 @@ long int Vehicle::mVehiclesCreated = 0;
 //-------------------------------------------------------------------------------------------------------
 Vehicle::Vehicle(int cargo, int passengers, Ogre::Vector3 initposition, Ogre::Vector3 initdirection) 
     : mbIsMoving(0), mbIsHealthy(1), mfTargetSpeed(0), mbtCar(nullptr), mSteeringValue(0.f), mMillisecondsCounter(0),
-      mSceneManager(getGameState()->mSceneMgr), mDynamicsWorld(getGameState()->mDynamicsWorld)
+      mSceneManager(getGameState()->mSceneMgr), mDynamicsWorld(getGameState()->mDynamicsWorld), mOccupiedRoadName("roadname")
 {
     //give a unique name to each vehicle
     std::ostringstream oss;
@@ -87,6 +87,7 @@ Vehicle::~Vehicle()
             mDynamicsWorld->removeRigidBody(body);
         }
     }
+    mDynamicsWorld->removeCollisionObject(mTriggerNode);
     delete mbtCar;
     delete mbtChassisShape;
     delete mVehicleRaycaster;
@@ -106,6 +107,11 @@ void Vehicle::setSpeed(float fSpeed)
     //The vehicle will attempt to speed up to the target speed when not obstructed
     fSpeed *= 0.447f * 10;     //convert mph into m/s (multiply by 10 for scaling)
     mfTargetSpeed = fSpeed;
+}
+//-------------------------------------------------------------------------------------------------------
+void Vehicle::inRoad(const std::string &road)
+{
+    mOccupiedRoadName = road;
 }
 //-------------------------------------------------------------------------------------------------------
 Ogre::Vector3 Vehicle::getPosition()
@@ -156,6 +162,7 @@ void Vehicle::initializePhysics(int cargo, int passengers, float yawangle)
     mbtCar = new btRigidBody(conInfo);
 
     mbtCar->setActivationState(DISABLE_DEACTIVATION);
+    mbtCar->setUserPointer(this, VEHICLE);
 
     mVehicleRaycaster = new btDefaultVehicleRaycaster(mDynamicsWorld);
     mVehicle = new btRaycastVehicle(mTuning, mbtCar, mVehicleRaycaster);
@@ -192,6 +199,13 @@ void Vehicle::initializePhysics(int cargo, int passengers, float yawangle)
         wheelinfo.m_frictionSlip = 0.8f;
         wheelinfo.m_rollInfluence = 0.1f;
     }
+
+    mTriggerNode = new btGhostObject();
+    btCollisionShape *shape = new btBoxShape(btVector3(10, 9, 25));
+    mTriggerNode->setCollisionShape(shape);
+    mTriggerNode->setWorldTransform(chassisTransform);
+    mTriggerNode->setCollisionFlags(mTriggerNode->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+    getGameState()->mDynamicsWorld->addCollisionObject(mTriggerNode);
 }
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::initializeMaterial(float fyawangle)
@@ -311,6 +325,7 @@ void Vehicle::update(float milliseconds)
         mWheelNodes[iii]->setOrientation(rotation.w(), rotation.x(), rotation.y(), rotation.z());
     }
 
+    updateTrigger();
     maintainSpeed();
     if (mMillisecondsCounter > 500)    //check this only about every half second
     {
@@ -320,8 +335,42 @@ void Vehicle::update(float milliseconds)
         }
         mMillisecondsCounter = 0;
     }
+    
 
     mVehicle->updateVehicle((int)milliseconds / 1000);
+}
+//-------------------------------------------------------------------------------------------------------
+void Vehicle::updateTrigger()
+{
+    mTriggerNode->setWorldTransform(mbtCar->getWorldTransform());
+    int numOverlapping = mTriggerNode->getNumOverlappingObjects();
+
+    /* need to determine at the end of looping through all of the objects that the Vehicle is not
+       currently in a road */
+    bool inRoad = false;
+    for (int iii = 0; iii < numOverlapping; ++iii)
+    {
+        btRigidBody *body = dynamic_cast<btRigidBody*>(mTriggerNode->getOverlappingObject(iii));
+        void *object = body->getUserPointer();
+        if (object != this)
+        {
+            if (body->getUserPointerType() == ROAD)
+            {
+                inRoad = true;
+                Road *road = static_cast<Road*>(object);
+                mOccupiedRoadName = road->getName();
+            }
+            if (body->getUserPointerType() == VEHICLE)
+            {
+                Vehicle *vehicle = static_cast<Vehicle*>(object);
+                isFollowingClosely = true;
+            }
+        }
+    }
+    if (!inRoad)
+    {
+        mOccupiedRoadName = "null";
+    }
 }
 //-------------------------------------------------------------------------------------------------------
 bool Vehicle::checkForVehicleAhead()

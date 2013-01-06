@@ -11,8 +11,12 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #define ROAD_HPP
 
 #include "stdafx.h"
+
+#include <string>
+
 #include <BulletCollision\CollisionDispatch\btGhostObject.h>
 #include <GameState.hpp>
+#include <BtOgMotionState.h>
 
 /*
     Need to intialize the Roads in backwards order in order to obtain a pointer
@@ -24,17 +28,21 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 class Road
 {
 private:
+    static long int mRoadsCreated;
+    std::string mName;
+
     Road *mNextRoad;
     Ogre::Vector3 mPosition;
     Ogre::Vector3 mDirection;
 
     bool occupied;
+    unsigned int cost;
 
     Road(const Road& road);
 
-    btGhostObject *mTriggerNode; //to check if a vehicle is close enough to the center of the node
+    btRigidBody *mTriggerNode; //to check if a vehicle is close enough to the center of the node
     void updateTriggerPosition(btTransform& trans);
-    void initPhysics();
+    void initOther();
 public:
     Road();
     Road(const Ogre::Vector3 &pos);
@@ -44,6 +52,7 @@ public:
 
     void replaceNextRoad(Road *nextRoad);
     Road* getNextRoad();
+    std::string getName();
     Ogre::Vector3& getPosition();
 
     void update();
