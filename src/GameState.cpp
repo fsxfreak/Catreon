@@ -71,7 +71,7 @@ void GameState::enter()
     mDispatcher = new btCollisionDispatcher(mCollisionConfiguration);
     btVector3 worldMin(-1000, -1000, -1000);
     btVector3 worldMax(1000, 1000, 1000);
-    mBroadphase = new btAxisSweep3(worldMin, worldMax);
+    mBroadphase = new btDbvtBroadphase();
     mSolver = new btSequentialImpulseConstraintSolver();
     mDynamicsWorld = new btDiscreteDynamicsWorld(mDispatcher, mBroadphase, mSolver, mCollisionConfiguration);
 
@@ -79,7 +79,7 @@ void GameState::enter()
     mDynamicsWorld->getBroadphase()->getOverlappingPairCache()->setInternalGhostPairCallback(mGhostCallback);
 
     mDynamicsWorld->setGravity(btVector3(0, -100, 0));
-    mDynamicsWorld->setForceUpdateAllAabbs(false);
+    mDynamicsWorld->setForceUpdateAllAabbs(true);
 
     Ogre::MaterialManager::getSingleton().load("DebugLines.material", "General");
     mDebugDrawer = new CDebugDraw(mSceneMgr, mDynamicsWorld);

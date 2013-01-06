@@ -64,23 +64,7 @@ void Road::initOther()
 
     ++mRoadsCreated;
 
-    btTransform trans;
-    updateTriggerPosition(trans);
-    btCollisionShape *shape = new btBoxShape(TRIGGER_SIZE);
-    getGameState()->mCollisionShapes.push_back(shape);
-
-    mNode = getGameState()->mSceneMgr->getRootSceneNode()->createChildSceneNode(mName);
-
-    BtOgMotionState *motionState = new BtOgMotionState(trans, mNode);
-    btRigidBody::btRigidBodyConstructionInfo conInfo(0, motionState, shape, btVector3(0, 0, 0));
-    mTriggerNode = new btRigidBody(conInfo);
-
-    mTriggerNode->setCollisionFlags(mTriggerNode->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
-    mTriggerNode->setUserPointer(this, ROAD);
-
-    getGameState()->mDynamicsWorld->addRigidBody(mTriggerNode);
-
-    /*mTriggerNode = new btGhostObject();
+    mTriggerNode = new btGhostObject();
     btCollisionShape *shape = new btBoxShape(TRIGGER_SIZE);
     mTriggerNode->setCollisionShape(shape);
     btTransform transform;
@@ -88,7 +72,7 @@ void Road::initOther()
     mTriggerNode->setWorldTransform(transform);
     mTriggerNode->setCollisionFlags(mTriggerNode->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
     mTriggerNode->setUserPointer(this, ROAD);
-    getGameState()->mDynamicsWorld->addCollisionObject(mTriggerNode);*/
+    getGameState()->mDynamicsWorld->addCollisionObject(mTriggerNode);
 
 }
 //-------------------------------------------------------------------------------------------------------
