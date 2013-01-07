@@ -41,8 +41,8 @@ void MenuState::createScene()
     CEGUI::Window *menuRoot = windowManager.loadWindowLayout("CatreonMenuState.layout");
     CEGUI::System::getSingleton().setGUISheet(menuRoot);
 
-    GUIEventSubscriber::get()->subscribe("Menu/EnterButton", ButtonTypes::PUSH_BUTTON, States::MENUSTATE, this);
-    GUIEventSubscriber::get()->subscribe("Menu/ExitButton", ButtonTypes::PUSH_BUTTON, States::MENUSTATE, this);
+    GUIEventSubscriber::get()->subscribe("Menu/EnterButton", PUSH_BUTTON, MENUSTATE, this);
+    GUIEventSubscriber::get()->subscribe("Menu/ExitButton", PUSH_BUTTON, MENUSTATE, this);
 }
 //-------------------------------------------------------------------------------------------------------
 void MenuState::exit()

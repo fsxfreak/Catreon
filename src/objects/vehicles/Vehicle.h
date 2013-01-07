@@ -27,6 +27,13 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include <GUI\DebugWindow.hpp>
 
+enum VehicleStates
+{
+    IDLE,
+    FINDING_BEGIN_NODE,
+    PATHFINDING,
+};
+
 class BtOgMotionState;
 
 class Vehicle
@@ -75,6 +82,7 @@ private:
     float mMillisecondsCounter; //in order to do several things like collision checking every one second
 
     std::string mOccupiedRoadName;
+    Road *mOccupiedRoad;
 
     //in pounds
     //unsigned int mnCargo;

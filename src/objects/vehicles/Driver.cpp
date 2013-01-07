@@ -13,6 +13,10 @@ TODO
 -Find a way to "know" where the car is in the city
 -The driver drives the vehicle
 -The vehicle doesn't have the driver
+
+TODO now
+-Use Road information (occupied, next road, cost, etc) 
+to pathfind to next road
 ********************************************************/
 
 #include "stdafx.h"

@@ -322,17 +322,13 @@ bool GameState::mouseMoved(const OIS::MouseEvent &mouseEvent)
         mCamera->yaw(Ogre::Degree(mouseEvent.state.X.rel * -0.18f));
 
         Ogre::Degree oldpitch = mCamera->getOrientation().getPitch();
-        Ogre::Degree newpitch = (Ogre::Degree(mouseEvent.state.Y.rel * -0.18f)) + oldpitch;
+        Ogre::Radian newpitch = Ogre::Degree(mouseEvent.state.Y.rel * -0.18f) + oldpitch;
 
-        if (newpitch < Ogre::Degree(88.0f) && newpitch > Ogre::Degree(-88.0f))
+        if (newpitch < Ogre::Radian(Ogre::Math::PI/2 - 0.2) || newpitch > Ogre::Radian(Ogre::Math::PI/2 + 0.2))
         {
             mCamera->pitch(Ogre::Degree(mouseEvent.state.Y.rel * -0.18f));
         }
 
-        if (Ogre::Degree(mCamera->getOrientation().getPitch()) < Ogre::Degree(-90))
-            mCamera->pitch(Ogre::Degree(1));
-        else if (Ogre::Degree(mCamera->getOrientation().getPitch()) > Ogre::Degree(90))
-            mCamera->pitch(Ogre::Degree(-1));
     }
 
     return true;

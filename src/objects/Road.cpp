@@ -25,14 +25,14 @@ TODO
 const btVector3 TRIGGER_SIZE(10, 11, 10);
 long int Road::mRoadsCreated = 0;
 //-------------------------------------------------------------------------------------------------------
-Road::Road() : mPosition(Ogre::Vector3(0, 0, 0)), mNextRoad(nullptr), occupied(false), cost(1)
+Road::Road() : mPosition(Ogre::Vector3(0, 0, 0)), mNextRoad(nullptr), mOccupied(false), mCost(1)
 {
     mDirection = Ogre::Vector3::UNIT_Z;
 
     initOther();
 }
 //-------------------------------------------------------------------------------------------------------
-Road::Road(const Ogre::Vector3 &pos) : mPosition(pos), mNextRoad(nullptr), occupied(false), cost(1)
+Road::Road(const Ogre::Vector3 &pos) : mPosition(pos), mNextRoad(nullptr), mOccupied(false), mCost(1)
 {
     mDirection = Ogre::Vector3::UNIT_Z;
 
@@ -40,10 +40,10 @@ Road::Road(const Ogre::Vector3 &pos) : mPosition(pos), mNextRoad(nullptr), occup
 }
 //-------------------------------------------------------------------------------------------------------
 Road::Road(const Ogre::Vector3 &pos, Road *nextRoad) : mPosition(pos), mNextRoad(nextRoad)
-                                                     , occupied(false)
+                                                     , mOccupied(false)
 {
     mDirection = nextRoad->getPosition() - mPosition;
-    cost = mDirection.squaredLength();
+    mCost = mDirection.squaredLength();
     mDirection.normalise();
 
     initOther();
@@ -80,7 +80,7 @@ void Road::replaceNextRoad(Road *nextRoad)
 {
     mNextRoad = nextRoad;
     mDirection = nextRoad->getPosition() - mPosition;
-    cost = mDirection.squaredLength();
+    mCost = mDirection.squaredLength();
     mDirection.normalise();
 
     btTransform transform;
@@ -96,6 +96,11 @@ void Road::updateTriggerPosition(btTransform& trans)
     trans.setRotation(btQuaternion(rotation.x, rotation.y, rotation.z, rotation.w));
 }
 //-------------------------------------------------------------------------------------------------------
+Ogre::Vector3& Road::getPosition()
+{
+    return mPosition;
+}
+//-------------------------------------------------------------------------------------------------------
 Road* Road::getNextRoad()
 {
     return mNextRoad;
@@ -106,9 +111,14 @@ std::string Road::getName()
     return mName;
 }
 //-------------------------------------------------------------------------------------------------------
-Ogre::Vector3& Road::getPosition()
+unsigned int Road::getCost()
 {
-    return mPosition;
+    return mCost;
+}
+//-------------------------------------------------------------------------------------------------------
+void Road::occupied(bool occupied)
+{
+    mOccupied = occupied;
 }
 //-------------------------------------------------------------------------------------------------------
 void Road::update()
@@ -123,4 +133,6 @@ void Road::update()
             vehicle->inRoad(mName);
         }
     }*/
+
+    //This function might not be needed, because Vehicle updates Road
 }

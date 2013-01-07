@@ -31,7 +31,8 @@ long int Vehicle::mVehiclesCreated = 0;
 //-------------------------------------------------------------------------------------------------------
 Vehicle::Vehicle(int cargo, int passengers, Ogre::Vector3 initposition, Ogre::Vector3 initdirection) 
     : mbIsMoving(0), mbIsHealthy(1), mfTargetSpeed(0), mbtCar(nullptr), mSteeringValue(0.f), mMillisecondsCounter(0),
-      mSceneManager(getGameState()->mSceneMgr), mDynamicsWorld(getGameState()->mDynamicsWorld), mOccupiedRoadName("roadname")
+      mSceneManager(getGameState()->mSceneMgr), mDynamicsWorld(getGameState()->mDynamicsWorld), mOccupiedRoadName("roadname"),
+      mOccupiedRoad(nullptr)
 {
     //give a unique name to each vehicle
     std::ostringstream oss;
@@ -375,17 +376,19 @@ void Vehicle::updateTrigger()
                 inRoad = true;
                 Road *road = static_cast<Road*>(object);
                 mOccupiedRoadName = road->getName();
-            }
-            if (body->getUserPointerType() == VEHICLE)
-            {
-                Vehicle *vehicle = static_cast<Vehicle*>(object);
-                isFollowingClosely = true;
+                road->occupied(true);
+                mOccupiedRoad = road;
             }
         }
     }
     if (!inRoad)
     {
         mOccupiedRoadName = "Not inside";
+        if (mOccupiedRoad)
+        {
+            mOccupiedRoad->occupied(false);
+            mOccupiedRoad = nullptr;
+        }
     }
 }
 #pragma optimize("", on)

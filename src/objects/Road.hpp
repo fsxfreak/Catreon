@@ -35,8 +35,8 @@ private:
     Ogre::Vector3 mPosition;
     Ogre::Vector3 mDirection;
 
-    bool occupied;
-    unsigned int cost;
+    bool mOccupied;
+    unsigned int mCost;
 
     Road(const Road& road);
 
@@ -51,9 +51,15 @@ public:
     ~Road();
 
     void replaceNextRoad(Road *nextRoad);
+
+    Ogre::Vector3& getPosition();
     Road* getNextRoad();
     std::string getName();
-    Ogre::Vector3& getPosition();
+    unsigned int getCost();
+    
+    void occupied(bool occupied);
+
+    bool isOccupied();
 
     void update();
 };
