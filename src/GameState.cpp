@@ -179,6 +179,7 @@ void GameState::createScene()
     sceneNode->scale(6, 1, 6);
     sceneNode->translate(0, 5, 0);
     Ogre::Node::ChildNodeIterator iterator = sceneNode->getChildIterator();
+    //Ogre::SceneNode *sceneNode->get
 
     Ogre::Light *directional = mSceneMgr->createLight("directionallight");
     directional->setType(Ogre::Light::LT_DIRECTIONAL);

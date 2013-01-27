@@ -497,6 +497,14 @@ void DotSceneLoader::processNode(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode 
         pNode->setScale(parseVector3(pElement));
         pNode->setInitialState();
     }
+
+    //Get the next node referred to by the locator, used for generating Road nodes
+    pElement = XMLNode->first_node("next");
+    if (pElement)
+    {
+        const Ogre::String nextName(parseNext(pElement));
+        mAttachNode->setUserAny(Ogre::Any(nextName));
+    }
  
     // Process lookTarget (?)
     pElement = XMLNode->first_node("lookTarget");
@@ -983,6 +991,11 @@ Ogre::ColourValue DotSceneLoader::parseColour(rapidxml::xml_node<>* XMLNode)
         Ogre::StringConverter::parseReal(XMLNode->first_attribute("b")->value()),
         XMLNode->first_attribute("a") != NULL ? Ogre::StringConverter::parseReal(XMLNode->first_attribute("a")->value()) : 1
     );
+}
+
+Ogre::String DotSceneLoader::parseNext(rapidxml::xml_node<>* XMLNode)
+{
+    return Ogre::String(XMLNode->first_attribute("name")->value());
 }
  
 Ogre::String DotSceneLoader::getProperty(const Ogre::String &ndNm, const Ogre::String &prop)
