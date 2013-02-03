@@ -28,8 +28,8 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 class Road
 {
 private:
-    static long int mRoadsCreated;
     std::string mName;
+    std::string mNameNextRoad;
 
     Road *mNextRoad;
     Ogre::Vector3 mPosition;
@@ -42,14 +42,15 @@ private:
 
     btGhostObject *mTriggerNode; //to check if a vehicle is close enough to the center of the node
     void updateTriggerPosition(btTransform& trans);
-    void initOther();
+    void initOther(const Ogre::SceneNode *node);
 public:
-    Road();
-    Road(const Ogre::Vector3 &pos);
-    Road(const Ogre::Vector3 &pos, Road *nextRoad);
+    Road(const Ogre::SceneNode *node);
 
     ~Road();
 
+    //called after all Road nodes have been generated, so we can build links to next nodes
+    //requires the name of the next road to be set
+    void obtainNextRoad();
     void replaceNextRoad(Road *nextRoad);
 
     Ogre::Vector3& getPosition();

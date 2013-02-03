@@ -502,8 +502,8 @@ void DotSceneLoader::processNode(rapidxml::xml_node<>* XMLNode, Ogre::SceneNode 
     pElement = XMLNode->first_node("next");
     if (pElement)
     {
-        const Ogre::String nextName(parseNext(pElement));
-        mAttachNode->setUserAny(Ogre::Any(nextName));
+        std::string nextName(parseNext(pElement));
+        pNode->setUserAny(Ogre::Any(nextName));
     }
  
     // Process lookTarget (?)

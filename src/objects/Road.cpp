@@ -22,47 +22,30 @@ TODO
 
 #include <objects\Road.hpp>
 
-const btVector3 TRIGGER_SIZE(10, 11, 10);
-long int Road::mRoadsCreated = 0;
+const btVector3 TRIGGER_SIZE(10, 20, 10);
 //-------------------------------------------------------------------------------------------------------
-Road::Road() : mPosition(Ogre::Vector3(0, 0, 0)), mNextRoad(nullptr), mOccupied(false), mCost(1)
+Road::Road(const Ogre::SceneNode* node) : mNextRoad(nullptr), mOccupied(false), mCost(0)
+                                        , mTriggerNode(nullptr)
 {
     mDirection = Ogre::Vector3::UNIT_Z;
-
-    initOther();
-}
-//-------------------------------------------------------------------------------------------------------
-Road::Road(const Ogre::Vector3 &pos) : mPosition(pos), mNextRoad(nullptr), mOccupied(false), mCost(1)
-{
-    mDirection = Ogre::Vector3::UNIT_Z;
-
-    initOther();
-}
-//-------------------------------------------------------------------------------------------------------
-Road::Road(const Ogre::Vector3 &pos, Road *nextRoad) : mPosition(pos), mNextRoad(nextRoad)
-                                                     , mOccupied(false)
-{
-    mDirection = nextRoad->getPosition() - mPosition;
-    mCost = mDirection.squaredLength();
-    mDirection.normalise();
-
-    initOther();
+    mPosition = node->getPosition();
+    if (!node->getUserAny().isEmpty())
+    {
+        mNameNextRoad = Ogre::any_cast<std::string>(node->getUserAny());
+        initOther(node);
+    }
 }
 //-------------------------------------------------------------------------------------------------------
 Road::~Road()
 {
     //mNextRoad is deleted with whoever created it
+    mNextRoad = nullptr;
     delete mTriggerNode;
 }
 //-------------------------------------------------------------------------------------------------------
-void Road::initOther()
+void Road::initOther(const Ogre::SceneNode *node)
 {
-    std::ostringstream oss;
-    oss << mRoadsCreated;
-    mName = "Road_";
-    mName += oss.str();
-
-    ++mRoadsCreated;
+    mName = node->getName();
 
     mTriggerNode = new btGhostObject();
     btCollisionShape *shape = new btBoxShape(TRIGGER_SIZE);
@@ -74,6 +57,26 @@ void Road::initOther()
     mTriggerNode->setUserPointer(this, ROAD);
     getGameState()->mDynamicsWorld->addCollisionObject(mTriggerNode);
 
+}
+//-------------------------------------------------------------------------------------------------------
+void Road::obtainNextRoad()
+{
+    if (mNameNextRoad == std::string("nullLocator"))
+    {
+        mNextRoad = nullptr;
+        return;
+    }
+
+    std::vector<Road*> &roadVector = getGameState()->mRoads;
+    auto it = roadVector.begin();
+    auto itend = roadVector.end();
+    for (it; it != itend; ++it)
+    {
+        if ((*it)->getName() == mNameNextRoad)
+        {
+            replaceNextRoad((*it));
+        }
+    }
 }
 //-------------------------------------------------------------------------------------------------------
 void Road::replaceNextRoad(Road *nextRoad)

@@ -176,10 +176,27 @@ void GameState::createScene()
     Ogre::SceneNode *sceneNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
     DotSceneLoader loader;
     loader.parseDotScene("catreoncity.scene", "General", mSceneMgr, sceneNode);
-    sceneNode->scale(6, 1, 6);
     sceneNode->translate(0, 5, 0);
-    Ogre::Node::ChildNodeIterator iterator = sceneNode->getChildIterator();
-    //Ogre::SceneNode *sceneNode->get
+    Ogre::SceneNode::ChildNodeIterator it = sceneNode->getChildIterator();
+    //locator is the prefix of the objects denoting Road nodes, we want to use this to compare to get the nodes
+    std::string nodeString = "locator";
+    while (it.hasMoreElements()) 
+    {
+        Ogre::SceneNode *node = dynamic_cast<Ogre::SceneNode*>(it.getNext());
+        //std::string::npos denotes "locator" not found in the string
+        if (node->getName().find(nodeString, 0) != std::string::npos)
+        {
+            Road *road = new Road(node);
+            mRoads.push_back(road); 
+        }
+
+    }
+    for (auto it = mRoads.begin(); it != mRoads.end(); ++it)
+    {
+        //this loop is O(n^2), ouch
+        //need my own file format for nodes in the future
+        (*it)->obtainNextRoad();
+    }
 
     Ogre::Light *directional = mSceneMgr->createLight("directionallight");
     directional->setType(Ogre::Light::LT_DIRECTIONAL);
@@ -240,7 +257,7 @@ void GameState::createScene()
     mDynamicsWorld->addRigidBody(boxbody);
     mRigidBodies.push_back(boxbody);
 
-    Ogre::Vector3 pos(-150, 15, 0);
+    /*Ogre::Vector3 pos(-150, 15, 0);
     Road *nextRoad = new Road(pos);
     mRoads.push_back(nextRoad);
     for (int iii = 0; iii < 20; ++iii)
@@ -249,7 +266,7 @@ void GameState::createScene()
         Road *road = new Road(pos, nextRoad);
         mRoads.push_back(road);
         nextRoad = road;
-    }
+    }*/
 }
 //-------------------------------------------------------------------------------------------------------
 bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
