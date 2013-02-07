@@ -23,11 +23,10 @@ to pathfind to next road
 #include "objects\vehicles\Driver.h"
 
 //-------------------------------------------------------------------------------------------------------
-Driver::Driver(int nSkill, int nRiskTaker, 
-                int nCargo, int nPassengers, Ogre::Vector3 position) 
+Driver::Driver(int nCargo, int nPassengers, const Ogre::Vector3 &position, const Ogre::Vector3 &direction) 
                 : mstrGoal(""), mnNervousness(0), bIsFollowingClose(0)
 {
-    pVehicle = new Vehicle(nCargo, nPassengers, position);
+    pVehicle = new Vehicle(nCargo, nPassengers, position, direction);
     mnSkill = rand() % 100 + 1;
     mnRiskTaker = rand() % 100 + 1;
 }
@@ -35,7 +34,13 @@ Driver::Driver(int nSkill, int nRiskTaker,
 //random, default constructor
 Driver::Driver() : mnNervousness(0), bIsFollowingClose(0)
 {
-    pVehicle = new Vehicle(150, 1);
+    int x = (rand() % 1000) - 500;
+    int z = (rand() % 1000) - 500;
+    int yawAngle  = (rand () % 720) - 360;
+
+    Ogre::Vector3 initPosition = Ogre::Vector3(x, 30, z);
+
+    pVehicle = new Vehicle(150, 1, initPosition, Ogre::Vector3(0, 0, 0), yawAngle);
     mnSkill = rand() % 100 + 1;
     mnRiskTaker = rand() % 100 + 1;
 }

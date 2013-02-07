@@ -29,7 +29,7 @@ long int Vehicle::mVehiclesCreated = 0;
 //btCollisionShape *Vehicle::mbtWheelShape = new btCylinderShapeX(btVector3(1.02, 4.07, 3.88));
 //yay magic numbers
 //-------------------------------------------------------------------------------------------------------
-Vehicle::Vehicle(int cargo, int passengers, Ogre::Vector3 initposition, Ogre::Vector3 initdirection) 
+Vehicle::Vehicle(int cargo, int passengers, const Ogre::Vector3 &initposition, const Ogre::Vector3 &initdirection, int yawAngle) 
     : mbIsMoving(0), mbIsHealthy(1), mfTargetSpeed(0), mbtCar(nullptr), mSteeringValue(0.f), mMillisecondsCounter(0),
       mSceneManager(getGameState()->mSceneMgr), mDynamicsWorld(getGameState()->mDynamicsWorld), mOccupiedRoadName("roadname"),
       mOccupiedRoad(nullptr)
@@ -42,16 +42,17 @@ Vehicle::Vehicle(int cargo, int passengers, Ogre::Vector3 initposition, Ogre::Ve
 
     //++mVehiclesCreated;   //iterate in initializeMaterial() instead
     
-    int x = (rand() % 1000) - 500;
-    int z = (rand() % 1000) - 500;
-    int yawangle  = (rand () % 720) - 360;
+    if (yawAngle == 999) 
+    {
+        Ogre::Radian radangle = Ogre::Vector3(0, 0, 0).angleBetween(initdirection);
+        yawAngle = radangle.valueDegrees();
+    }
 
-    initposition = Ogre::Vector3(x, 30, z);
     mNode = mSceneManager->getRootSceneNode()->createChildSceneNode(mstrName, initposition);
-    mNode->yaw(Ogre::Angle(yawangle));
+    mNode->yaw(Ogre::Angle(yawAngle));
 
-    initializeMaterial(yawangle);
-    initializePhysics(cargo, passengers, yawangle);
+    initializeMaterial(yawAngle);
+    initializePhysics(cargo, passengers, yawAngle);
 }
 //-------------------------------------------------------------------------------------------------------
 Vehicle::~Vehicle()

@@ -22,13 +22,13 @@ TODO
 
 #include <objects\Road.hpp>
 
-const btVector3 TRIGGER_SIZE(10, 20, 10);
+const btVector3 TRIGGER_SIZE(10, 5, 10);
 //-------------------------------------------------------------------------------------------------------
 Road::Road(const Ogre::SceneNode* node) : mNextRoad(nullptr), mOccupied(false), mCost(0)
                                         , mTriggerNode(nullptr)
 {
     mDirection = Ogre::Vector3::UNIT_Z;
-    mPosition = node->getPosition();
+    mPosition = node->getPosition() + Ogre::Vector3(0, 15, 0);
     if (!node->getUserAny().isEmpty())
     {
         mNameNextRoad = Ogre::any_cast<std::string>(node->getUserAny());

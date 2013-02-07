@@ -167,6 +167,9 @@ public:
     //GUI
     float                                   mTimeSinceUpdate;
     std::vector<Road*>                      mRoads;
+
+    btVector3                               mOrigin;
+    btVector3                               mDirection;
 };
 
 //just a little of what I like to call function typedef

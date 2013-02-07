@@ -293,7 +293,29 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
 
     if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_F))    //create Drivers and their vehicles
     {
-        Driver *driver = new Driver();
+        //btVector3 origin = ogreVecToBullet(mCamera->getPosition());
+        //btVector3 direction = ogreVecToBullet(mCamera->getDirection());
+        btVector3 origin = btVector3(100, 300, 100);
+        btVector3 direction = btVector3(0, -300, 0);
+
+        mOrigin = origin;
+        mDirection = direction;
+
+        btCollisionWorld::ClosestRayResultCallback rayQuery(origin, direction);
+        mDynamicsWorld->rayTest(origin, direction, rayQuery);
+
+        mDebugDrawer->drawRay(origin, direction);
+
+        Ogre::Vector3 hitPosition(0, 0, 0);
+
+        if (rayQuery.hasHit())
+        {
+            hitPosition = bulletVecToOgre(rayQuery.m_hitPointWorld);
+        }
+
+        Ogre::Vector3 dir = mCamera->getDirection();
+        dir.y = 0;
+        Driver *driver = new Driver(150, 1, hitPosition, dir);
         std::shared_ptr<Driver> driverPtr(driver);
         mDrivers.push_back(driverPtr);
     }
@@ -542,6 +564,8 @@ void GameState::buildGUI()
 //-------------------------------------------------------------------------------------------------------
 void GameState::updatePhysics()
 {
+    mDebugDrawer->drawRay(mOrigin, mDirection);
+
     if (mbBackslashDown)
     {
         mDebugDrawer->Update();

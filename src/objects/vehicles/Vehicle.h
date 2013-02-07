@@ -100,8 +100,9 @@ private:
     bool checkForVehicleAhead();
     void maintainSpeed();
 public:
-    Vehicle(int cargo, int passengers, Ogre::Vector3 initposition = Ogre::Vector3(0, 30, 0),
-                                       Ogre::Vector3 initdirection = Ogre::Vector3(0, 0, 0));
+    Vehicle(int cargo, int passengers, const Ogre::Vector3 &initposition = Ogre::Vector3(0, 100, 0),
+                                       const Ogre::Vector3 &initdirection = Ogre::Vector3(0, 0, 0),
+                                       int yawAngle = 999);
     ~Vehicle();
 
     float getSpeed();
