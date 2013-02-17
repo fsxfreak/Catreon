@@ -29,22 +29,31 @@ long int Vehicle::mVehiclesCreated = 0;
 //btCollisionShape *Vehicle::mbtWheelShape = new btCylinderShapeX(btVector3(1.02, 4.07, 3.88));
 //yay magic numbers
 //-------------------------------------------------------------------------------------------------------
-Vehicle::Vehicle(int cargo, int passengers, const Ogre::Vector3 &initposition, Ogre::Radian yawAngle) 
-    : mbIsMoving(0), mbIsHealthy(1), mfTargetSpeed(0), mbtCar(nullptr), mSteeringValue(0.f), mMillisecondsCounter(0),
+Vehicle::Vehicle(int cargo, int passengers, const Ogre::Vector3 &initposition, const Ogre::Vector3 &initdirection) 
+    : mbIsHealthy(1), mfTargetSpeed(0), mbtCar(nullptr), mSteeringValue(0.f), mMillisecondsCounter(0),
       mSceneManager(getGameState()->mSceneMgr), mDynamicsWorld(getGameState()->mDynamicsWorld), mOccupiedRoadName("roadname"),
       mOccupiedRoad(nullptr)
 {
-    //give a unique name to each vehicle
-    std::ostringstream oss;
-    oss << mVehiclesCreated;
-    mstrName = "Vehicle_";
-    mstrName += oss.str();
+    initializePreliminaries();
 
     mNode = mSceneManager->getRootSceneNode()->createChildSceneNode(mstrName, initposition);
-    mNode->yaw(yawAngle);
+    mNode->lookAt(initdirection, Ogre::Node::TransformSpace::TS_WORLD);
 
-    initializeMaterial(yawAngle);
-    initializePhysics(cargo, passengers, yawAngle);
+    initializeMaterial();
+    initializePhysics(cargo, passengers);
+}
+//-------------------------------------------------------------------------------------------------------
+Vehicle::Vehicle(int cargo, int passengers, const Ogre::Vector3 &initposition, const Ogre::Quaternion &initquat) 
+{
+    initializePreliminaries();
+
+    mNode = mSceneManager->getRootSceneNode()->createChildSceneNode(mstrName, initposition);
+    //Turn the Vehicle so that it faces the same direction as the camera.
+    Ogre::Quaternion quat = Ogre::Quaternion(0, 0, 1, 0) * Ogre::Quaternion(initquat.w, 0, initquat.y, 0);
+    mNode->setOrientation(quat);
+
+    initializeMaterial();
+    initializePhysics(cargo, passengers);
 }
 //-------------------------------------------------------------------------------------------------------
 Vehicle::~Vehicle()
@@ -124,25 +133,20 @@ Ogre::Vector3 Vehicle::getUp()
     return mNode->getOrientation() * Ogre::Vector3::UNIT_Y;
 }
 //-------------------------------------------------------------------------------------------------------
-bool Vehicle::isMoving()
-{
-    return mbIsMoving;
-}
-//-------------------------------------------------------------------------------------------------------
 bool Vehicle::isHealthy()
 {
     return mbIsHealthy;
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::initializePhysics(int cargo, int passengers, Ogre::Radian yawAngle)
+void Vehicle::initializePhysics(int cargo, int passengers)
 {  
     //main body
 //  mbtChassisShape = new btBoxShape(btVector3(8.92499, 7.48537, 24.072));
     btVector3 carPosition = GameState::ogreVecToBullet(mNode->getPosition());
     btTransform chassisTransform;
     chassisTransform.setIdentity();
-    btQuaternion rotation;
-    rotation.setEulerZYX(0, btScalar(yawAngle.valueDegrees()), 0);
+    Ogre::Quaternion quat = mNode->getOrientation();
+    btQuaternion rotation(quat.x, quat.y, quat.z, quat.w);
    
     //to adjust the center of mass
     mbtChassisShape = new btBoxShape(btVector3(8, 7, 23));
@@ -199,7 +203,7 @@ void Vehicle::initializePhysics(int cargo, int passengers, Ogre::Radian yawAngle
         wheelinfo.m_rollInfluence = 0.1f;
     }
 
-    //mTriggerNode = new btGhostObject();
+    //create a sensor above the Vehicle that will detect Roads
     mTriggerNode = new btGhostObject();
     btCollisionShape *shape = new btBoxShape(btVector3(4, 1, 4));
     mTriggerNode->setCollisionShape(shape);
@@ -212,7 +216,7 @@ void Vehicle::initializePhysics(int cargo, int passengers, Ogre::Radian yawAngle
         , btBroadphaseProxy::AllFilter & ~btBroadphaseProxy::SensorTrigger);
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::initializeMaterial(Ogre::Radian yawAngle)
+void Vehicle::initializeMaterial()
 {
     mEntity = mSceneManager->createEntity(mstrName, "car_bmwe46.mesh");
     mNode->attachObject(mEntity);
@@ -222,7 +226,7 @@ void Vehicle::initializeMaterial(Ogre::Radian yawAngle)
     auto createWheel = [&](Ogre::Entity *ent, Ogre::SceneNode *node, const Ogre::Vector3 &pos, const std::string &name) {
         ent = mSceneManager->createEntity("wheel.mesh");
         node = mSceneManager->getRootSceneNode()->createChildSceneNode(name, pos);
-        node->yaw(yawAngle);
+        node->setOrientation(mNode->getOrientation());
         node->attachObject(ent);
         mWheelNodes.push_back(node);
         mWheelEntities.push_back(ent);
@@ -256,6 +260,27 @@ void Vehicle::initializeMaterial(Ogre::Radian yawAngle)
     createWheel(br_ent, br_node, Ogre::Vector3(-9.76f, -6, -15.37f), name);
 
     ++mVehiclesCreated;
+}
+//-------------------------------------------------------------------------------------------------------
+void Vehicle::initializePreliminaries()
+{
+    //Proudness level of this "function": zero.
+    //But, have to have zero duplication of code.
+    mbIsHealthy = true;
+    mfTargetSpeed = 0.f;
+    mbtCar = nullptr;
+    mSteeringValue = 0.f;
+    mMillisecondsCounter = 0.f;
+    mSceneManager = getGameState()->mSceneMgr;
+    mDynamicsWorld = getGameState()->mDynamicsWorld;
+    mOccupiedRoadName = "roadname";
+    mOccupiedRoad = nullptr;
+
+    //give a unique name to each vehicle
+    std::ostringstream oss;
+    oss << mVehiclesCreated;
+    mstrName = "Vehicle_";
+    mstrName += oss.str();
 }
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::accelerate(float power)
@@ -337,8 +362,6 @@ void Vehicle::update(float milliseconds)
         }
         mMillisecondsCounter = 0;
     }
-    
-
     mVehicle->updateVehicle((int)milliseconds / 1000);
 }
 //-------------------------------------------------------------------------------------------------------
