@@ -101,8 +101,7 @@ private:
     void maintainSpeed();
 public:
     Vehicle(int cargo, int passengers, const Ogre::Vector3 &initposition = Ogre::Vector3(0, 100, 0),
-                                       const Ogre::Vector3 &initdirection = Ogre::Vector3(0, 0, 0),
-                                       int yawAngle = 999);
+                                       Ogre::Radian yawAngle = Ogre::Radian(0));
     ~Vehicle();
 
     float getSpeed();
@@ -117,8 +116,8 @@ public:
     bool isMoving();
     bool isHealthy();
 
-    virtual void initializePhysics(int cargo, int passengers, float yawangle = 0.0f);
-    virtual void initializeMaterial(float yawangle = 0.0f);
+    virtual void initializePhysics(int cargo, int passengers, Ogre::Radian yawAngle);
+    virtual void initializeMaterial(Ogre::Radian yawAngle);
 
     void update(float milliseconds);
     void updateTrigger();

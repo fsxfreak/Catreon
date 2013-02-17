@@ -29,7 +29,7 @@ long int Vehicle::mVehiclesCreated = 0;
 //btCollisionShape *Vehicle::mbtWheelShape = new btCylinderShapeX(btVector3(1.02, 4.07, 3.88));
 //yay magic numbers
 //-------------------------------------------------------------------------------------------------------
-Vehicle::Vehicle(int cargo, int passengers, const Ogre::Vector3 &initposition, const Ogre::Vector3 &initdirection, int yawAngle) 
+Vehicle::Vehicle(int cargo, int passengers, const Ogre::Vector3 &initposition, Ogre::Radian yawAngle) 
     : mbIsMoving(0), mbIsHealthy(1), mfTargetSpeed(0), mbtCar(nullptr), mSteeringValue(0.f), mMillisecondsCounter(0),
       mSceneManager(getGameState()->mSceneMgr), mDynamicsWorld(getGameState()->mDynamicsWorld), mOccupiedRoadName("roadname"),
       mOccupiedRoad(nullptr)
@@ -40,16 +40,8 @@ Vehicle::Vehicle(int cargo, int passengers, const Ogre::Vector3 &initposition, c
     mstrName = "Vehicle_";
     mstrName += oss.str();
 
-    //++mVehiclesCreated;   //iterate in initializeMaterial() instead
-    
-    if (yawAngle == 999) 
-    {
-        Ogre::Radian radangle = Ogre::Vector3(0, 0, 0).angleBetween(initdirection);
-        yawAngle = radangle.valueDegrees();
-    }
-
     mNode = mSceneManager->getRootSceneNode()->createChildSceneNode(mstrName, initposition);
-    mNode->yaw(Ogre::Angle(yawAngle));
+    mNode->yaw(yawAngle);
 
     initializeMaterial(yawAngle);
     initializePhysics(cargo, passengers, yawAngle);
@@ -142,7 +134,7 @@ bool Vehicle::isHealthy()
     return mbIsHealthy;
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::initializePhysics(int cargo, int passengers, float yawangle)
+void Vehicle::initializePhysics(int cargo, int passengers, Ogre::Radian yawAngle)
 {  
     //main body
 //  mbtChassisShape = new btBoxShape(btVector3(8.92499, 7.48537, 24.072));
@@ -150,7 +142,7 @@ void Vehicle::initializePhysics(int cargo, int passengers, float yawangle)
     btTransform chassisTransform;
     chassisTransform.setIdentity();
     btQuaternion rotation;
-    rotation.setEulerZYX(0, yawangle, 0);
+    rotation.setEulerZYX(0, btScalar(yawAngle.valueDegrees()), 0);
    
     //to adjust the center of mass
     mbtChassisShape = new btBoxShape(btVector3(8, 7, 23));
@@ -220,20 +212,17 @@ void Vehicle::initializePhysics(int cargo, int passengers, float yawangle)
         , btBroadphaseProxy::AllFilter & ~btBroadphaseProxy::SensorTrigger);
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::initializeMaterial(float fyawangle)
+void Vehicle::initializeMaterial(Ogre::Radian yawAngle)
 {
     mEntity = mSceneManager->createEntity(mstrName, "car_bmwe46.mesh");
     mNode->attachObject(mEntity);
     mEntity->setCastShadows(true);
 
-
-    Ogre::Radian yawangle = Ogre::Angle(fyawangle);
-
     //my crowning achievement, lol
     auto createWheel = [&](Ogre::Entity *ent, Ogre::SceneNode *node, const Ogre::Vector3 &pos, const std::string &name) {
         ent = mSceneManager->createEntity("wheel.mesh");
         node = mSceneManager->getRootSceneNode()->createChildSceneNode(name, pos);
-        node->yaw(yawangle);
+        node->yaw(yawAngle);
         node->attachObject(ent);
         mWheelNodes.push_back(node);
         mWheelEntities.push_back(ent);
