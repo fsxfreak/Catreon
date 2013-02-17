@@ -67,7 +67,6 @@ private:
     btGhostObject *mTriggerNode;
 
     //state variables
-    bool mbIsMoving;
     bool mbIsHealthy;       //healthy as in not totaled
     bool isObstructed;
 
@@ -76,7 +75,7 @@ private:
     float mfTargetSpeed;
     float mfSpeed;
 
-    float mSteeringValue;   //-0.6f - 0.6f
+    float mSteeringValue;   //-0.6f to 0.6f
 
     float mDeltaTime;
     float mMillisecondsCounter; //in order to do several things like collision checking every one second
@@ -92,16 +91,24 @@ private:
 
     virtual void accelerate(float power = 200.f);
     virtual void brake(float power = 200.f);
-    virtual void brake(const btVector3 &rayOrigin, 
-                       const btCollisionWorld::ClosestRayResultCallback &rayQuery, 
-                       float brakeFactor = 1.7f);
-
+    virtual void brake(const btVector3 &rayOrigin 
+                       , const btCollisionWorld::ClosestRayResultCallback &rayQuery 
+                       , float brakeFactor = 1.7f);
     virtual void steer(float targetSteerRadius = 0.0f);
+
+    void updateTrigger();
+
     bool checkForVehicleAhead();
     void maintainSpeed();
+
+    virtual void initializePhysics(int cargo, int passengers);
+    virtual void initializeMaterial();
+    virtual void initializePreliminaries();  //avoid duplication in multiple constructors
 public:
-    Vehicle(int cargo, int passengers, const Ogre::Vector3 &initposition = Ogre::Vector3(0, 100, 0),
-                                       Ogre::Radian yawAngle = Ogre::Radian(0));
+    Vehicle(int cargo, int passengers, const Ogre::Vector3 &initposition = Ogre::Vector3(0, 30, 0)
+                                     , const Ogre::Vector3 &initdirection = Ogre::Vector3(0, 0, 0));
+    Vehicle(int cargo, int passengers, const Ogre::Vector3 &initposition = Ogre::Vector3(0, 30, 0)
+                                     , const Ogre::Quaternion &initquat = Ogre::Quaternion());
     ~Vehicle();
 
     float getSpeed();
@@ -113,15 +120,9 @@ public:
     Ogre::Vector3 getDirection();
     Ogre::Vector3 getUp();
 
-    bool isMoving();
     bool isHealthy();
 
-    virtual void initializePhysics(int cargo, int passengers, Ogre::Radian yawAngle);
-    virtual void initializeMaterial(Ogre::Radian yawAngle);
-
     void update(float milliseconds);
-    void updateTrigger();
-    
 };
 
 #endif
