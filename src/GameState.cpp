@@ -306,9 +306,7 @@ bool GameState::keyPressed(const OIS::KeyEvent &keyEvent)
             hitPosition = bulletVecToOgre(rayQuery.m_hitPointWorld);
         }
 
-        Ogre::Vector3 dir = hitPosition - mCamera->getPosition();
-        dir.y = 0;
-        Driver *driver = new Driver(150, 1, hitPosition + Ogre::Vector3(0, 30, 0), dir);
+        Driver *driver = new Driver(150, 1, hitPosition + Ogre::Vector3(0, 30, 0), mCamera->getOrientation());
         std::shared_ptr<Driver> driverPtr(driver);
         mDrivers.push_back(driverPtr);
     }

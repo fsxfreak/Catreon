@@ -33,7 +33,7 @@ private:
 
     Driver& operator=(const Driver& cDriver);
 public:
-    Driver(int nCargo, int nPassengers, const Ogre::Vector3 &position, const Ogre::Vector3 &direction);
+    Driver(int nCargo, int nPassengers, const Ogre::Vector3 &position, const Ogre::Quaternion &quat);
     Driver();
     ~Driver();
 

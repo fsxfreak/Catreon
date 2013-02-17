@@ -23,12 +23,10 @@ to pathfind to next road
 #include "objects\vehicles\Driver.h"
 
 //-------------------------------------------------------------------------------------------------------
-Driver::Driver(int nCargo, int nPassengers, const Ogre::Vector3 &position, const Ogre::Vector3 &direction) 
+Driver::Driver(int nCargo, int nPassengers, const Ogre::Vector3 &position, const Ogre::Quaternion &quat) 
                 : mstrGoal(""), mnNervousness(0), bIsFollowingClose(0)
 {
-    Ogre::Quaternion yawAngle(direction);
-
-    pVehicle = new Vehicle(nCargo, nPassengers, position, yawAngle);
+    pVehicle = new Vehicle(nCargo, nPassengers, position, quat);
     mnSkill = rand() % 100 + 1;
     mnRiskTaker = rand() % 100 + 1;
 }
@@ -39,14 +37,14 @@ Driver::Driver() : mnNervousness(0), bIsFollowingClose(0)
     //create random position and random rotation
     int xpos = (rand() % 1000) - 500;
     int zpos = (rand() % 1000) - 500;
-    Ogre::Vector3 initPosition = Ogre::Vector3(xpos, 30, zpos);
+    Ogre::Vector3 pos = Ogre::Vector3(xpos, 30, zpos);
 
-    int max = 10000, min = 0;
+    int max = -10000, min = 10000;  //flipped values intentional, makes Vehicles more likely to point to center
     float xdir = (min + (rand() % (max - min + 1))) / 10000.f;
     float zdir = (min + (rand() % (max - min + 1))) / 10000.f;
-    Ogre::Radian yawAngle = Ogre::Math::ATan2(xdir, -zdir);
+    Ogre::Vector3 dir(pos.x * xdir, pos.y, pos.z * zdir);
 
-    pVehicle = new Vehicle(150, 1, initPosition, yawAngle);
+    pVehicle = new Vehicle(150, 1, pos, dir);
     mnSkill = rand() % 100 + 1;
     mnRiskTaker = rand() % 100 + 1;
 }
