@@ -440,7 +440,14 @@ void GameState::moveCamera()
     {
         mCamera->moveRelative(mTranslateVector * 50);
     }
-    mCamera->moveRelative(mTranslateVector * 20);
+    else if (OgreFramework::getSingletonPtr()->mKb->isKeyDown(OIS::KC_LCONTROL))
+    {
+        mCamera->moveRelative(mTranslateVector * 5);
+    }
+    else
+    {
+        mCamera->moveRelative(mTranslateVector * 20);
+    }
 }
 //-------------------------------------------------------------------------------------------------------
 void GameState::getInput(float timesince)
