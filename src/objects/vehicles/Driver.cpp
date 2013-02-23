@@ -27,6 +27,7 @@ Driver::Driver(int nCargo, int nPassengers, const Ogre::Vector3 &position, const
                 : mstrGoal(""), mnNervousness(0), bIsFollowingClose(0)
 {
     pVehicle = new Vehicle(nCargo, nPassengers, position, quat);
+    pVehicle->goTo(Ogre::Vector3(0, 0, 0));
     mnSkill = rand() % 100 + 1;
     mnRiskTaker = rand() % 100 + 1;
 }
@@ -45,6 +46,7 @@ Driver::Driver() : mnNervousness(0), bIsFollowingClose(0)
     Ogre::Vector3 dir(pos.x * xdir, pos.y, pos.z * zdir);
 
     pVehicle = new Vehicle(150, 1, pos, dir);
+    pVehicle->goTo(Ogre::Vector3(0, 0, 0));
     mnSkill = rand() % 100 + 1;
     mnRiskTaker = rand() % 100 + 1;
 }
