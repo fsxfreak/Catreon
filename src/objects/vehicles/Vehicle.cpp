@@ -112,11 +112,6 @@ void Vehicle::setSpeed(float fSpeed)
     mfTargetSpeed = fSpeed;
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::inRoad(const std::string &road)
-{
-    mOccupiedRoadName = road;
-}
-//-------------------------------------------------------------------------------------------------------
 Ogre::Vector3 Vehicle::getPosition()
 {
     return mNode->getPosition();
@@ -275,6 +270,7 @@ void Vehicle::initializePreliminaries()
     mDynamicsWorld = getGameState()->mDynamicsWorld;
     mOccupiedRoadName = "roadname";
     mOccupiedRoad = nullptr;
+    mTargetPosition = Ogre::Vector3(0, 0, 0);
 
     //give a unique name to each vehicle
     std::ostringstream oss;
@@ -338,11 +334,40 @@ void Vehicle::steer(float targetSteerRadius)
     }
 }
 //-------------------------------------------------------------------------------------------------------
+void Vehicle::goTo(const Ogre::Vector3 &pos)
+{
+    mTargetPosition = pos;
+}
+//-------------------------------------------------------------------------------------------------------
+void Vehicle::updateSteering()
+{
+    Ogre::Vector3 rightVector = getDirection().crossProduct(getUp());
+    Ogre::Vector3 directionToTarget = mTargetPosition - mNode->getPosition();
+    float dotProduct = rightVector.dotProduct(directionToTarget);
+
+    if (-0.01f < dotProduct && dotProduct < 0.01f)
+    {
+        steer(0.0f);
+    }
+    else if (dotProduct < -0.01f)
+    {
+        float angleBetween = getDirection().angleBetween(directionToTarget).valueRadians();
+        steer(-0.30 * angleBetween);
+    }
+    else if (dotProduct > 0.01f)
+    {
+        float angleBetween = getDirection().angleBetween(directionToTarget).valueRadians();
+        steer(0.30 * angleBetween);
+    }
+
+}
+//-------------------------------------------------------------------------------------------------------
 void Vehicle::update(float milliseconds)
 {
     mDeltaTime = milliseconds;
     mMillisecondsCounter += milliseconds;
     mfSpeed = mVehicle->getCurrentSpeedKmHour();
+    updateSteering();
     for (int iii = 0; iii < 4; iii++)
     {
         btTransform wheeltrans = mVehicle->getWheelTransformWS(iii);

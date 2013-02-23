@@ -76,6 +76,7 @@ private:
     float mfSpeed;
 
     float mSteeringValue;   //-0.6f to 0.6f
+    Ogre::Vector3 mTargetPosition;
 
     float mDeltaTime;
     float mMillisecondsCounter; //in order to do several things like collision checking every one second
@@ -95,6 +96,7 @@ private:
                        , const btCollisionWorld::ClosestRayResultCallback &rayQuery 
                        , float brakeFactor = 1.7f);
     virtual void steer(float targetSteerRadius = 0.0f);
+    void updateSteering();
 
     void updateTrigger();
 
@@ -114,7 +116,9 @@ public:
     float getSpeed();
     void setSpeed(float fSpeed);
 
-    void inRoad(const std::string& road);
+    /** Precondition: pos must have a zero in the Y term.
+    */
+    void goTo(const Ogre::Vector3 &pos);
 
     Ogre::Vector3 getPosition();
     Ogre::Vector3 getDirection();
