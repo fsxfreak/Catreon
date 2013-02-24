@@ -319,12 +319,14 @@ void Vehicle::steer(float targetSteerRadius)
 
     if (targetSteerRadius > mSteeringValue) //then turn the wheel right
     {
-        float steerOffset = (targetSteerRadius - mSteeringValue) / 2.f;   //will most likely have floating point errors
+        float steerOffset = 0.4f;
+        //float steerOffset = (targetSteerRadius - mSteeringValue);   //will most likely have floating point errors
         mSteeringValue += steerOffset * (mDeltaTime / 1000);               //but precision is not needed
     }
     else if (targetSteerRadius < mSteeringValue) //then turn the wheel left
     {
-        float steerOffset = (mSteeringValue - targetSteerRadius) / 2.f;
+        float steerOffset = 0.4f;
+        //float steerOffset = (mSteeringValue - targetSteerRadius);
         mSteeringValue -= steerOffset * (mDeltaTime / 1000);
     }
 
@@ -352,12 +354,12 @@ void Vehicle::updateSteering()
     else if (dotProduct < -0.01f)
     {
         float angleBetween = getDirection().angleBetween(directionToTarget).valueRadians();
-        steer(-0.30 * angleBetween);
+        steer(-0.50 * angleBetween);
     }
     else if (dotProduct > 0.01f)
     {
         float angleBetween = getDirection().angleBetween(directionToTarget).valueRadians();
-        steer(0.30 * angleBetween);
+        steer(0.50 * angleBetween);
     }
 
 }
