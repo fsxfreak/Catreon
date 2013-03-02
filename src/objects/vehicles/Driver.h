@@ -20,7 +20,7 @@ class Vehicle;
 class Driver
 {
 private:
-    std::string mstrGoal;
+    Road *mGoal;
 
     //all personality on a scale of 1 to 100
     int mnSkill;
@@ -31,13 +31,15 @@ private:
 
     Vehicle* pVehicle;
 
+    void findNearestRoad();
+
     Driver& operator=(const Driver& cDriver);
 public:
     Driver(int nCargo, int nPassengers, const Ogre::Vector3 &position, const Ogre::Quaternion &quat);
     Driver();
     ~Driver();
 
-    void updateGoal(std::string strDest);
+    void updateGoal(Road *goalRoad);
     void updateDecision();
     void update(int milliseconds, std::string goal = "NULL");
 
@@ -47,7 +49,7 @@ public:
 
     void setNervousness(int nNervous);
 
-    std::string getDestination();
+    Road* getDestination();
     Vehicle* getVehicle();
 
 };
