@@ -24,16 +24,17 @@ to pathfind to next road
 
 //-------------------------------------------------------------------------------------------------------
 Driver::Driver(int nCargo, int nPassengers, const Ogre::Vector3 &position, const Ogre::Quaternion &quat) 
-                : mstrGoal(""), mnNervousness(0), bIsFollowingClose(0)
+                : mGoal(nullptr), mnNervousness(0), bIsFollowingClose(0)
 {
+    
     pVehicle = new Vehicle(nCargo, nPassengers, position, quat);
-    pVehicle->goTo(Ogre::Vector3(0, 0, 0));
     mnSkill = rand() % 100 + 1;
     mnRiskTaker = rand() % 100 + 1;
+    findNearestRoad();
 }
 //-------------------------------------------------------------------------------------------------------
 //random, default constructor
-Driver::Driver() : mnNervousness(0), bIsFollowingClose(0)
+Driver::Driver() : mGoal(nullptr), mnNervousness(0), bIsFollowingClose(0)
 {
     //create random position and random rotation
     int xpos = (rand() % 1000) - 500;
@@ -46,9 +47,9 @@ Driver::Driver() : mnNervousness(0), bIsFollowingClose(0)
     Ogre::Vector3 dir(pos.x * xdir, pos.y, pos.z * zdir);
 
     pVehicle = new Vehicle(150, 1, pos, dir);
-    pVehicle->goTo(Ogre::Vector3(0, 0, 0));
     mnSkill = rand() % 100 + 1;
     mnRiskTaker = rand() % 100 + 1;
+    findNearestRoad();
 }
 //-------------------------------------------------------------------------------------------------------
 Driver::~Driver()
@@ -60,19 +61,19 @@ Driver::~Driver()
     delete pVehicle;
 }
 //-------------------------------------------------------------------------------------------------------
-void Driver::updateGoal(std::string strGoal)
+void Driver::updateGoal(Road *goalRoad)
 {
-    mstrGoal = strGoal;
+    mGoal = goalRoad;
 }
 //-------------------------------------------------------------------------------------------------------
-std::string Driver::getDestination()
+Road* Driver::getDestination()
 {
-    return mstrGoal;
+    return mGoal;
 }
 //-------------------------------------------------------------------------------------------------------
 void Driver::updateDecision()
 {
-    if (mstrGoal == "")
+    if (mGoal == nullptr)
     {
         pVehicle->setSpeed(50); //in MPH, to be converted internally into m/s
     }
@@ -113,4 +114,62 @@ void Driver::update(int milliseconds, std::string goal)
 Vehicle* Driver::getVehicle()
 {
     return pVehicle;
+}
+//-------------------------------------------------------------------------------------------------------
+void Driver::findNearestRoad()
+{
+    const int radius = 1000;
+    btGhostObject *cylinder = new btGhostObject();
+    btCollisionShape *cylinderShape = new btCylinderShape(btVector3(radius, 50, radius));
+    cylinder->setCollisionShape(cylinderShape);
+    btVector3 pos = GameState::ogreVecToBullet(pVehicle->getPosition());
+    btTransform trans;
+    trans.setIdentity();
+    trans.setOrigin(pos);
+    cylinder->setWorldTransform(trans);
+    cylinder->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+    getGameState()->mDynamicsWorld->addCollisionObject(cylinder, btBroadphaseProxy::SensorTrigger
+        , btBroadphaseProxy::AllFilter & ~btBroadphaseProxy::SensorTrigger);
+
+    int numOverlapping = cylinder->getNumOverlappingObjects();
+    bool foundRoad = false;
+    std::vector<Road*> roads;
+    for (int iii = 0; iii < numOverlapping; ++iii)
+    {
+        btCollisionObject *body = dynamic_cast<btCollisionObject*>(cylinder->getOverlappingObject(iii));
+        void *object = body->getUserPointer();
+        if (body->getUserPointerType() == ROAD)
+        {
+            foundRoad = true;
+            roads.push_back(static_cast<Road*>(object));
+        }
+    }
+    if (foundRoad)
+    {
+        unsigned int shortestDistance = UINT_MAX;
+        Road *road = nullptr;
+
+        Ogre::Vector3 &pos = pVehicle->getPosition();
+
+        auto it = roads.begin();
+        auto itend = roads.end();
+        for (it; it != itend; ++it)
+        {
+            float distance = ((*it)->getPosition() - pos).squaredLength();
+            if (distance < shortestDistance)
+            {
+                road = *it;
+                shortestDistance = distance;
+            }
+        }
+        if (road != nullptr)
+        {
+            pVehicle->goTo(road->getPosition());
+        }
+    }
+
+    getGameState()->mDynamicsWorld->removeCollisionObject(cylinder);
+    delete cylinderShape;
+    delete cylinder;
+
 }

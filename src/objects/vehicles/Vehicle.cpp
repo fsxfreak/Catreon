@@ -392,7 +392,7 @@ void Vehicle::update(float milliseconds)
     mVehicle->updateVehicle((int)milliseconds / 1000);
 }
 //-------------------------------------------------------------------------------------------------------
-#pragma optimize("", off)
+#pragma optimize("", off)   //The compiler optimizes out the loop contents in Release mode
 void Vehicle::updateTrigger()
 {
     btTransform trans = mbtCar->getWorldTransform();
