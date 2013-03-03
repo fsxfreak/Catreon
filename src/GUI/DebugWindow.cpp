@@ -89,6 +89,10 @@ void DebugWindow::update()
                                      + " " + Ogre::StringConverter::toString(GameState::round(dir.y, 2))
                                      + " " + Ogre::StringConverter::toString(GameState::round(dir.z, 2)));
         mWindows[5]->setText("Road: " + mVehicle->mOccupiedRoadName);
+        pos = mVehicle->mTargetPositions.front();
+        mWindows[6]->setText("Target: " + Ogre::StringConverter::toString(static_cast<int>(pos.x)) 
+                                  + " " + Ogre::StringConverter::toString(static_cast<int>(pos.y)) 
+                                  + " " + Ogre::StringConverter::toString(static_cast<int>(pos.z)));
     }
 }
 //-------------------------------------------------------------------------------------------------------
