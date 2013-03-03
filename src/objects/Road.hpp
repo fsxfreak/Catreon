@@ -52,14 +52,15 @@ public:
     //requires the name of the next road to be set
     void obtainNextRoad();
     void replaceNextRoad(Road *nextRoad);
+    int heuristic(Road *goalRoad);
 
     Ogre::Vector3& getPosition();
+    Ogre::Vector3& getDirection();
     Road* getNextRoad();
     std::string getName();
     unsigned int getCost();
     
     void occupied(bool occupied);
-
     bool isOccupied();
 
     void update();

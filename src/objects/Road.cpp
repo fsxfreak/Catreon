@@ -91,6 +91,11 @@ void Road::replaceNextRoad(Road *nextRoad)
     mTriggerNode->setWorldTransform(transform);
 }
 //-------------------------------------------------------------------------------------------------------
+int Road::heuristic(Road *goalRoad)
+{
+    return (goalRoad->getPosition() - mPosition).squaredLength();
+}
+//-------------------------------------------------------------------------------------------------------
 void Road::updateTriggerPosition(btTransform& trans)
 {
     trans.setIdentity();
@@ -102,6 +107,11 @@ void Road::updateTriggerPosition(btTransform& trans)
 Ogre::Vector3& Road::getPosition()
 {
     return mPosition;
+}
+//-------------------------------------------------------------------------------------------------------
+Ogre::Vector3& Road::getDirection()
+{
+    return mDirection;
 }
 //-------------------------------------------------------------------------------------------------------
 Road* Road::getNextRoad()
