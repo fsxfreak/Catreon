@@ -13,6 +13,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include "stdafx.h"
 #include <string>
 #include "objects\vehicles\Vehicle.h"
+#include <objects\Road.hpp>
 #include <GameState.hpp>
 
 class Vehicle;
@@ -31,7 +32,9 @@ private:
 
     Vehicle* pVehicle;
 
-    void findNearestRoad();
+    void findNearestRoad(float radius = 1000);
+    void chooseGoal();
+    void findPathToGoal();
 
     Driver& operator=(const Driver& cDriver);
 public:
@@ -41,7 +44,7 @@ public:
 
     void updateGoal(Road *goalRoad);
     void updateDecision();
-    void update(int milliseconds, std::string goal = "NULL");
+    void update(int milliseconds, Road *goalRoad = nullptr);
 
     int getSkill();
     int getNervousness();

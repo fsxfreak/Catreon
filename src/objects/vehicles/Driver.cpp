@@ -99,11 +99,11 @@ void Driver::setNervousness(int nNervous)
     mnNervousness += nNervous;
 }
 //-------------------------------------------------------------------------------------------------------
-void Driver::update(int milliseconds, std::string goal)
+void Driver::update(int milliseconds, Road *goalRoad)
 {
-    if (goal != "NULL")
+    if (goalRoad != nullptr)
     {
-        updateGoal(goal);
+        updateGoal(goalRoad);
     }
     updateDecision();
 
@@ -116,9 +116,12 @@ Vehicle* Driver::getVehicle()
     return pVehicle;
 }
 //-------------------------------------------------------------------------------------------------------
-void Driver::findNearestRoad()
+void Driver::findNearestRoad(float radius)
 {
-    const int radius = 1000;
+    if (radius >= 32000) //A vehicle too far from any nodes will lock the program, and eventually overflow.
+        return;
+
+    //creates a tall and wide cylinder to intersect with Roads, to find the closest possible to the Vehicle
     btGhostObject *cylinder = new btGhostObject();
     btCollisionShape *cylinderShape = new btCylinderShape(btVector3(radius, 50, radius));
     cylinder->setCollisionShape(cylinderShape);
@@ -144,9 +147,15 @@ void Driver::findNearestRoad()
             roads.push_back(static_cast<Road*>(object));
         }
     }
+
+    getGameState()->mDynamicsWorld->removeCollisionObject(cylinder);
+    delete cylinderShape;
+    delete cylinder;
+
     if (foundRoad)
     {
-        unsigned int shortestDistance = UINT_MAX;
+        unsigned int shortestDistance = radius * radius + 1;   /* 1,000,001 = the maximum + 1 distance we could 
+                                                       possibly come up with, according to Euler. */
         Road *road = nullptr;
 
         Ogre::Vector3 &pos = pVehicle->getPosition();
@@ -164,12 +173,29 @@ void Driver::findNearestRoad()
         }
         if (road != nullptr)
         {
-            pVehicle->goTo(road->getPosition());
+            pVehicle->goTo(road, VehicleStates::FINDING_BEGIN_NODE);
         }
     }
+    else
+    {
+        findNearestRoad(radius * 2);
+    }
+    chooseGoal();
+}
+//-------------------------------------------------------------------------------------------------------
+void Driver::chooseGoal()
+{
+    std::vector<Road*> &roads = getGameState()->mRoads;
+    int min = 1, max = roads.size();
+    int randomRoad = (min + (rand() % (max - min + 1)));
 
-    getGameState()->mDynamicsWorld->removeCollisionObject(cylinder);
-    delete cylinderShape;
-    delete cylinder;
-
+    mGoal = roads.at(randomRoad - 1);
+    findPathToGoal();
+}
+//-------------------------------------------------------------------------------------------------------
+void Driver::findPathToGoal()
+{
+    if (mGoal == nullptr)
+        return;
+    //if (pVehicle->
 }
