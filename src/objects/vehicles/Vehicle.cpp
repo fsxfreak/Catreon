@@ -270,7 +270,6 @@ void Vehicle::initializePreliminaries()
     mDynamicsWorld = getGameState()->mDynamicsWorld;
     mOccupiedRoadName = "roadname";
     mOccupiedRoad = nullptr;
-    mTargetPosition = Ogre::Vector3(0, 0, 0);
 
     //give a unique name to each vehicle
     std::ostringstream oss;
@@ -338,13 +337,45 @@ void Vehicle::steer(float targetSteerRadius)
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::goTo(const Ogre::Vector3 &pos)
 {
-    mTargetPosition = pos;
+    mTargetPositions.clear();
+    mTargetPositions.push_back(pos);
 }
+//-------------------------------------------------------------------------------------------------------
+void Vehicle::goTo(Road *road, VehicleStates state)
+{
+    mTargetPositions.clear();
+    switch (state)
+    {
+    case PATHFINDING:
+        mTargetPositions.push_back(road->getPosition());
+        break;
+    case FINDING_BEGIN_NODE:   //intermediate goal to get the Vehicle in the right direction
+        mTargetPositions.push_back(road->getPosition() - (road->getDirection() * 50));
+        mTargetPositions.push_back(road->getPosition());
+        break;
+    default:
+        mTargetPositions.push_back(road->getPosition());
+        break;
+    }
+}
+//-------------------------------------------------------------------------------------------------------
+void Vehicle::addToQueue(Road *road, VehicleStates state)
+{
+    mTargetPositions.push_back(road->getPosition());
+}
+//-------------------------------------------------------------------------------------------------------
+#pragma optimize("", off)
+void Vehicle::updateQueue()
+{
+    if ((mNode->getPosition() - mTargetPositions.front()).squaredLength() < 500)
+        mTargetPositions.pop_front();
+}
+#pragma optimize("", on)
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::updateSteering()
 {
     Ogre::Vector3 rightVector = getDirection().crossProduct(getUp());
-    Ogre::Vector3 directionToTarget = mTargetPosition - mNode->getPosition();
+    Ogre::Vector3 directionToTarget = mTargetPositions.front() - mNode->getPosition();
     float dotProduct = rightVector.dotProduct(directionToTarget);
 
     if (-0.01f < dotProduct && dotProduct < 0.01f)
@@ -369,6 +400,7 @@ void Vehicle::update(float milliseconds)
     mDeltaTime = milliseconds;
     mMillisecondsCounter += milliseconds;
     mfSpeed = mVehicle->getCurrentSpeedKmHour();
+    updateQueue();
     updateSteering();
     for (int iii = 0; iii < 4; iii++)
     {
@@ -380,7 +412,7 @@ void Vehicle::update(float milliseconds)
     }
 
     updateTrigger();
-    maintainSpeed();
+    updateSpeed();
     if (mMillisecondsCounter > 500)    //check this only about every half second
     {
         if (!checkForVehicleAhead()) //true if vehicle ahead, false if not
@@ -493,8 +525,12 @@ bool Vehicle::checkForVehicleAhead()
     return 0;
 }
 //-------------------------------------------------------------------------------------------------------
-void Vehicle::maintainSpeed()
+void Vehicle::updateSpeed()
 {
+    if ((mNode->getPosition() - mTargetPositions.front()).squaredLength() < 250)
+    {
+        mfTargetSpeed = 0;
+    }
     if (mfSpeed < mfTargetSpeed)
     {
         float power = (mfTargetSpeed - mfSpeed) * 50;

@@ -76,7 +76,7 @@ private:
     float mfSpeed;
 
     float mSteeringValue;   //-0.6f to 0.6f
-    Ogre::Vector3 mTargetPosition;
+    std::list<Ogre::Vector3> mTargetPositions;
 
     float mDeltaTime;
     float mMillisecondsCounter; //in order to do several things like collision checking every one second
@@ -97,11 +97,12 @@ private:
                        , float brakeFactor = 1.7f);
     virtual void steer(float targetSteerRadius = 0.0f);
     void updateSteering();
+    void updateQueue();
 
     void updateTrigger();
 
     bool checkForVehicleAhead();
-    void maintainSpeed();
+    void updateSpeed();
 
     virtual void initializePhysics(int cargo, int passengers);
     virtual void initializeMaterial();
@@ -119,6 +120,8 @@ public:
     /** Precondition: pos must have a zero in the Y term.
     */
     void goTo(const Ogre::Vector3 &pos);
+    void goTo(Road *road, VehicleStates state);
+    void addToQueue(Road *road, VehicleStates state = VehicleStates::PATHFINDING);
 
     Ogre::Vector3 getPosition();
     Ogre::Vector3 getDirection();
