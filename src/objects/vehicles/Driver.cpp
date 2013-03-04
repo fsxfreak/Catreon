@@ -152,11 +152,11 @@ void Driver::findNearestRoad(float radius)
     delete cylinderShape;
     delete cylinder;
 
+    Road *road = nullptr;
     if (foundRoad)
     {
         unsigned int shortestDistance = radius * radius + 1;   /* 1,000,001 = the maximum + 1 distance we could 
-                                                       possibly come up with, according to Euler. */
-        Road *road = nullptr;
+                                                                  possibly come up with, according to Pythagoras. */
 
         Ogre::Vector3 &pos = pVehicle->getPosition();
 
@@ -181,6 +181,7 @@ void Driver::findNearestRoad(float radius)
         findNearestRoad(radius * 2);
     }
     chooseGoal();
+    findPathToGoal(road);
 }
 //-------------------------------------------------------------------------------------------------------
 void Driver::chooseGoal()
@@ -190,12 +191,13 @@ void Driver::chooseGoal()
     int randomRoad = (min + (rand() % (max - min + 1)));
 
     mGoal = roads.at(randomRoad - 1);
-    findPathToGoal();
+    
 }
 //-------------------------------------------------------------------------------------------------------
-void Driver::findPathToGoal()
+void Driver::findPathToGoal(Road *currentRoad)
 {
+    //A* magic right here
     if (mGoal == nullptr)
         return;
-    //if (pVehicle->
+    currentRoad->getNextRoad();
 }

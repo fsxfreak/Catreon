@@ -34,7 +34,7 @@ private:
 
     void findNearestRoad(float radius = 1000);
     void chooseGoal();
-    void findPathToGoal();
+    void findPathToGoal(Road *currentRoad);
 
     Driver& operator=(const Driver& cDriver);
 public:

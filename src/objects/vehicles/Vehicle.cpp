@@ -367,7 +367,7 @@ void Vehicle::addToQueue(Road *road, VehicleStates state)
 #pragma optimize("", off)
 void Vehicle::updateQueue()
 {
-    if ((mNode->getPosition() - mTargetPositions.front()).squaredLength() < 500)
+    if ((mNode->getPosition() - mTargetPositions.front()).squaredLength() < 750)
         mTargetPositions.pop_front();
 }
 #pragma optimize("", on)
@@ -527,9 +527,14 @@ bool Vehicle::checkForVehicleAhead()
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::updateSpeed()
 {
-    if ((mNode->getPosition() - mTargetPositions.front()).squaredLength() < 250)
+    float distance = (mNode->getPosition() - mTargetPositions.front()).squaredLength();
+    if (distance < 500)
     {
         mfTargetSpeed = 0;
+    }
+    else
+    {
+        mfTargetSpeed = 220;
     }
     if (mfSpeed < mfTargetSpeed)
     {
