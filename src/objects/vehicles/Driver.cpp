@@ -30,7 +30,7 @@ Driver::Driver(int nCargo, int nPassengers, const Ogre::Vector3 &position, const
     pVehicle = new Vehicle(nCargo, nPassengers, position, quat);
     mnSkill = rand() % 100 + 1;
     mnRiskTaker = rand() % 100 + 1;
-    findNearestRoad();
+    pVehicle->goTo(findNearestRoad(), VehicleStates::FINDING_BEGIN_NODE);
 }
 //-------------------------------------------------------------------------------------------------------
 //random, default constructor
@@ -49,7 +49,7 @@ Driver::Driver() : mGoal(nullptr), mnNervousness(0), bIsFollowingClose(0)
     pVehicle = new Vehicle(150, 1, pos, dir);
     mnSkill = rand() % 100 + 1;
     mnRiskTaker = rand() % 100 + 1;
-    findNearestRoad();
+    pVehicle->goTo(findNearestRoad(), VehicleStates::FINDING_BEGIN_NODE);
 }
 //-------------------------------------------------------------------------------------------------------
 Driver::~Driver()
@@ -64,6 +64,13 @@ Driver::~Driver()
 void Driver::updateGoal(Road *goalRoad)
 {
     mGoal = goalRoad;
+    findPathToGoal(findNearestRoad());
+}
+//-------------------------------------------------------------------------------------------------------
+void Driver::updateGoal()
+{
+    chooseGoal();
+    findPathToGoal(findNearestRoad());
 }
 //-------------------------------------------------------------------------------------------------------
 Road* Driver::getDestination()
@@ -105,7 +112,11 @@ void Driver::update(int milliseconds, Road *goalRoad)
     {
         updateGoal(goalRoad);
     }
-    updateDecision();
+    else if (mGoal == nullptr)
+    {
+        updateGoal();
+    }
+    //updateDecision();
 
     pVehicle->update(milliseconds);
 
@@ -116,10 +127,10 @@ Vehicle* Driver::getVehicle()
     return pVehicle;
 }
 //-------------------------------------------------------------------------------------------------------
-void Driver::findNearestRoad(float radius)
+Road* Driver::findNearestRoad(float radius)
 {
     if (radius >= 32000) //A vehicle too far from any nodes will lock the program, and eventually overflow.
-        return;
+        return nullptr;
 
     //creates a tall and wide cylinder to intersect with Roads, to find the closest possible to the Vehicle
     btGhostObject *cylinder = new btGhostObject();
@@ -171,17 +182,18 @@ void Driver::findNearestRoad(float radius)
                 shortestDistance = distance;
             }
         }
-        if (road != nullptr)
+        return road;
+        /*if (road != nullptr)  //this isn't a findNearestRoad responsibility
         {
             pVehicle->goTo(road, VehicleStates::FINDING_BEGIN_NODE);
-        }
+        }*/
     }
     else
     {
         findNearestRoad(radius * 2);
     }
-    chooseGoal();
-    mPathToGoal = findPathToGoal(road);
+    /*chooseGoal(); //this isn't a findNearestRoad responsibility
+    mPathToGoal = findPathToGoal(road);*/
 }
 //-------------------------------------------------------------------------------------------------------
 void Driver::chooseGoal()
@@ -193,6 +205,7 @@ void Driver::chooseGoal()
     mGoal = roads.at(randomRoad - 1);
 }
 //-------------------------------------------------------------------------------------------------------
+#pragma optimize("", off)
 std::list<Node*> Driver::findPathToGoal(Road *currentRoad)
 {
     //A* magic right here
@@ -296,7 +309,7 @@ std::list<Node*> Driver::findPathToGoal(Road *currentRoad)
         unsigned long lowestCost = 9999999999;
         if (partialPlans[iii]->back() == &mGoal->mNode)
         {
-            if (mGoal->mNode.mTotalCost < lowestCost)
+            if (mGoal->mNode.mTotalCost < lowestCost)   //find the complete plan with the lowest cost
             {
                 completePlan.assign(partialPlans[iii]->begin(), partialPlans[iii]->end());
                 lowestCost = mGoal->mNode.mTotalCost;
@@ -304,6 +317,7 @@ std::list<Node*> Driver::findPathToGoal(Road *currentRoad)
         }
     }
 
+    partialPlans.clear();   //we called new, this will call delete
     return completePlan;    //Will return an empty list if no path is possible.
-
 }
+#pragma optimize("", on)

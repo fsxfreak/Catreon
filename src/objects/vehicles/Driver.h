@@ -33,7 +33,7 @@ private:
     Vehicle* pVehicle;
     std::list<Node*> mPathToGoal;
 
-    void findNearestRoad(float radius = 1000);
+    Road* findNearestRoad(float radius = 1000);
     void chooseGoal();
     std::list<Node*> findPathToGoal(Road *currentRoad);
 
@@ -44,6 +44,7 @@ public:
     ~Driver();
 
     void updateGoal(Road *goalRoad);
+    void updateGoal();
     void updateDecision();
     void update(int milliseconds, Road *goalRoad = nullptr);
 
