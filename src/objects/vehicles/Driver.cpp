@@ -181,7 +181,7 @@ void Driver::findNearestRoad(float radius)
         findNearestRoad(radius * 2);
     }
     chooseGoal();
-    findPathToGoal(road);
+    mPathToGoal = findPathToGoal(road);
 }
 //-------------------------------------------------------------------------------------------------------
 void Driver::chooseGoal()
@@ -193,40 +193,113 @@ void Driver::chooseGoal()
     mGoal = roads.at(randomRoad - 1);
 }
 //-------------------------------------------------------------------------------------------------------
-void Driver::findPathToGoal(Road *currentRoad)
+std::list<Node*> Driver::findPathToGoal(Road *currentRoad)
 {
     //A* magic right here
     if (mGoal == nullptr)
-        return;
-    long long totalCost = 0;
+        return std::list<Node*>();
 
-    std::list<Road*> openList;
-    openList.push_back(currentRoad);
+    //unsigned long long runningCost = 0;
 
-    std::list<Road*> closedList;
+    Node *currentNode = &currentRoad->mNode;
+    currentNode->mCost = 0;
+    currentNode->mHeuristic = (currentRoad->getPosition() - mGoal->getPosition()).squaredLength();
+    currentNode->mTotalCost = currentNode->mCost + currentNode->mHeuristic;
+
+    std::list<Node*> openList;                      //the nodes that are not expanded yet
+    std::list<Node*> closedList;                    //the nodes that have been expanded
+                                    
+    std::vector<std::list<Node*>* > partialPlans;    //the possible plans we have generated
+    std::list<Node*> completePlan;                  //the correct sequence of Roads that leads to the goal
+
+    partialPlans.push_back(new std::list<Node*>);
+    partialPlans[0]->push_back(currentNode);
+
+    openList.push_back(currentNode);
 
     while (!openList.empty())
     {
-        openList.push_back(currentRoad->getNextRoad());
-
-        unsigned long long lowestCost = ULONG_MAX;
-        long long nodeCost = 0;
-
-        std::list<Road*>::iterator it = openList.begin();
-        std::list<Road*>::iterator itend = openList.end();
-        Road *tempRoad = nullptr;
+        unsigned long lowestTotalCost = 9999999999;
+        std::list<Node*> openListCopy = openList;   //because we are adding nodes to the open list in this loop
+        auto it = openListCopy.begin();
+        auto itend = openListCopy.end();
         for (it; it != itend; ++it)
         {
-            nodeCost = (*it)->getCost() + (*it)->heuristic(mGoal);
-            if (nodeCost < lowestCost)
+            bool uniqueNode = true;
+            auto itclosed = closedList.begin();
+            auto itclosedend = closedList.end();
+            for (itclosed; itclosed != itclosedend; ++itclosed)
             {
-                tempRoad = (*it);
-                lowestCost = nodeCost;
+                if (itclosed == it)
+                    uniqueNode = false;
+            }
+
+            if (uniqueNode)
+            {
+                Node *node = (*it);
+
+                if (node->mParent != nullptr)   //check if the node has any preceding nodes
+                {
+                    node->mCost = (node->mThisRoad->getPosition() - node->mParent->getPosition()).squaredLength()
+                    + (node->mParent->mNode.mCost);
+                }
+                else    //otherwise it costs zero to get to this one
+                    node->mCost = 0;
+                node->mHeuristic = (node->mThisRoad->getPosition() - mGoal->getPosition()).squaredLength();
+                node->mTotalCost = node->mCost + node->mHeuristic;
+
+                if (node->mTotalCost < lowestTotalCost)  //get the node with the lowest cost
+                {
+                    currentNode = node;
+                    lowestTotalCost = node->mTotalCost;
+                }
+
+                //put the nodes of the children of the open list on the open list
+                for (int iii = 0; iii < node->mChildren.size(); ++iii)
+                {   
+                    openList.push_back(&node->mChildren[iii]->mNode);
+                }
+                openList.remove(*it);
+                closedList.push_back((*it));
             }
         }
 
-
-        nextRoad = tempRoad;
-        plan.push_back(nextRoad);
+        for (int iii = 0; iii < partialPlans.size(); ++iii)
+        {
+            //if the node with the lowest cost is on the same path, add it to the plan
+            if (&currentNode->mParent->mNode == partialPlans[iii]->back())
+            {
+                partialPlans[iii]->push_back(currentNode);
+                break;
+            }
+            else    //we backtracked
+            {
+                auto it = partialPlans[iii]->begin();
+                auto itend = partialPlans[iii]->end();
+                for (it; it != itend; ++it) 
+                {   
+                    //take the path that matches and use that to construct a new one
+                    if ((*it) == &currentNode->mParent->mNode)  
+                    {
+                        partialPlans.push_back(new std::list<Node*>(partialPlans[iii]->begin(), it));
+                    }
+                }
+            }
+        }
     }
+    for (int iii = 0; iii < partialPlans.size(); ++iii)
+    {
+        unsigned long lowestCost = 9999999999;
+        if (partialPlans[iii]->back() == &mGoal->mNode)
+        {
+            if (mGoal->mNode.mTotalCost < lowestCost)
+            {
+                completePlan.assign(partialPlans[iii]->begin(), partialPlans[iii]->end());
+                lowestCost = mGoal->mNode.mTotalCost;
+            }
+        }
+    }
+
+    return completePlan;
+
 }

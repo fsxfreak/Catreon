@@ -31,10 +31,11 @@ private:
     bool bIsFollowingClose;
 
     Vehicle* pVehicle;
+    std::list<Node*> mPathToGoal;
 
     void findNearestRoad(float radius = 1000);
     void chooseGoal();
-    void findPathToGoal(Road *currentRoad);
+    std::list<Node*> findPathToGoal(Road *currentRoad);
 
     Driver& operator=(const Driver& cDriver);
 public:
