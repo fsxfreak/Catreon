@@ -30,9 +30,6 @@ long int Vehicle::mVehiclesCreated = 0;
 //yay magic numbers
 //-------------------------------------------------------------------------------------------------------
 Vehicle::Vehicle(int cargo, int passengers, const Ogre::Vector3 &initposition, const Ogre::Vector3 &initdirection) 
-    : mbIsHealthy(1), mfTargetSpeed(0), mbtCar(nullptr), mSteeringValue(0.f), mMillisecondsCounter(0),
-      mSceneManager(getGameState()->mSceneMgr), mDynamicsWorld(getGameState()->mDynamicsWorld), mOccupiedRoadName("roadname"),
-      mOccupiedRoad(nullptr)
 {
     initializePreliminaries();
 
@@ -270,6 +267,7 @@ void Vehicle::initializePreliminaries()
     mDynamicsWorld = getGameState()->mDynamicsWorld;
     mOccupiedRoadName = "roadname";
     mOccupiedRoad = nullptr;
+    mState = IDLE;
 
     //give a unique name to each vehicle
     std::ostringstream oss;
@@ -343,6 +341,11 @@ void Vehicle::goTo(const Ogre::Vector3 &pos)
 //-------------------------------------------------------------------------------------------------------
 void Vehicle::goTo(Road *road, VehicleStates state)
 {
+    if (road == nullptr)
+    {
+        mState = IDLE;
+        return;
+    }
     mTargetPositions.clear();
     switch (state)
     {

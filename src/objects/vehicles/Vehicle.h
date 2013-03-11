@@ -67,6 +67,8 @@ private:
     btGhostObject *mTriggerNode;
 
     //state variables
+    VehicleStates mState;
+
     bool mbIsHealthy;       //healthy as in not totaled
     bool isObstructed;
 
