@@ -24,7 +24,7 @@ TODO
 
 const btVector3 TRIGGER_SIZE(10, 5, 10);
 //-------------------------------------------------------------------------------------------------------
-Road::Road(const Ogre::SceneNode* node) : mNextRoad(nullptr), mOccupied(false), mCost(0)
+Road::Road(const Ogre::SceneNode* node) : mNode(this), mOccupied(false)
                                         , mTriggerNode(nullptr)
 {
     mDirection = Ogre::Vector3::UNIT_Z;
@@ -39,7 +39,6 @@ Road::Road(const Ogre::SceneNode* node) : mNextRoad(nullptr), mOccupied(false), 
 Road::~Road()
 {
     //mNextRoad is deleted with whoever created it
-    mNextRoad = nullptr;
     delete mTriggerNode;
 }
 //-------------------------------------------------------------------------------------------------------
@@ -63,7 +62,8 @@ void Road::obtainNextRoad()
 {
     if (mNameNextRoad == std::string("nullLocator"))
     {
-        mNextRoad = nullptr;
+        mNode.mChildren.clear();
+        mNode.mChildren.push_back(nullptr);
         return;
     }
 
@@ -81,19 +81,14 @@ void Road::obtainNextRoad()
 //-------------------------------------------------------------------------------------------------------
 void Road::replaceNextRoad(Road *nextRoad)
 {
-    mNextRoad = nextRoad;
+    mNode.mChildren.push_back(nextRoad);
+    mNode.mChildren[0]->mNode.mParent = this;
     mDirection = nextRoad->getPosition() - mPosition;
-    mCost = mDirection.squaredLength();
     mDirection.normalise();
 
     btTransform transform;
     updateTriggerPosition(transform);
     mTriggerNode->setWorldTransform(transform);
-}
-//-------------------------------------------------------------------------------------------------------
-int Road::heuristic(Road *goalRoad)
-{
-    return (goalRoad->getPosition() - mPosition).squaredLength();
 }
 //-------------------------------------------------------------------------------------------------------
 void Road::updateTriggerPosition(btTransform& trans)
@@ -116,17 +111,12 @@ Ogre::Vector3& Road::getDirection()
 //-------------------------------------------------------------------------------------------------------
 Road* Road::getNextRoad()
 {
-    return mNextRoad;
+    return mNode.mChildren[0];
 }
 //-------------------------------------------------------------------------------------------------------
 std::string Road::getName()
 {
     return mName;
-}
-//-------------------------------------------------------------------------------------------------------
-unsigned int Road::getCost()
-{
-    return mCost;
 }
 //-------------------------------------------------------------------------------------------------------
 void Road::occupied(bool occupied)

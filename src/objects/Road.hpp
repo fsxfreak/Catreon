@@ -18,6 +18,8 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include <GameState.hpp>
 #include <BtOgMotionState.h>
 
+#include <objects\Node.hpp>
+
 /*
     Need to intialize the Roads in backwards order in order to obtain a pointer
     to the road ahead.
@@ -25,19 +27,19 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
     Perhaps initialize these Roads using a Street class?
 */
 
+class Node;
+
 class Road
 {
 protected:
     std::string mName;
     std::string mNameNextRoad;
 
-    Road *mNextRoad;
     Ogre::Vector3 mPosition;
     Ogre::Vector3 mDirection;
 
     bool mOccupied;
-    unsigned int mCost;
-
+    
     Road(const Road& road);
 
     btGhostObject *mTriggerNode; //to check if a vehicle is close enough to the center of the node
@@ -51,14 +53,14 @@ public:
     //requires the name of the next road to be set
     void obtainNextRoad();
     void replaceNextRoad(Road *nextRoad);
-    int heuristic(Road *goalRoad);
 
     Ogre::Vector3& getPosition();
     Ogre::Vector3& getDirection();
     Road* getNextRoad();
     std::string getName();
-    unsigned int getCost();
     
+    Node mNode;
+
     void occupied(bool occupied);
     bool isOccupied();
 
