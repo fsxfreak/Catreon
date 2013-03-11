@@ -191,7 +191,6 @@ void Driver::chooseGoal()
     int randomRoad = (min + (rand() % (max - min + 1)));
 
     mGoal = roads.at(randomRoad - 1);
-    
 }
 //-------------------------------------------------------------------------------------------------------
 void Driver::findPathToGoal(Road *currentRoad)
@@ -199,5 +198,35 @@ void Driver::findPathToGoal(Road *currentRoad)
     //A* magic right here
     if (mGoal == nullptr)
         return;
-    currentRoad->getNextRoad();
+    long long totalCost = 0;
+
+    std::list<Road*> openList;
+    openList.push_back(currentRoad);
+
+    std::list<Road*> closedList;
+
+    while (!openList.empty())
+    {
+        openList.push_back(currentRoad->getNextRoad());
+
+        unsigned long long lowestCost = ULONG_MAX;
+        long long nodeCost = 0;
+
+        std::list<Road*>::iterator it = openList.begin();
+        std::list<Road*>::iterator itend = openList.end();
+        Road *tempRoad = nullptr;
+        for (it; it != itend; ++it)
+        {
+            nodeCost = (*it)->getCost() + (*it)->heuristic(mGoal);
+            if (nodeCost < lowestCost)
+            {
+                tempRoad = (*it);
+                lowestCost = nodeCost;
+            }
+        }
+
+
+        nextRoad = tempRoad;
+        plan.push_back(nextRoad);
+    }
 }
