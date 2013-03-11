@@ -27,7 +27,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 class Road
 {
-private:
+protected:
     std::string mName;
     std::string mNameNextRoad;
 
@@ -45,7 +45,6 @@ private:
     void initOther(const Ogre::SceneNode *node);
 public:
     Road(const Ogre::SceneNode *node);
-
     ~Road();
 
     //called after all Road nodes have been generated, so we can build links to next nodes
@@ -65,5 +64,6 @@ public:
 
     void update();
 };
+
 
 #endif
