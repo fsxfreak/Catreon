@@ -15,9 +15,21 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include <GameState.hpp>
 #include <objects\Road.hpp>
 
+class Road;
+
 class Node
 {
+public:
+    Road *mThisRoad;    //guaranteed to be initialized to a valid pointer
+    Road *mParent;      //may not be initialized due to being a start of a road
+    std::vector<Road*> mChildren;
 
+    unsigned long mCost;        //cost to reach this node + those who came before
+    unsigned long mHeuristic;   //heuristic to the goal
+    unsigned long mTotalCost;   //cost to reach this node + heuristic + those who came before
+
+    Node(Road *road);
+    ~Node();
 };
 
 #endif
