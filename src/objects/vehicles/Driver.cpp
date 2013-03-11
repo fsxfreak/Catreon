@@ -220,7 +220,7 @@ std::list<Node*> Driver::findPathToGoal(Road *currentRoad)
     while (!openList.empty())
     {
         unsigned long lowestTotalCost = 9999999999;
-        std::list<Node*> openListCopy = openList;   //because we are adding nodes to the open list in this loop
+        std::list<Node*> openListCopy(openList);   //because we are adding nodes to the open list in this loop
         auto it = openListCopy.begin();
         auto itend = openListCopy.end();
         for (it; it != itend; ++it)
@@ -230,7 +230,7 @@ std::list<Node*> Driver::findPathToGoal(Road *currentRoad)
             auto itclosedend = closedList.end();
             for (itclosed; itclosed != itclosedend; ++itclosed)
             {
-                if (itclosed == it)
+                if ((*itclosed) == (*it))
                     uniqueNode = false;
             }
 
@@ -257,7 +257,11 @@ std::list<Node*> Driver::findPathToGoal(Road *currentRoad)
                 //put the nodes of the children of the open list on the open list
                 for (int iii = 0; iii < node->mChildren.size(); ++iii)
                 {   
-                    openList.push_back(&node->mChildren[iii]->mNode);
+                    if (node != &mGoal->mNode)  //if the node we have is the goal, don't put its children on
+                    {
+                        if (node->mChildren[iii] != nullptr)
+                            openList.push_back(&node->mChildren[iii]->mNode);
+                    }
                 }
                 openList.remove(*it);
                 closedList.push_back((*it));
@@ -300,6 +304,6 @@ std::list<Node*> Driver::findPathToGoal(Road *currentRoad)
         }
     }
 
-    return completePlan;
+    return completePlan;    //Will return an empty list if no path is possible.
 
 }
