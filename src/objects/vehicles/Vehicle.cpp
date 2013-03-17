@@ -353,7 +353,7 @@ void Vehicle::goTo(Road *road, VehicleStates state)
         mTargetPositions.push_back(road->getPosition());
         break;
     case FINDING_BEGIN_NODE:   //intermediate goal to get the Vehicle in the right direction
-        mTargetPositions.push_back(road->getPosition() - (road->getDirection() * 50));
+        //mTargetPositions.push_back(road->getPosition() - (road->getDirection() * 50));
         mTargetPositions.push_back(road->getPosition());
         break;
     default:
@@ -370,7 +370,8 @@ void Vehicle::addToQueue(Road *road, VehicleStates state)
 #pragma optimize("", off)
 void Vehicle::updateQueue()
 {
-    if ((mNode->getPosition() - mTargetPositions.front()).squaredLength() < 750)
+    Ogre::Real distanceToTarget = (mNode->getPosition() - mTargetPositions.front()).squaredLength();
+    if (distanceToTarget < 750)
         mTargetPositions.pop_front();
 }
 #pragma optimize("", on)

@@ -10,7 +10,6 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 /********************************************************
 TODO
 -Take inputs from various sources for a neural network AI
--Find a way to "know" where the car is in the city
 -The driver drives the vehicle
 -The vehicle doesn't have the driver
 
@@ -64,13 +63,15 @@ Driver::~Driver()
 void Driver::updateGoal(Road *goalRoad)
 {
     mGoal = goalRoad;
-    findPathToGoal(findNearestRoad());
+    mPathToGoal = findPathToGoal(findNearestRoad());
 }
 //-------------------------------------------------------------------------------------------------------
 void Driver::updateGoal()
 {
     chooseGoal();
-    findPathToGoal(findNearestRoad());
+    Road *closest = findNearestRoad();
+    if (closest != nullptr)
+        mPathToGoal = findPathToGoal(closest);
 }
 //-------------------------------------------------------------------------------------------------------
 Road* Driver::getDestination()
@@ -118,6 +119,12 @@ void Driver::update(int milliseconds, Road *goalRoad)
     }
     //updateDecision();
 
+    auto it = mPathToGoal.begin();
+    auto itend = mPathToGoal.end();
+    for (it; it != itend; ++it)
+    {
+       pVehicle->addToQueue((*it)->mThisRoad);
+    }
     pVehicle->update(milliseconds);
 
 }
@@ -166,8 +173,7 @@ Road* Driver::findNearestRoad(float radius)
     Road *road = nullptr;
     if (foundRoad)
     {
-        unsigned int shortestDistance = radius * radius + 1;   /* 1,000,001 = the maximum + 1 distance we could 
-                                                                  possibly come up with, according to Pythagoras. */
+        unsigned int shortestDistance = radius * radius + 1;   
 
         Ogre::Vector3 &pos = pVehicle->getPosition();
 
@@ -183,17 +189,11 @@ Road* Driver::findNearestRoad(float radius)
             }
         }
         return road;
-        /*if (road != nullptr)  //this isn't a findNearestRoad responsibility
-        {
-            pVehicle->goTo(road, VehicleStates::FINDING_BEGIN_NODE);
-        }*/
     }
     else
     {
         findNearestRoad(radius * 2);
     }
-    /*chooseGoal(); //this isn't a findNearestRoad responsibility
-    mPathToGoal = findPathToGoal(road);*/
 }
 //-------------------------------------------------------------------------------------------------------
 void Driver::chooseGoal()
@@ -212,9 +212,10 @@ std::list<Node*> Driver::findPathToGoal(Road *currentRoad)
     if (mGoal == nullptr)
         return std::list<Node*>();
 
-    //unsigned long long runningCost = 0;
+    if (currentRoad == nullptr)
+        return std::list<Node*>();
 
-    Node *currentNode = &currentRoad->mNode;
+    Node *currentNode = &currentRoad->mNode;        //our starting node
     currentNode->mCost = 0;
     currentNode->mHeuristic = (currentRoad->getPosition() - mGoal->getPosition()).squaredLength();
     currentNode->mTotalCost = currentNode->mCost + currentNode->mHeuristic;
@@ -230,9 +231,12 @@ std::list<Node*> Driver::findPathToGoal(Road *currentRoad)
 
     openList.push_back(currentNode);
 
+    bool foundGoal = false;         /* these two variables prevent unnecessary venturing into  */
+    unsigned long totalCostOfGoal = ULONG_MAX;  /* a deep node that is far away from the goal  */
+
     while (!openList.empty())
     {
-        unsigned long lowestTotalCost = 9999999999;
+        unsigned long lowestTotalCost = ULONG_MAX;
         std::list<Node*> openListCopy(openList);   //because we are adding nodes to the open list in this loop
         auto it = openListCopy.begin();
         auto itend = openListCopy.end();
@@ -241,10 +245,14 @@ std::list<Node*> Driver::findPathToGoal(Road *currentRoad)
             bool uniqueNode = true;
             auto itclosed = closedList.begin();
             auto itclosedend = closedList.end();
-            for (itclosed; itclosed != itclosedend; ++itclosed)
+            for (itclosed; itclosed != itclosedend; ++itclosed) //skip over the nodes that have been already expanded
             {
                 if ((*itclosed) == (*it))
+                {
                     uniqueNode = false;
+                    openList.remove(*it);
+                }
+
             }
 
             if (uniqueNode)
@@ -267,13 +275,30 @@ std::list<Node*> Driver::findPathToGoal(Road *currentRoad)
                     lowestTotalCost = node->mTotalCost;
                 }
 
-                //put the nodes of the children of the open list on the open list
+                //put the nodes of the children of the open list on the open list (aka expand this)
                 for (int iii = 0; iii < node->mChildren.size(); ++iii)
                 {   
-                    if (node != &mGoal->mNode)  //if the node we have is the goal, don't put its children on
+                    /* If the node we have is the goal, don't put its children on
+                       But we do not return the path, because there could be a shorter one yet to be expanded */
+                    if (node != &mGoal->mNode)  
                     {
                         if (node->mChildren[iii] != nullptr)
-                            openList.push_back(&node->mChildren[iii]->mNode);
+                        {
+                            //will not put nodes that cost more than our goal on the open list
+                            /*if (foundGoal && node->mCost > totalCostOfGoal)
+                            {
+                                continue;
+                            }*/
+                            //else
+                            {
+                                openList.push_back(&node->mChildren[iii]->mNode);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foundGoal = true;
+                        totalCostOfGoal = mGoal->mNode.mTotalCost;
                     }
                 }
                 openList.remove(*it);
@@ -281,7 +306,8 @@ std::list<Node*> Driver::findPathToGoal(Road *currentRoad)
             }
         }
 
-        for (int iii = 0; iii < partialPlans.size(); ++iii)
+        //Group up all the possible paths we have
+        for (int iii = 0; iii < partialPlans.size(); ++iii) 
         {
             //if the node with the lowest cost is on the same path, add it to the plan
             if (&currentNode->mParent->mNode == partialPlans[iii]->back())
@@ -306,7 +332,7 @@ std::list<Node*> Driver::findPathToGoal(Road *currentRoad)
     }
     for (int iii = 0; iii < partialPlans.size(); ++iii)
     {
-        unsigned long lowestCost = 9999999999;
+        unsigned long lowestCost = ULONG_MAX;
         if (partialPlans[iii]->back() == &mGoal->mNode)
         {
             if (mGoal->mNode.mTotalCost < lowestCost)   //find the complete plan with the lowest cost

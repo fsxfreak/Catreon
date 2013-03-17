@@ -11,8 +11,8 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 TODO
 -Include position, pointer to next node, bool occupied, 
 
--Derive class to include info about lanes beside current lane
--
+-Implement speed limits, rules of the Road (red lights, stop signs
+-Intersections, turns, and merges
 ********************************************************/
 
 #include "stdafx.h"
