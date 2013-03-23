@@ -36,6 +36,7 @@ private:
     Road* findNearestRoad(float radius = 1000);
     void chooseGoal();
     std::list<Node*> findPathToGoal(Road *currentRoad);
+    void computeCost(Node *to);
 
     Driver& operator=(const Driver& cDriver);
 public:

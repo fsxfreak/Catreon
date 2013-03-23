@@ -205,145 +205,120 @@ void Driver::chooseGoal()
     mGoal = roads.at(randomRoad - 1);
 }
 //-------------------------------------------------------------------------------------------------------
-#pragma optimize("", off)
 std::list<Node*> Driver::findPathToGoal(Road *currentRoad)
 {
-    //A* magic right here
-    if (mGoal == nullptr)
-        return std::list<Node*>();
+    std::list<Node*> openList;
+    std::list<Node*> closedList;
+    std::list<Node*> partialPlan;
+    std::list<Node*> completePlan;
 
-    if (currentRoad == nullptr)
-        return std::list<Node*>();
+    Node *startingNode = &currentRoad->mNode;
+    //initialize cost of starting node
+    startingNode->mCost = 0;
+    startingNode->mHeuristic = (startingNode->mThisRoad->getPosition() - mGoal->getPosition()).squaredLength();
+    startingNode->mTotalCost = startingNode->mCost + startingNode->mHeuristic;
 
-    Node *currentNode = &currentRoad->mNode;        //our starting node
-    currentNode->mCost = 0;
-    currentNode->mHeuristic = (currentRoad->getPosition() - mGoal->getPosition()).squaredLength();
-    currentNode->mTotalCost = currentNode->mCost + currentNode->mHeuristic;
-
-    std::list<Node*> openList;                      //the nodes that are not expanded yet
-    std::list<Node*> closedList;                    //the nodes that have been expanded
-                                    
-    std::vector<std::list<Node*>* > partialPlans;    //the possible plans we have generated
-    std::list<Node*> completePlan;                  //the correct sequence of Roads that leads to the goal
-
-    partialPlans.push_back(new std::list<Node*>);
-    partialPlans[0]->push_back(currentNode);
-
-    openList.push_back(currentNode);
-
-    bool foundGoal = false;         /* these two variables prevent unnecessary venturing into  */
-    unsigned long totalCostOfGoal = ULONG_MAX;  /* a deep node that is far away from the goal  */
+    //expand the starting node
+    int size = startingNode->mChildren.size();
+    for (int iii = 0; iii < size; ++iii)
+    {
+        //put the children of starting node into open list
+        Node *child = &startingNode->mChildren[iii]->mNode;
+        computeCost(child);
+        openList.push_back(child);
+    }
+    openList.remove(startingNode);
+    closedList.push_back(startingNode);
 
     while (!openList.empty())
     {
-        unsigned long lowestTotalCost = ULONG_MAX;
-        std::list<Node*> openListCopy(openList);   //because we are adding nodes to the open list in this loop
-        auto it = openListCopy.begin();
-        auto itend = openListCopy.end();
-        for (it; it != itend; ++it)
+        //First, find the node on the openList with the lowest cost
+        Node *nodeToExpand = nullptr;
         {
-            bool uniqueNode = true;
-            auto itclosed = closedList.begin();
-            auto itclosedend = closedList.end();
-            for (itclosed; itclosed != itclosedend; ++itclosed) //skip over the nodes that have been already expanded
+            auto itOpen = openList.begin();
+            auto itOpenEnd = openList.end();
+            unsigned long lowestCost = UINT_MAX;
+            for (itOpen; itOpen != itOpenEnd; ++itOpen)
             {
-                if ((*itclosed) == (*it))
+                bool unique = true;
+                auto itClosed = closedList.begin();
+                auto itClosedEnd = closedList.end();
+                for (itClosed; itClosed != itClosedEnd; ++itClosed)
                 {
-                    uniqueNode = false;
-                    openList.remove(*it);
+                    if (*itOpen == *itClosed) //don't expand a node we have already
+                        unique = false;
                 }
 
+                if ((*itOpen)->mTotalCost < lowestCost && unique)
+                {
+                    nodeToExpand = *itOpen;
+                }
             }
-
-            if (uniqueNode)
+        }
+        //Put all of its children on the openList
+        if (nodeToExpand != &mGoal->mNode)
+        {
+            auto it = nodeToExpand->mChildren.begin();
+            auto itend = nodeToExpand->mChildren.end();
+            for (it; it != itend; ++it)
             {
-                Node *node = (*it);
+                Node *child = &(*it)->mNode;
 
-                if (node->mParent != nullptr)   //check if the node has any preceding nodes
+                auto itOpen = openList.begin();
+                auto itOpenEnd = openList.end();
+                bool onOpenList = false;
+                Node *nodeAlreadyOnOpenList = nullptr;
+                for (itOpen; itOpen != itOpenEnd; ++itOpen)
                 {
-                    node->mCost = (node->mThisRoad->getPosition() - node->mParent->getPosition()).squaredLength()
-                    + (node->mParent->mNode.mCost);
-                }
-                else    //otherwise it costs zero to get to this one
-                    node->mCost = 0;
-                node->mHeuristic = (node->mThisRoad->getPosition() - mGoal->getPosition()).squaredLength();
-                node->mTotalCost = node->mCost + node->mHeuristic;
-
-                if (node->mTotalCost < lowestTotalCost)  //get the node with the lowest cost
-                {
-                    currentNode = node;
-                    lowestTotalCost = node->mTotalCost;
-                }
-
-                //put the nodes of the children of the open list on the open list (aka expand this)
-                for (int iii = 0; iii < node->mChildren.size(); ++iii)
-                {   
-                    /* If the node we have is the goal, don't put its children on
-                       But we do not return the path, because there could be a shorter one yet to be expanded */
-                    if (node != &mGoal->mNode)  
+                    if (*itOpen == child)
                     {
-                        if (node->mChildren[iii] != nullptr)
+                        onOpenList = true;
+                        nodeAlreadyOnOpenList = *itOpen;
+                    }
+                }
+
+                if (!onOpenList)
+                {
+                    child->mParent = nodeToExpand->mThisRoad;
+                    computeCost(child);
+                    openList.push_back(child);
+                }
+                else
+                {
+                    /* if this node was already on the openList to be expanded,
+                       we may have found a lower cost path to it.
+                       Therefore, check if we indeed have a lower cost path to it.
+                       If we do, we replace the parent (the lower cost path to it)
+                       and recompute the cost
+                    */
+                    if (nodeAlreadyOnOpenList)
+                    {
+                        child->mParent = nodeToExpand->mThisRoad;
+                        computeCost(child);
+                        if (child->mCost < nodeAlreadyOnOpenList->mCost)
                         {
-                            //will not put nodes that cost more than our goal on the open list
-                            /*if (foundGoal && node->mCost > totalCostOfGoal)
-                            {
-                                continue;
-                            }*/
-                            //else
-                            {
-                                openList.push_back(&node->mChildren[iii]->mNode);
-                            }
+                            nodeAlreadyOnOpenList->mParent = nodeToExpand->mThisRoad;
+                            computeCost(nodeAlreadyOnOpenList);
                         }
                     }
-                    else
-                    {
-                        foundGoal = true;
-                        totalCostOfGoal = mGoal->mNode.mTotalCost;
-                    }
-                }
-                openList.remove(*it);
-                closedList.push_back((*it));
-            }
-        }
-
-        //Group up all the possible paths we have
-        for (int iii = 0; iii < partialPlans.size(); ++iii) 
-        {
-            //if the node with the lowest cost is on the same path, add it to the plan
-            if (&currentNode->mParent->mNode == partialPlans[iii]->back())
-            {
-                partialPlans[iii]->push_back(currentNode);
-                break;
-            }
-            else    //we backtracked
-            {
-                auto it = partialPlans[iii]->begin();
-                auto itend = partialPlans[iii]->end();
-                for (it; it != itend; ++it) 
-                {   
-                    //take the path that matches and use that to construct a new one
-                    if ((*it) == &currentNode->mParent->mNode)  
-                    {
-                        partialPlans.push_back(new std::list<Node*>(partialPlans[iii]->begin(), it));
-                    }
                 }
             }
+            openList.remove(nodeToExpand);
+            closedList.push_back(nodeToExpand);
         }
-    }
-    for (int iii = 0; iii < partialPlans.size(); ++iii)
-    {
-        unsigned long lowestCost = ULONG_MAX;
-        if (partialPlans[iii]->back() == &mGoal->mNode)
+        else    //this node is the goal, don't expand it
         {
-            if (mGoal->mNode.mTotalCost < lowestCost)   //find the complete plan with the lowest cost
-            {
-                completePlan.assign(partialPlans[iii]->begin(), partialPlans[iii]->end());
-                lowestCost = mGoal->mNode.mTotalCost;
-            }
+           openList.remove(nodeToExpand);
         }
     }
-
-    partialPlans.clear();   //we called new, this will call delete
-    return completePlan;    //Will return an empty list if no path is possible.
+    return closedList;
 }
-#pragma optimize("", on)
+//-------------------------------------------------------------------------------------------------------
+void Driver::computeCost(Node *node)
+{
+    Node *parent = &node->mParent->mNode;
+    node->mCost = parent->mCost 
+        + (node->mThisRoad->getPosition() - parent->mThisRoad->getPosition()).squaredLength();
+    node->mHeuristic = (node->mThisRoad->getPosition() - mGoal->getPosition()).squaredLength();
+    node->mTotalCost = node->mCost + node->mHeuristic;
+}
