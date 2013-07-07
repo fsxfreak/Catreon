@@ -126,7 +126,7 @@ void GameState::exit()
     mSceneMgr->destroyQuery(mRaySceneQuery);
     
     mDrivers.clear();
-    mRoads.clear();
+//  mRoads.clear();
 
     for (auto it = mBalls.begin(); it != mBalls.end(); ++it)
     {
@@ -173,6 +173,8 @@ void GameState::exit()
 //inherited from Appstate, fill the scene
 void GameState::createScene()
 {
+    /*** Replacing this initialization routine with a procedurally generated city thing
+    
     Ogre::SceneNode *sceneNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
     DotSceneLoader loader;
     loader.parseDotScene("catreoncity.scene", "General", mSceneMgr, sceneNode);
@@ -197,7 +199,7 @@ void GameState::createScene()
         //need my own file format for nodes in the future
         (*it)->obtainNextRoad();
     }
-
+    */
     Ogre::Light *directional = mSceneMgr->createLight("directionallight");
     directional->setType(Ogre::Light::LT_DIRECTIONAL);
     directional->setDirection(0, -0.85f, -0.3f);
@@ -209,8 +211,11 @@ void GameState::createScene()
     //ground plane for testing
     planeGround.normal = Ogre::Vector3(0, 1, 0);
     planeGround.d = 0;
-    Ogre::MeshManager::getSingleton().createPlane("GroundPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-    planeGround, 1500, 1500, 20, 20, true, 1, 100, 100, Ogre::Vector3::UNIT_Z);
+    Ogre::MeshPtr planePtr = Ogre::MeshManager::getSingleton().createPlane("GroundPlane", 
+                            Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+                            planeGround, 1500, 1500, 20, 20, true, 1, 100, 100, Ogre::Vector3::UNIT_Z);
+    planePtr->buildEdgeList();
+    planePtr->prepareForShadowVolume();
     entityGround = mSceneMgr->createEntity("gnd", "GroundPlane");
     entityGround->setMaterialName("Examples/BumpyMetal");
     nodeGround = mSceneMgr->getRootSceneNode()->createChildSceneNode("groundnode");
@@ -539,7 +544,7 @@ void GameState::update(double timeSinceLastFrame)
     updateSound();
     
     mTimeSinceUpdate += timeSinceLastFrame;
-    updateRoads();
+    //updateRoads();
     if (mTimeSinceUpdate >= 41)
     {
         mTimeSinceUpdate = 0;
@@ -619,7 +624,7 @@ Ogre::Vector3 GameState::irrVecToOgre(const vec3df &irrvector)
     return Ogre::Vector3(irrvector.X, irrvector.Y, irrvector.Z);
 }
 //-------------------------------------------------------------------------------------------------------
-void GameState::updateRoads()
+/*void GameState::updateRoads()
 {
     auto it = mRoads.begin();
     auto itend = mRoads.end();
@@ -627,4 +632,4 @@ void GameState::updateRoads()
     {
         (*it)->update();
     }
-}
+}*/

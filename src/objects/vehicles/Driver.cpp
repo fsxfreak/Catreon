@@ -68,7 +68,7 @@ void Driver::updateGoal(Road *goalRoad)
 //-------------------------------------------------------------------------------------------------------
 void Driver::updateGoal()
 {
-    chooseGoal();
+    //chooseGoal();
     Road *closest = findNearestRoad();
     if (closest != nullptr)
         mPathToGoal = findPathToGoal(closest);
@@ -196,14 +196,14 @@ Road* Driver::findNearestRoad(float radius)
     }
 }
 //-------------------------------------------------------------------------------------------------------
-void Driver::chooseGoal()
+/*void Driver::chooseGoal()
 {
     std::vector<Road*> &roads = getGameState()->mRoads;
     int min = 1, max = roads.size();
     int randomRoad = (min + (rand() % (max - min + 1)));
 
     mGoal = roads.at(randomRoad - 1);
-}
+}*/
 //-------------------------------------------------------------------------------------------------------
 std::list<Node*> Driver::findPathToGoal(Road *currentRoad)
 {

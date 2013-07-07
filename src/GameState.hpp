@@ -91,7 +91,7 @@ public:
     static btQuaternion ogreQuatToBullet(const Ogre::Quaternion &ogrequat);
 
     void updateSound();
-    void updateRoads();
+    //void updateRoads();
 
     static vec3df ogreVecToIrr(const Ogre::Vector3 &ogrevector);
     static Ogre::Vector3 irrVecToOgre(const vec3df &irrvector);
@@ -166,7 +166,6 @@ public:
 
     //GUI
     float                                   mTimeSinceUpdate;
-    std::vector<Road*>                      mRoads;
 
 };
 

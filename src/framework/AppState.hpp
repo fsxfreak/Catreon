@@ -39,6 +39,8 @@ public:
     virtual void resume() {}
     virtual void update(double timeSinceLastFrame) = 0;
 
+    Ogre::SceneManager *mSceneMgr;
+
 protected:
     AppState() {};
 
@@ -50,9 +52,7 @@ protected:
     void        popAllAndPushAppState(AppState *state)      { mParent->popAllAndPushAppState(state); }
 
     AppStateListener *mParent;
-    //Ogre::SceneManager *mSceneMgr;
-    //Ogre::Camera *mCamera;
-    
+
     Ogre::FrameEvent mFrameEvent;
 };
 //-------------------------------------------------------------------------------------------------------

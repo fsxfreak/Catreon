@@ -34,7 +34,7 @@ private:
     std::list<Node*> mPathToGoal;
 
     Road* findNearestRoad(float radius = 1000);
-    void chooseGoal();
+    //void chooseGoal();
     std::list<Node*> findPathToGoal(Road *currentRoad);
     void computeCost(Node *to);
 

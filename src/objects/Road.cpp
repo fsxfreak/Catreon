@@ -58,7 +58,7 @@ void Road::initOther(const Ogre::SceneNode *node)
 
 }
 //-------------------------------------------------------------------------------------------------------
-void Road::obtainNextRoad()
+/*void Road::obtainNextRoad()
 {
     if (mNameNextRoad == std::string("nullLocator"))
     {
@@ -77,7 +77,7 @@ void Road::obtainNextRoad()
             replaceNextRoad((*it));
         }
     }
-}
+}*/
 //-------------------------------------------------------------------------------------------------------
 void Road::replaceNextRoad(Road *nextRoad)
 {
