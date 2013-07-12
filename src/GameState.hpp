@@ -29,6 +29,8 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include <objects\vehicles\Vehicle.h>
 #include <objects\vehicles\Driver.h>
 #include <objects\Road.hpp>
+#include <objects\World.hpp>
+#include <objects\Traversable.hpp>
 
 #include <irrKlang.h>
 

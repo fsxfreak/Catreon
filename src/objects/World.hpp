@@ -20,6 +20,8 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 #include <string>
 
+#include <objects\Street.hpp>
+
 class World
 {
 private:
@@ -48,9 +50,7 @@ private:
     void loadWorld(const std::string &worldName);
 
     std::vector<Ogre::Vector3> mCityPositions;
-    /*
-    std::vector<Street> mStreets;
-    */
+    std::vector<Traversable*> mStreets;
 
 public:
     World(int numCities = 3);

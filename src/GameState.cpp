@@ -200,6 +200,8 @@ void GameState::createScene()
         (*it)->obtainNextRoad();
     }
     */
+    World world(3);
+
     Ogre::Light *directional = mSceneMgr->createLight("directionallight");
     directional->setType(Ogre::Light::LT_DIRECTIONAL);
     directional->setDirection(0, -0.85f, -0.3f);

@@ -20,12 +20,13 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 
 class Street : public Traversable
 {
-protected:
-
 private:
-
+    virtual void generateGraphical();
+    virtual void generatePhysics();
+    virtual void generatePathNodes();
 public:
-    Street();
+    Street(const Ogre::Vector3& startPosition, const Ogre::Vector3& endPosition,
+           const Traversable::RoadType roadType, const std::string& name);
     ~Street();
 };
 

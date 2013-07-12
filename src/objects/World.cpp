@@ -41,8 +41,8 @@ void World::generateWorld(int numCities)
 
         mCityPositions.push_back(Ogre::Vector3(x, 0, z));
     }
-
     generateHighways();
+    generateStreetGrid();
 }
 
 void World::generateHighways()
@@ -52,6 +52,8 @@ void World::generateHighways()
 
 void World::generateStreetGrid()
 {
-
+    Street *street = new Street(Ogre::Vector3(-50, 0, -50), Ogre::Vector3(50, 0, 50), 
+        Traversable::RoadType::ONCOMING_FOUR_LANE, "testStreet");
+    mStreets.push_back(street);
 }
 
