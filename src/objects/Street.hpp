@@ -18,6 +18,10 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include <GameState.hpp>
 #include <objects\Traversable.hpp>
 
+#include <btBulletCollisionCommon.h>
+#include <btBulletDynamicsCommon.h>
+#include "BtOgMotionState.h"
+
 class Street : public Traversable
 {
 private:

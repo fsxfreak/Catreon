@@ -18,6 +18,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 #include <GameState.hpp>
 #include <BtOgMotionState.h>
 
+#include <objects\Traversable.hpp>
 #include <objects\Node.hpp>
 
 /*
@@ -33,7 +34,8 @@ class Road
 {
 protected:
     std::string mName;
-    std::string mNameNextRoad;
+    
+    std::unique_ptr<Ogre::SceneNode, SceneNodeDeleter> mNode;
 
     Ogre::Vector3 mPosition;
     Ogre::Vector3 mDirection;
@@ -46,13 +48,11 @@ protected:
     void updateTriggerPosition(btTransform& trans);
     void initOther(const Ogre::SceneNode *node);
 public:
-    Road(const Ogre::SceneNode *node);
+    Road(const std::string& name, const Ogre::Vector3 &pos,
+         const Ogre::Vector3 &dir);
     ~Road();
 
-    //called after all Road nodes have been generated, so we can build links to next nodes
-    //requires the name of the next road to be set
-    void obtainNextRoad();
-    void replaceNextRoad(Road *nextRoad);
+    void setNextRoad(Road *nextRoad);
 
     Ogre::Vector3& getPosition();
     Ogre::Vector3& getDirection();

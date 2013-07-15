@@ -32,7 +32,7 @@ Traversable::Traversable(const Ogre::Vector3& startPosition
                        , const Ogre::Vector3& endPosition
                        , const Traversable::RoadType roadType
                        , const std::string& name)
-    : mNode(nullptr), mEntity(nullptr)
+    : mNode(nullptr), mEntity(nullptr), mWidth(0), mHeight(0), mbtRigidBody(nullptr)
     , mStartPosition(startPosition), mEndPosition(endPosition)
     , mRoadType(roadType)
     , mName(name)

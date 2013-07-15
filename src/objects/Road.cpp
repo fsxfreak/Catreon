@@ -11,7 +11,7 @@ available at http://www.gnu.org/licenses/lgpl-3.0.txt
 TODO
 -Include position, pointer to next node, bool occupied, 
 
--Implement speed limits, rules of the Road (red lights, stop signs
+-Implement speed limits, rules of the Road (red lights, stop signs)
 -Intersections, turns, and merges
 ********************************************************/
 
@@ -58,28 +58,7 @@ void Road::initOther(const Ogre::SceneNode *node)
 
 }
 //-------------------------------------------------------------------------------------------------------
-/*void Road::obtainNextRoad()
-{
-    if (mNameNextRoad == std::string("nullLocator"))
-    {
-        mNode.mChildren.clear();
-        mNode.mChildren.push_back(nullptr);
-        return;
-    }
-
-    std::vector<Road*> &roadVector = getGameState()->mRoads;
-    auto it = roadVector.begin();
-    auto itend = roadVector.end();
-    for (it; it != itend; ++it)
-    {
-        if ((*it)->getName() == mNameNextRoad)
-        {
-            replaceNextRoad((*it));
-        }
-    }
-}*/
-//-------------------------------------------------------------------------------------------------------
-void Road::replaceNextRoad(Road *nextRoad)
+void Road::setNextRoad(Road *nextRoad)
 {
     mNode.mChildren.push_back(nextRoad);
     mNode.mChildren[0]->mNode.mParent = this;

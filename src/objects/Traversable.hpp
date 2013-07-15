@@ -48,8 +48,12 @@ protected:
     std::unique_ptr<Ogre::SceneNode, SceneNodeDeleter> mNode;
     std::unique_ptr<Ogre::Entity, EntityDeleter> mEntity;
 
+    btRigidBody *mbtRigidBody;
+
     const Ogre::Vector3 mStartPosition;
     const Ogre::Vector3 mEndPosition;
+    int mWidth;
+    int mHeight;
     const Traversable::RoadType mRoadType;
 
     // For the pathfinding portion
